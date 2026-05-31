@@ -1,5 +1,5 @@
 import styles from './CategoryBadge.module.css';
-import { getCategoryById } from '../utils/mockData';
+import { getCategoryById } from '../../utils/mockData';
 
 function CategoryBadge({ categoryId, onClick }) {
    const category = getCategoryById(categoryId);

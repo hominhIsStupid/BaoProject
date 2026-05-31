@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import CategoryBadge from './CategoryBadge';
-import { formatDate } from '../utils/formatDate';
+import { formatDate } from '../../utils/formatDate';
 import styles from './ArticleCard.module.css';
 
 function ArticleCard({ article }) {

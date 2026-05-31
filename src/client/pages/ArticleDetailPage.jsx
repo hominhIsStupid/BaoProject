@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
-import { getArticleById, getCategoryName, MOCK_ARTICLES } from '../utils/mockData';
-import { formatDate } from '../utils/formatDate';
+import { getArticleById, getCategoryName, MOCK_ARTICLES } from '../../utils/mockData';
+import { formatDate } from '../../utils/formatDate';
 import CategoryBadge from '../components/CategoryBadge';
 import ArticleGrid from '../components/ArticleGrid';
 import styles from './ArticleDetailPage.module.css';
