@@ -6,15 +6,20 @@ function SearchBar({ onSearch, selectedCategory = 'all' }) {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = useCallback((e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}&category=${selectedCategory}`);
-      if (onSearch) {
-        onSearch(searchQuery, selectedCategory);
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (searchQuery.trim()) {
+        navigate(
+          `/search?q=${encodeURIComponent(searchQuery)}&category=${selectedCategory}`
+        );
+        if (onSearch) {
+          onSearch(searchQuery, selectedCategory);
+        }
       }
-    }
-  }, [searchQuery, selectedCategory, navigate, onSearch]);
+    },
+    [searchQuery, selectedCategory, navigate, onSearch]
+  );
 
   return (
     <form className={styles.searchForm} onSubmit={handleSubmit} role="search">
@@ -27,11 +32,7 @@ function SearchBar({ onSearch, selectedCategory = 'all' }) {
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search articles"
         />
-        <button
-          type="submit"
-          className={styles.button}
-          aria-label="Search"
-        >
+        <button type="submit" className={styles.button} aria-label="Search">
           <svg
             className={styles.icon}
             fill="none"

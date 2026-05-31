@@ -9,12 +9,13 @@ function Header() {
         <Link to="/" className={styles.logo}>
           <h1>BaoProject</h1>
         </Link>
-        
+
+        <SearchBar />
         <nav className={styles.nav}>
-          <SearchBar />
           <ul className={styles.navLinks}>
-            <li><Link to="/">Home</Link></li>
-            <li><a href="#categories">Categories</a></li>
+            <li>
+              <a>Login</a>
+            </li>
           </ul>
         </nav>
       </div>
