@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ArticleGrid from '../components/ArticleGrid';
-import CategoryBadge from '../components/CategoryBadge';
+import CategoryFilter from '../components/CategoryFilter';
 import { CATEGORIES, MOCK_ARTICLES, getFeaturedArticles, getArticlesByCategory } from '../../utils/mockData';
 import styles from './HomePage.module.css';
 
@@ -38,28 +38,12 @@ function HomePage() {
             <h2 id="categories-heading" className={styles.sectionTitle}>
                Browse by Category
             </h2>
-            <div className={styles.categoryGrid} role="tablist">
-               <button
-                  className={`${styles.categoryButton} ${!selectedCategory ? styles.active : ''}`}
-                  onClick={() => setSelectedCategory(null)}
-                  style={!selectedCategory ? { backgroundColor: 'black' } : {}}
-                  role="tab"
-                  aria-selected={!selectedCategory}
-               >
-                  All Articles
-               </button>
-               {CATEGORIES.map((category) => (
-                  <button
-                     key={category.id}
-                     className={`${styles.categoryButton} ${selectedCategory === category.id ? styles.active : ''}`}
-                     onClick={() => setSelectedCategory(category.id)}
-                     style={selectedCategory === category.id ? { backgroundColor: category.color } : {}}
-                     role="tab"
-                     aria-selected={selectedCategory === category.id}
-                  >
-                     {category.name}
-                  </button>
-               ))}
+            <div className={styles.categoryFilter}>
+               <CategoryFilter
+                  selectedCategory={selectedCategory}
+                  allLabel="All Articles"
+                  onCategoryChange={(categoryId) => setSelectedCategory(categoryId === 'all' ? null : categoryId)}
+               />
             </div>
          </section>
 
