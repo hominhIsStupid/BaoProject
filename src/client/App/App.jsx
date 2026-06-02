@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import HomePage from '../pages/HomePage';
 import ArticleDetailPage from '../pages/ArticleDetailPage';
 import SearchPage from '../pages/SearchPage';
+import CategoryPage from '../pages/CategoryPage';
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
                <Route path="/" element={<HomePage />} />
                <Route path="/article/:id" element={<ArticleDetailPage />} />
                <Route path="/search" element={<SearchPage />} />
+               <Route path="/category/:category" element={<CategoryPage />} />
                <Route
                   path="*"
                   element={

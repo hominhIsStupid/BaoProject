@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import ArticleGrid from '../components/ArticleGrid';
-import { CATEGORIES, searchArticles } from '../../utils/mockData';
+import { searchArticles } from '../../utils/mockData';
+import { CATEGORIES } from '../../constant/global';
 import styles from './SearchPage.module.css';
 
 function SearchPage() {

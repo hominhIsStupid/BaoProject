@@ -1,13 +1,20 @@
+import { CATEGORIES } from '../constant/global';
+
 // Mock data for development - replace with API calls in Phase 2
-export const CATEGORIES = [
-   { id: 'politics', name: 'Politics', color: '#3b82f6' },
-   { id: 'business', name: 'Business', color: '#10b981' },
-   { id: 'technology', name: 'Technology', color: '#f59e0b' },
-   { id: 'sports', name: 'Sports', color: '#ef4444' },
-   { id: 'entertainment', name: 'Entertainment', color: '#8b5cf6' },
-   { id: 'health', name: 'Health', color: '#06b6d4' },
-   { id: 'lifestyle', name: 'Lifestyle', color: '#ec4899' },
-];
+/**
+ * {
+ *    id: number,
+ *    title: string,
+ *    excerpt: string,
+ *    category: category,
+ *    author: string,
+ *    date: date,
+ *    content: string,
+ *    image: link,
+ *    readTime: number,
+ *    featured: boolean,
+ * }
+ */
 
 export const MOCK_ARTICLES = [
    {

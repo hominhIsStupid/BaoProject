@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ArticleGrid from '../components/ArticleGrid';
 import CategoryBadge from '../components/CategoryBadge';
-import { CATEGORIES, MOCK_ARTICLES, getFeaturedArticles, getArticlesByCategory } from '../../utils/mockData';
+import { MOCK_ARTICLES, getFeaturedArticles, getArticlesByCategory } from '../../utils/mockData';
+import { CATEGORIES } from '../../constant/global';
 import styles from './HomePage.module.css';
 
 function HomePage() {
