@@ -1,16 +1,17 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ArticleGrid from '../components/ArticleGrid';
-import CategoryBadge from '../components/CategoryBadge';
-import { MOCK_ARTICLES, getFeaturedArticles, getArticlesByCategory } from '../../utils/mockData';
+import { MOCK_ARTICLES, getFeaturedArticles } from '../../utils/mockData';
 import { CATEGORIES } from '../../constant/global';
 import styles from './HomePage.module.css';
 
 function HomePage() {
-   const [selectedCategory, setSelectedCategory] = useState(null);
-
    const featuredArticles = getFeaturedArticles();
-   const displayArticles = selectedCategory ? getArticlesByCategory(selectedCategory) : MOCK_ARTICLES;
+
+   // Group articles by category
+   const articlesByCategory = CATEGORIES.map((category) => ({
+      ...category,
+      articles: MOCK_ARTICLES.filter((article) => article.category === category.id),
+   })).filter((category) => category.articles.length > 0);
 
    return (
       <div className={styles.homePage}>
@@ -34,44 +35,16 @@ function HomePage() {
             </section>
          )}
 
-         {/* Categories Section */}
-         <section className={styles.categories} aria-labelledby="categories-heading">
-            <h2 id="categories-heading" className={styles.sectionTitle}>
-               Browse by Category
-            </h2>
-            <div className={styles.categoryGrid} role="tablist">
-               <button
-                  className={`${styles.categoryButton} ${!selectedCategory ? styles.active : ''}`}
-                  onClick={() => setSelectedCategory(null)}
-                  style={!selectedCategory ? { backgroundColor: 'black' } : {}}
-                  role="tab"
-                  aria-selected={!selectedCategory}
-               >
-                  All Articles
-               </button>
-               {CATEGORIES.map((category) => (
-                  <button
-                     key={category.id}
-                     className={`${styles.categoryButton} ${selectedCategory === category.id ? styles.active : ''}`}
-                     onClick={() => setSelectedCategory(category.id)}
-                     style={selectedCategory === category.id ? { backgroundColor: category.color } : {}}
-                     role="tab"
-                     aria-selected={selectedCategory === category.id}
-                  >
-                     {category.name}
-                  </button>
+         {/* Articles by Category Section */}
+         <section className={styles.articles} aria-labelledby="articles-heading">
+            <div className={styles.categoryStackContainer}>
+               {articlesByCategory.map((category) => (
+                  <div key={category.id} className={styles.categorySection}>
+                     <h2 className={styles.categoryTitle}>{category.name}</h2>
+                     <ArticleGrid articles={category.articles} />
+                  </div>
                ))}
             </div>
-         </section>
-
-         {/* Articles Section */}
-         <section className={styles.articles} aria-labelledby="articles-heading">
-            <h2 id="articles-heading" className={styles.sectionTitle}>
-               {selectedCategory
-                  ? CATEGORIES.find((c) => c.id === selectedCategory)?.name + ' Articles'
-                  : 'All Articles'}
-            </h2>
-            <ArticleGrid articles={displayArticles} />
          </section>
       </div>
    );

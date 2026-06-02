@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
-import { getArticlesByCategory, MOCK_ARTICLES } from '../../utils/mockData';
+import { getArticlesByCategory, MOCK_ARTICLES, getFeaturedArticles } from '../../utils/mockData';
 import { CATEGORIES } from '../../constant/global';
+import ArticleGrid from '../components/ArticleGrid';
+import styles from './HomePage.module.css';
 
 function CategoryPage() {
    const { category } = useParams();
@@ -15,27 +17,41 @@ function CategoryPage() {
       ? getArticlesByCategory(currentCategory.id)
       : MOCK_ARTICLES.filter((article) => article.category?.toLowerCase() === normalizedCategory);
 
+   const featuredArticles = filteredArticles.filter((article) => article.featured);
+
    const title = currentCategory
       ? `${currentCategory.name} Articles`
       : `${normalizedCategory.charAt(0).toUpperCase() + normalizedCategory.slice(1)} Articles`;
 
    return (
-      <div className="page-container">
-         <h1>{title}</h1>
-         {filteredArticles.length === 0 ? (
-            <p>No articles found in this category.</p>
-         ) : (
-            <div className="article-list">
-               {filteredArticles.map((article) => (
-                  <article key={article.id} className="article-card">
-                     <Link to={`/article/${article.id}`}>
-                        <h2>{article.title}</h2>
+      <div className={styles.homePage}>
+         {/* Featured Section */}
+         {featuredArticles.length > 0 && (
+            <section className={styles.featured} aria-labelledby="featured-heading">
+               <h2 id="featured-heading" className={styles.sectionTitle}>
+                  Featured
+               </h2>
+               <div className={styles.featuredGrid}>
+                  {featuredArticles.map((article) => (
+                     <Link key={article.id} to={`/article/${article.id}`} className={styles.featuredCard}>
+                        <img src={article.image} alt={article.title} className={styles.featuredImage} />
+                        <div className={styles.featuredContent}>
+                           <h3 className={styles.featuredTitle}>{article.title}</h3>
+                           <p className={styles.featuredExcerpt}>{article.excerpt}</p>
+                        </div>
                      </Link>
-                     <p>{article.excerpt || article.summary || ''}</p>
-                  </article>
-               ))}
-            </div>
+                  ))}
+               </div>
+            </section>
          )}
+
+         {/* Articles Section */}
+         <section className={styles.articles} aria-labelledby="articles-heading">
+            <h2 id="articles-heading" className={styles.sectionTitle}>
+               {title}
+            </h2>
+            <ArticleGrid articles={filteredArticles} />
+         </section>
       </div>
    );
 }
