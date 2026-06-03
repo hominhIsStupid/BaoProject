@@ -108,7 +108,7 @@
 
 **Nội Dung**:
 
-- Phase 1: Nền Tảng MVP (9 tuần)
+- Phase 1: Nền Tảng MVP
    - Tuần 1-2: Trang Chủ & Bài Viết
    - Tuần 3-4: Tìm Kiếm & Lọc
    - Tuần 5-6: Nội Dung & API
@@ -190,8 +190,8 @@
 | **User Stories**  | 18       | Yêu Cầu Cơ Bản                                                                                             |
 | **Backlog Items** | 75+      | Công Việc Chi Tiết                                                                                         |
 | **Features**      | 30+      | Tính Năng Chính                                                                                            |
-| **Phases**        | 5        | Giai Đoạn Phát Triển                                                                                       |
-| **Timeline**      | 12 tháng | Kế Hoạch Dài Hạn                                                                                           |
+| **Phases**        | 5        | Giai Đoạn Phát Triển âu                                                                                    |
+| **Timeline**      | rất lâu  | Kế Hoạch Dài Hạn                                                                                           |
 
 ---
 

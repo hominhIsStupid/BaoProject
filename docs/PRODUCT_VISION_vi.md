@@ -235,11 +235,11 @@ Bảo vệ dữ liệu người dùng, ngăn chặn các lỗ hổng web phổ b
 
 ## 10. Kế Hoạch Từng Bước Để Đạt Tầm Nhìn
 
-1. **Xây Dựng Giai Đoạn 1** - Nền tảng ổn định & đáng tin cậy (9 tuần)
-2. **Đạt Chỉ Số KPI** - 90+ Lighthouse, <3s tải, 80%+ kiểm tra (Tuần 9)
+1. **Xây Dựng Giai Đoạn 1** - Nền tảng ổn định & đáng tin cậy
+2. **Đạt Chỉ Số KPI** - 90+ Lighthouse, <3s tải, 80%+ kiểm tra
 3. **Phát Hành Công Khai** - Mở cho người dùng rộng rãi
 4. **Thu Thập Phản Hồi** - Người dùng thực tế & chỉ số sử dụng
-5. **Phát Triển Giai Đoạn 2** - Tài khoản & Cá nhân hóa (Tháng 4-5)
+5. **Phát Triển Giai Đoạn 2** - Tài khoản & Cá nhân hóa
 6. **Lặp Lại Quy Trình** - Mỗi Giai Đoạn tuân theo chu kỳ tương tự
 
 ---
