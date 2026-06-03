@@ -4,7 +4,7 @@
 
 ### Product Name
 
-BaoProject (formerly DocGiDo)
+BaoProject
 
 ### Product Type
 
