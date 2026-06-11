@@ -5,24 +5,28 @@
 Báo Rồng Vàng is a complete news website platform with full backend and frontend support for multiple user roles.
 
 ### Key Features
+
 ✅ User authentication with JWT  
 ✅ Role-based access control (Guest, Author, Editor, Admin)  
 ✅ Article management system with workflow (draft → pending → approved → published)  
 ✅ Editor review workflow  
 ✅ Admin dashboard with system management  
 ✅ Real-time data synchronization  
-✅ SQLite database with comprehensive schema  
+✅ SQLite database with comprehensive schema
 
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
+
 ```bash
 cd /Users/longnguyen/Documents/BaoProject
 npm install
 ```
 
 ### 2. Create Environment File
+
 The `.env` file has been created. Verify it contains:
+
 ```
 PORT=5000
 NODE_ENV=development
@@ -33,15 +37,18 @@ CORS_ORIGIN=http://localhost:5173
 ```
 
 ### 3. Start Development Environment
+
 ```bash
 npm run dev
 ```
 
 This starts both:
+
 - **Backend**: http://localhost:5000 (Express API)
 - **Frontend**: http://localhost:3003 (React app)
 
 ### 4. Login with Test Account
+
 ```
 Email: author1@baorong.com
 Password: password123
@@ -102,7 +109,9 @@ BaoProject/
 ## 🔐 User Roles & Workflows
 
 ### 1️⃣ Guest (Default Role)
+
 **What they can do:**
+
 - Read published articles
 - Search articles
 - Browse by category
@@ -113,7 +122,9 @@ BaoProject/
 ---
 
 ### 2️⃣ Author
+
 **What they can do:**
+
 - Create draft articles
 - Edit draft articles
 - Submit articles for review
@@ -123,6 +134,7 @@ BaoProject/
 **Dashboard:** `/author`
 
 **Workflow:**
+
 ```
 1. Write article (saved as draft)
    ↓
@@ -137,6 +149,7 @@ BaoProject/
 ```
 
 **Test Account:**
+
 ```
 Email: author1@baorong.com
 Password: password123
@@ -145,7 +158,9 @@ Password: password123
 ---
 
 ### 3️⃣ Editor
+
 **What they can do:**
+
 - Review pending articles
 - Approve articles
 - Reject articles (with reason)
@@ -155,6 +170,7 @@ Password: password123
 **Dashboard:** `/editor`
 
 **Workflow:**
+
 ```
 1. View pending articles
    ↓
@@ -168,6 +184,7 @@ Password: password123
 ```
 
 **Test Account:**
+
 ```
 Email: editor1@baorong.com
 Password: password123
@@ -176,7 +193,9 @@ Password: password123
 ---
 
 ### 4️⃣ Admin
+
 **What they can do:**
+
 - Full system access
 - Publish approved articles
 - Delete articles
@@ -188,6 +207,7 @@ Password: password123
 **Dashboard:** `/admin`
 
 **Workflow:**
+
 ```
 1. View all articles (all statuses)
    ↓
@@ -201,6 +221,7 @@ Password: password123
 ```
 
 **Test Account:**
+
 ```
 Email: admin@baorong.com
 Password: password123
@@ -220,6 +241,7 @@ Password: password123
 ```
 
 **Status Details:**
+
 - **draft**: Initial state, only author can edit/delete
 - **pending**: Waiting for editor review
 - **approved**: Editor approved, waiting for admin to publish
@@ -229,6 +251,7 @@ Password: password123
 ## 🔌 API Endpoints Quick Reference
 
 ### Authentication
+
 ```
 POST   /api/auth/register          Create account
 POST   /api/auth/login             Login
@@ -237,6 +260,7 @@ PUT    /api/auth/me                Update profile
 ```
 
 ### Public Articles
+
 ```
 GET    /api/articles               All published articles
 GET    /api/articles/{id}          Get article details
@@ -245,6 +269,7 @@ GET    /api/articles/search/{q}    Search articles
 ```
 
 ### Author Articles
+
 ```
 POST   /api/author/articles                        Create article
 GET    /api/author/articles/my-articles           Get my articles
@@ -255,6 +280,7 @@ DELETE /api/author/articles/{id}                  Delete article
 ```
 
 ### Editor Articles
+
 ```
 GET    /api/editor/articles/pending               Get pending articles
 GET    /api/editor/articles/approved              Get approved articles
@@ -266,6 +292,7 @@ GET    /api/editor/articles/stats/me              Get my stats
 ```
 
 ### Admin
+
 ```
 GET    /api/admin/articles/all                    All articles
 POST   /api/admin/articles/{id}/publish           Publish article
@@ -286,140 +313,138 @@ GET    /api/admin/logs                           System audit logs
 ## 💻 Using the API in React Components
 
 ### Example 1: Login
+
 ```jsx
 import { useAuth } from '../hooks/useApi';
 
 function LoginPage() {
-  const { login, loading, error } = useAuth();
+   const { login, loading, error } = useAuth();
 
-  const handleLogin = async () => {
-    try {
-      await login('author1@baorong.com', 'password123');
-      // Success - user is now logged in
-    } catch (err) {
-      console.error('Login failed:', err.message);
-    }
-  };
+   const handleLogin = async () => {
+      try {
+         await login('author1@baorong.com', 'password123');
+         // Success - user is now logged in
+      } catch (err) {
+         console.error('Login failed:', err.message);
+      }
+   };
 
-  return (
-    <div>
-      {error && <p className="error">{error}</p>}
-      <button onClick={handleLogin} disabled={loading}>
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
-    </div>
-  );
+   return (
+      <div>
+         {error && <p className="error">{error}</p>}
+         <button onClick={handleLogin} disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+         </button>
+      </div>
+   );
 }
 ```
 
 ### Example 2: Create Article (Author)
+
 ```jsx
 import { useAuthorArticles } from '../hooks/useApi';
 
 function AuthorDashboard() {
-  const { createArticle, submitArticle } = useAuthorArticles();
+   const { createArticle, submitArticle } = useAuthorArticles();
 
-  const handleCreateArticle = async () => {
-    try {
-      const response = await createArticle({
-        title: 'My First Article',
-        excerpt: 'Short summary',
-        content: 'Full article content...',
-        category: 'Technology'
-      });
-      console.log('Article created:', response);
-    } catch (err) {
-      console.error('Failed:', err.message);
-    }
-  };
+   const handleCreateArticle = async () => {
+      try {
+         const response = await createArticle({
+            title: 'My First Article',
+            excerpt: 'Short summary',
+            content: 'Full article content...',
+            category: 'Technology',
+         });
+         console.log('Article created:', response);
+      } catch (err) {
+         console.error('Failed:', err.message);
+      }
+   };
 
-  return (
-    <button onClick={handleCreateArticle}>Write Article</button>
-  );
+   return <button onClick={handleCreateArticle}>Write Article</button>;
 }
 ```
 
 ### Example 3: Review Articles (Editor)
+
 ```jsx
 import { useEditorArticles } from '../hooks/useApi';
 
 function EditorDashboard() {
-  const { articles, approveArticle, rejectArticle } = useEditorArticles();
+   const { articles, approveArticle, rejectArticle } = useEditorArticles();
 
-  const handleApprove = async (articleId) => {
-    try {
-      await approveArticle(articleId);
-      console.log('Article approved');
-    } catch (err) {
-      console.error('Failed:', err.message);
-    }
-  };
+   const handleApprove = async (articleId) => {
+      try {
+         await approveArticle(articleId);
+         console.log('Article approved');
+      } catch (err) {
+         console.error('Failed:', err.message);
+      }
+   };
 
-  const handleReject = async (articleId, reason) => {
-    try {
-      await rejectArticle(articleId, reason);
-      console.log('Article rejected');
-    } catch (err) {
-      console.error('Failed:', err.message);
-    }
-  };
+   const handleReject = async (articleId, reason) => {
+      try {
+         await rejectArticle(articleId, reason);
+         console.log('Article rejected');
+      } catch (err) {
+         console.error('Failed:', err.message);
+      }
+   };
 
-  return (
-    <div>
-      {articles.map(article => (
-        <div key={article.id}>
-          <h3>{article.title}</h3>
-          <button onClick={() => handleApprove(article.id)}>Approve</button>
-          <button onClick={() => handleReject(article.id, 'Needs revision')}>
-            Reject
-          </button>
-        </div>
-      ))}
-    </div>
-  );
+   return (
+      <div>
+         {articles.map((article) => (
+            <div key={article.id}>
+               <h3>{article.title}</h3>
+               <button onClick={() => handleApprove(article.id)}>Approve</button>
+               <button onClick={() => handleReject(article.id, 'Needs revision')}>Reject</button>
+            </div>
+         ))}
+      </div>
+   );
 }
 ```
 
 ### Example 4: Admin Publish
+
 ```jsx
 import { useAdmin } from '../hooks/useApi';
 
 function AdminDashboard() {
-  const { getAllArticles, publishArticle } = useAdmin();
-  const [articles, setArticles] = useState([]);
+   const { getAllArticles, publishArticle } = useAdmin();
+   const [articles, setArticles] = useState([]);
 
-  useEffect(() => {
-    loadArticles();
-  }, []);
+   useEffect(() => {
+      loadArticles();
+   }, []);
 
-  const loadArticles = async () => {
-    const data = await getAllArticles();
-    setArticles(data);
-  };
+   const loadArticles = async () => {
+      const data = await getAllArticles();
+      setArticles(data);
+   };
 
-  const handlePublish = async (articleId) => {
-    try {
-      await publishArticle(articleId);
-      await loadArticles(); // Refresh
-    } catch (err) {
-      console.error('Failed:', err.message);
-    }
-  };
+   const handlePublish = async (articleId) => {
+      try {
+         await publishArticle(articleId);
+         await loadArticles(); // Refresh
+      } catch (err) {
+         console.error('Failed:', err.message);
+      }
+   };
 
-  return (
-    <div>
-      {articles
-        .filter(a => a.status === 'approved')
-        .map(article => (
-          <div key={article.id}>
-            <h3>{article.title}</h3>
-            <button onClick={() => handlePublish(article.id)}>
-              Publish
-            </button>
-          </div>
-        ))}
-    </div>
-  );
+   return (
+      <div>
+         {articles
+            .filter((a) => a.status === 'approved')
+            .map((article) => (
+               <div key={article.id}>
+                  <h3>{article.title}</h3>
+                  <button onClick={() => handlePublish(article.id)}>Publish</button>
+               </div>
+            ))}
+      </div>
+   );
 }
 ```
 
@@ -428,6 +453,7 @@ function AdminDashboard() {
 ### Test Scenario 1: Create & Publish Article
 
 1. **Login as Author**
+
    ```
    Email: author1@baorong.com
    Password: password123
@@ -446,6 +472,7 @@ function AdminDashboard() {
    - Status changes to "pending"
 
 5. **Login as Editor**
+
    ```
    Email: editor1@baorong.com
    Password: password123
@@ -459,6 +486,7 @@ function AdminDashboard() {
    - Status changes to "approved"
 
 8. **Login as Admin**
+
    ```
    Email: admin@baorong.com
    Password: password123
@@ -466,14 +494,14 @@ function AdminDashboard() {
 
 9. **Go to Admin Dashboard** (`/admin`)
 
-10. **Publish Article**
-    - Find approved article
-    - Click "Publish"
-    - Status changes to "published"
+10.   **Publish Article**
+      - Find approved article
+      - Click "Publish"
+      - Status changes to "published"
 
-11. **View Published Article**
-    - Go to Home page (`/`)
-    - Article now visible to public
+11.   **View Published Article**
+      - Go to Home page (`/`)
+      - Article now visible to public
 
 ### Test Scenario 2: Reject & Resubmit
 
@@ -495,6 +523,7 @@ function AdminDashboard() {
 ## 📱 Frontend Pages
 
 ### Public Pages (No Login Required)
+
 - **Home** (`/`) - Browse published articles
 - **Article Detail** (`/article/:id`) - Read full article
 - **Search** (`/search?q=keyword`) - Search articles
@@ -503,6 +532,7 @@ function AdminDashboard() {
 - **Register** (`/register`) - Create account
 
 ### Protected Pages (Login Required)
+
 - **Author Dashboard** (`/author`) - Write & manage articles
 - **Editor Dashboard** (`/editor`) - Review & approve articles
 - **Admin Dashboard** (`/admin`) - System management
@@ -511,6 +541,7 @@ function AdminDashboard() {
 ## 🗄️ Database
 
 ### Tables
+
 - **users** - User accounts with roles
 - **articles** - News articles with status
 - **categories** - Article categories
@@ -519,6 +550,7 @@ function AdminDashboard() {
 - **system_logs** - Audit trail of admin actions
 
 ### Pre-loaded Data (On First Run)
+
 - 5 test users (authors, editors, admin)
 - 5 categories (Technology, Lifestyle, Business, Sports, Education)
 - Empty system ready for articles
@@ -531,7 +563,7 @@ function AdminDashboard() {
 ✅ Request validation middleware  
 ✅ Database foreign keys  
 ✅ CORS protection  
-✅ Environment variable separation  
+✅ Environment variable separation
 
 ## 📚 Documentation Files
 
@@ -562,6 +594,7 @@ npm run build
 ## 🐛 Troubleshooting
 
 ### Backend won't start
+
 ```bash
 # Check if port 5000 is in use
 lsof -ti:5000 | xargs kill -9
@@ -571,22 +604,26 @@ PORT=5001 npm run dev:server
 ```
 
 ### Frontend can't reach backend
+
 - Check `.env` file has correct `CORS_ORIGIN`
 - Verify backend is running on port 5000
 - Check browser console for CORS errors
 
 ### Login not working
+
 - Use correct test account credentials
 - Check token is being stored in localStorage
 - Check browser DevTools → Application → Local Storage
 
 ### Database issues
+
 - Delete `src/backend/Data/database.sqlite` to reset
 - Restart server to recreate database
 
 ## 🚀 Next Steps
 
 ### Phase 2: Enhanced Features
+
 - [ ] Email notifications
 - [ ] Image upload & CDN
 - [ ] Real-time notifications (WebSocket)
@@ -595,6 +632,7 @@ PORT=5001 npm run dev:server
 - [ ] Article versioning
 
 ### Phase 3: Production
+
 - [ ] Deploy to production server
 - [ ] Set up SSL/HTTPS
 - [ ] Configure database backups
@@ -603,6 +641,7 @@ PORT=5001 npm run dev:server
 - [ ] Set up CI/CD pipeline
 
 ### Phase 4: Performance
+
 - [ ] Database indexing optimization
 - [ ] API response caching
 - [ ] CDN for static assets
@@ -612,6 +651,7 @@ PORT=5001 npm run dev:server
 ## 📞 Support
 
 For questions about:
+
 - **Backend API** - See `BACKEND_API_GUIDE.md`
 - **Backend Setup** - See `BACKEND_QUICK_START.md`
 - **Integration** - See `INTEGRATION_GUIDE.md`
@@ -622,6 +662,7 @@ For questions about:
 ## ✨ Key Achievements
 
 ✅ **Full Backend System**
+
 - Express.js API with 5 route modules
 - SQLite database with 6 tables
 - JWT authentication
@@ -629,6 +670,7 @@ For questions about:
 - Repository pattern for clean data access
 
 ✅ **Complete Frontend**
+
 - 3 dashboard implementations (Author, Editor, Admin)
 - Public article browsing
 - Search functionality
@@ -636,6 +678,7 @@ For questions about:
 - Responsive design
 
 ✅ **Integration Ready**
+
 - React hooks for all API calls
 - API client with token management
 - Error handling throughout
@@ -643,6 +686,7 @@ For questions about:
 - Type-safe patterns
 
 ✅ **Production Ready**
+
 - Environment configuration
 - Database seeding
 - Error handling

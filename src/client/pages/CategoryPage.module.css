@@ -1,0 +1,111 @@
+.categoryPage {
+   background: var(--bg-primary);
+   min-height: 100vh;
+   padding: 2rem 0;
+}
+
+.featured {
+   max-width: var(--container-max);
+   margin: 0 auto 3rem;
+   padding: 0 1.25rem;
+}
+
+.sectionTitle {
+   font-size: 1.5rem;
+   font-weight: 800;
+   color: var(--text-primary);
+   margin-bottom: 1.5rem;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   display: flex;
+   align-items: center;
+}
+
+.sectionTitle::after {
+   content: '';
+   flex: 1;
+   height: 1px;
+   background: linear-gradient(to right, var(--gold-dark), transparent);
+   margin-left: 1rem;
+}
+
+.featuredGrid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 1.5rem;
+}
+
+.featuredCard {
+   display: flex;
+   flex-direction: column;
+   background: var(--bg-card);
+   border: 1px solid var(--bg-border);
+   border-radius: 8px;
+   overflow: hidden;
+   text-decoration: none;
+   transition: all 0.3s ease;
+}
+
+.featuredCard:hover {
+   transform: translateY(-2px);
+   box-shadow: var(--shadow-card);
+   border-color: var(--gold-dark);
+}
+
+.featuredImage {
+   width: 100%;
+   height: 300px;
+   object-fit: cover;
+   transition: transform 0.5s ease;
+}
+
+.featuredCard:hover .featuredImage {
+   transform: scale(1.03);
+}
+
+.featuredContent {
+   padding: 1.5rem;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+}
+
+.featuredTitle {
+   font-family: 'Merriweather', serif;
+   font-size: 1.25rem;
+   font-weight: 700;
+   color: var(--text-primary);
+   margin-bottom: 0.75rem;
+   line-height: 1.4;
+   transition: color 0.2s;
+}
+
+.featuredCard:hover .featuredTitle {
+   color: var(--gold-primary);
+}
+
+.featuredExcerpt {
+   font-size: 0.95rem;
+   color: var(--text-secondary);
+   line-height: 1.5;
+   display: -webkit-box;
+   -webkit-line-clamp: 3;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+}
+
+.articles {
+   max-width: var(--container-max);
+   margin: 0 auto;
+   padding: 0 1.25rem;
+}
+
+@media (max-width: 768px) {
+   .featuredGrid {
+      grid-template-columns: 1fr;
+   }
+
+   .featuredImage {
+      height: 200px;
+   }
+}

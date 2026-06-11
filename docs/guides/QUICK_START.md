@@ -18,35 +18,45 @@ npm run dev
 ## 📍 Truy Cập Các Dashboard
 
 ### 🏠 Trang Chủ
+
 ```
 http://localhost:5173/
 ```
 
 ### ✍️ Author Dashboard (Tác Giả)
+
 ```
 http://localhost:5173/author
 ```
+
 **Tính năng:**
+
 - Tạo bài viết mới
 - Quản lý bài nháp
 - Theo dõi bài chờ duyệt
 - Xem bài đã đăng
 
 ### 📋 Editor Dashboard (Biên Tập Viên)
+
 ```
 http://localhost:5173/editor
 ```
+
 **Tính năng:**
+
 - Xem danh sách bài chờ duyệt
 - Duyệt/Từ chối bài viết
 - Chỉnh sửa bài viết
 - Xem hướng dẫn chỉnh sửa
 
 ### ⚙️ Admin Dashboard (Quản Trị Viên)
+
 ```
 http://localhost:5173/admin
 ```
+
 **Tính năng:**
+
 - Xem thống kê toàn bộ hệ thống
 - Quản lý bài viết, người dùng
 - Quản lý chuyên mục, biên tập viên
@@ -57,6 +67,7 @@ http://localhost:5173/admin
 ## 🎯 Các Vai Trò & Quyền Hạn
 
 ### 👤 Author (Tác Giả/Phóng Viên)
+
 - Viết bài viết mới
 - Lưu bài nháp
 - Gửi bài để duyệt
@@ -64,6 +75,7 @@ http://localhost:5173/admin
 - Cập nhật hồ sơ cá nhân
 
 ### ✏️ Editor (Biên Tập Viên)
+
 - Duyệt/Từ chối bài viết
 - Chỉnh sửa bài viết
 - Xem danh sách bài chờ duyệt
@@ -71,6 +83,7 @@ http://localhost:5173/admin
 - Quản lý hồ sơ cá nhân
 
 ### 🔐 Admin (Quản Trị Viên)
+
 - Tất cả quyền của Editor
 - Quản lý toàn bộ bài viết
 - Quản lý người dùng & biên tập viên
@@ -98,11 +111,13 @@ http://localhost:5173/admin
 ## 🎨 Giao Diện & Các Biểu Tượng
 
 ### Header Icons (sau khi đăng nhập)
+
 - **✍️** (Pen) = Author Dashboard
 - **📋** (Clipboard) = Editor Dashboard
 - **⚙️** (Gear) = Admin Dashboard
 
 ### Sidebar Menu Icons
+
 - **📊** = Dashboard/Tổng quan
 - **📝** = Bài viết
 - **📂** = Chuyên mục
@@ -111,6 +126,7 @@ http://localhost:5173/admin
 - **⚙️** = Cài đặt
 
 ### Status Badges
+
 - **✅ Duyệt** = Bài được duyệt
 - **❌ Từ chối** = Bài bị từ chối
 - **⏳ Chờ duyệt** = Bài chờ được duyệt
@@ -160,19 +176,23 @@ Có sẵn 4 file hướng dẫn:
 ## 🐛 Troubleshooting
 
 ### Dashboard không hiển thị
+
 - Kiểm tra URL: `/author`, `/editor`, `/admin`
 - Xóa cache browser (Ctrl+Shift+Delete)
 - Reload trang (F5)
 
 ### Sidebar không xuất hiện
+
 - Kiểm tra import trong App.jsx
 - Xem console cho lỗi (F12)
 
 ### CSS không load đúng
+
 - Kiểm tra tên class trong CSS Module
 - Xác nhận import styles đúng
 
 ### Biểu tượng không hiển thị
+
 - Sử dụng emoji trực tiếp (✍️, 📋, ⚙️)
 - Kiểm tra font support
 
@@ -181,12 +201,14 @@ Có sẵn 4 file hướng dẫn:
 ## ✨ Demo Features
 
 ### Author Dashboard
+
 - ✅ 6 stat cards (Nháp, Chờ duyệt, Đã đăng, Lượt xem)
 - ✅ Rich text editor với toolbar
 - ✅ Quản lý bài viết theo trạng thái
 - ✅ Profile panel
 
 ### Editor Dashboard
+
 - ✅ 4 stat cards (Chờ duyệt, Đã duyệt, Từ chối, Đã xuất bản)
 - ✅ Review cards chi tiết
 - ✅ 3 nút hành động (Từ chối, Chỉnh sửa, Duyệt)
@@ -194,6 +216,7 @@ Có sẵn 4 file hướng dẫn:
 - ✅ Bảng danh sách bài viết
 
 ### Admin Dashboard
+
 - ✅ 6 stat cards toàn hệ thống
 - ✅ Biểu đồ bài viết theo trạng thái
 - ✅ Hoạt động gần đây
@@ -207,6 +230,7 @@ Có sẵn 4 file hướng dẫn:
 Sau khi làm quen với giao diện:
 
 1. **Xem các file hướng dẫn chi tiết**
+
    ```
    docs/AUTHOR_DASHBOARD_GUIDE.md
    docs/EDITOR_DASHBOARD_GUIDE.md
@@ -241,6 +265,6 @@ Sau khi làm quen với giao diện:
 ---
 
 **Phiên bản**: 1.0  
-**Cập nhật lần cuối**: 11/06/2026  
+**Cập nhật lần cuối**: 11/06/2026
 
 💬 **Cần giúp đỡ?** Xem các file .md trong project hoặc kiểm tra console (F12) để xem lỗi.

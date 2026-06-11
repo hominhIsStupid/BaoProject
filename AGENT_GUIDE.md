@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Provide basic instructions for AI agents working on the BaoProject repository.
+Provide basic instructions for AI agents working on the BaoProject repository.\
 
 ## Scope
 
@@ -20,6 +20,7 @@ Provide basic instructions for AI agents working on the BaoProject repository.
 
 ## Communication
 
+- Always read relevant guides in docs
 - Be explicit about assumptions.
 - Label uncertain areas for human review.
 - Avoid changing unrelated files.

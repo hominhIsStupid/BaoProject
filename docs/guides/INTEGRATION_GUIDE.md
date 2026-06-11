@@ -3,17 +3,20 @@
 ## Complete Setup for Báo Rồng Vàng
 
 ### Overview
+
 This document explains how the frontend and backend work together for the Báo Rồng Vàng (Dragon Gold News) website.
 
 ## Architecture
 
 ### Backend (Express.js + SQLite)
+
 - **Port**: 5000
 - **Database**: SQLite at `src/backend/Data/database.sqlite`
 - **Entry Point**: `src/server/app.js`
 - **API Base**: `http://localhost:5000/api`
 
 ### Frontend (React + Vite)
+
 - **Port**: 3003 (or next available)
 - **Entry Point**: `src/index.jsx`
 - **API Client**: `src/utils/api.js`
@@ -81,6 +84,7 @@ BaoProject/
 ### 1. User Registration & Login
 
 #### Frontend Flow:
+
 ```
 User fills LoginPage.jsx form
     ↓
@@ -96,6 +100,7 @@ Redirect to dashboard
 ```
 
 #### Backend Flow:
+
 ```
 POST /api/auth/login
     ↓
@@ -109,6 +114,7 @@ Return token + user data
 ### 2. Protected Routes
 
 #### Middleware Flow:
+
 ```
 Frontend request with Bearer token
     ↓
@@ -126,6 +132,7 @@ If invalid: return 401 Unauthorized
 ### 3. Role-Based Access
 
 #### Author Creating Article:
+
 ```
 Author fills AuthorDashboard form
     ↓
@@ -141,6 +148,7 @@ Article saved to database with status='draft'
 ```
 
 #### Editor Reviewing Article:
+
 ```
 Editor views EditorDashboard
     ↓
@@ -160,6 +168,7 @@ Editor stats updated
 ```
 
 #### Admin Publishing Article:
+
 ```
 Admin views AdminDashboard
     ↓
@@ -179,6 +188,7 @@ System log created
 ## Authentication Flow
 
 ### Token Storage
+
 ```javascript
 // Storage in localStorage
 localStorage.getItem('auth_token')     // JWT token
@@ -193,17 +203,20 @@ localStorage.getItem('user')           // User info (JSON)
 ```
 
 ### Header Format
+
 ```
 Authorization: Bearer eyJhbGc...token...here
 ```
 
 ### Token Refresh
+
 - Currently: Users must login again when token expires (7 days)
 - Future: Implement refresh token mechanism
 
 ## Database Schema
 
 ### Users Table
+
 ```sql
 users {
   id: UUID PRIMARY KEY,
@@ -221,6 +234,7 @@ users {
 ```
 
 ### Articles Table
+
 ```sql
 articles {
   id: UUID PRIMARY KEY,
@@ -243,6 +257,7 @@ articles {
 ```
 
 ### Categories Table
+
 ```sql
 categories {
   id: UUID PRIMARY KEY,
@@ -260,84 +275,87 @@ categories {
 ### Frontend Making Requests
 
 #### 1. Using React Hooks (Recommended)
+
 ```jsx
 import { useAuth, useAuthorArticles } from '../hooks/useApi';
 
 function MyComponent() {
-  const { user, login, logout } = useAuth();
-  const { articles, createArticle, submitArticle } = useAuthorArticles();
+   const { user, login, logout } = useAuth();
+   const { articles, createArticle, submitArticle } = useAuthorArticles();
 
-  const handleLogin = async () => {
-    try {
-      await login('author@test.com', 'password123');
-      console.log('Logged in!');
-    } catch (error) {
-      console.error('Login failed:', error.message);
-    }
-  };
+   const handleLogin = async () => {
+      try {
+         await login('author@test.com', 'password123');
+         console.log('Logged in!');
+      } catch (error) {
+         console.error('Login failed:', error.message);
+      }
+   };
 
-  const handleCreateArticle = async () => {
-    try {
-      const response = await createArticle({
-        title: 'New Article',
-        content: 'Article content here...',
-        category: 'Technology'
-      });
-      console.log('Article created:', response);
-    } catch (error) {
-      console.error('Failed to create article:', error.message);
-    }
-  };
+   const handleCreateArticle = async () => {
+      try {
+         const response = await createArticle({
+            title: 'New Article',
+            content: 'Article content here...',
+            category: 'Technology',
+         });
+         console.log('Article created:', response);
+      } catch (error) {
+         console.error('Failed to create article:', error.message);
+      }
+   };
 
-  return (
-    <div>
-      {user ? (
-        <div>
-          <p>Welcome, {user.fullName}!</p>
-          <button onClick={handleCreateArticle}>Create Article</button>
-          <button onClick={logout}>Logout</button>
-        </div>
-      ) : (
-        <button onClick={handleLogin}>Login</button>
-      )}
-    </div>
-  );
+   return (
+      <div>
+         {user ? (
+            <div>
+               <p>Welcome, {user.fullName}!</p>
+               <button onClick={handleCreateArticle}>Create Article</button>
+               <button onClick={logout}>Logout</button>
+            </div>
+         ) : (
+            <button onClick={handleLogin}>Login</button>
+         )}
+      </div>
+   );
 }
 
 export default MyComponent;
 ```
 
 #### 2. Direct API Calls
+
 ```jsx
 import { authorAPI, tokenStorage } from '../utils/api';
 
 async function handleCreateArticle() {
-  try {
-    // Check if user is logged in
-    const token = tokenStorage.getToken();
-    if (!token) {
-      console.error('User not logged in');
-      return;
-    }
+   try {
+      // Check if user is logged in
+      const token = tokenStorage.getToken();
+      if (!token) {
+         console.error('User not logged in');
+         return;
+      }
 
-    // Create article
-    const response = await authorAPI.createArticle({
-      title: 'My Article',
-      content: 'Article content',
-      category: 'Technology',
-      readTime: 5
-    });
+      // Create article
+      const response = await authorAPI.createArticle({
+         title: 'My Article',
+         content: 'Article content',
+         category: 'Technology',
+         readTime: 5,
+      });
 
-    console.log('Article created:', response);
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
+      console.log('Article created:', response);
+   } catch (error) {
+      console.error('Error:', error.message);
+   }
 }
 ```
 
 ### Testing with cURL
 
 #### Register User
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -350,6 +368,7 @@ curl -X POST http://localhost:5000/api/auth/register \
 ```
 
 #### Login
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -362,6 +381,7 @@ curl -X POST http://localhost:5000/api/auth/login \
 Save the returned token, then:
 
 #### Create Article (with token)
+
 ```bash
 curl -X POST http://localhost:5000/api/author/articles \
   -H "Authorization: Bearer YOUR_TOKEN_HERE" \
@@ -377,7 +397,9 @@ curl -X POST http://localhost:5000/api/author/articles \
 ## User Roles & Workflows
 
 ### 1. Guest (Default)
+
 **Permissions:**
+
 - Browse published articles
 - Search articles
 - View article details
@@ -386,6 +408,7 @@ curl -X POST http://localhost:5000/api/author/articles \
 **Dashboard:** None
 
 **Key Pages:**
+
 - Home page
 - Article detail page
 - Search results
@@ -394,7 +417,9 @@ curl -X POST http://localhost:5000/api/author/articles \
 ---
 
 ### 2. Author
+
 **Permissions:**
+
 - Create articles (saved as draft)
 - Edit own draft articles
 - Submit articles for review
@@ -405,6 +430,7 @@ curl -X POST http://localhost:5000/api/author/articles \
 **Dashboard:** `/author`
 
 **Workflow:**
+
 1. Write article (draft)
 2. Edit article (draft)
 3. Submit for review (status: pending)
@@ -413,27 +439,30 @@ curl -X POST http://localhost:5000/api/author/articles \
 6. If rejected → see reason, edit and resubmit
 
 **Key API Calls:**
+
 ```javascript
 // Create
-POST /api/author/articles
+POST / api / author / articles;
 
 // View my articles
-GET /api/author/articles/my-articles
+GET / api / author / articles / my - articles;
 
 // Edit
-PUT /api/author/articles/{id}
+PUT / api / author / articles / { id };
 
 // Submit
-POST /api/author/articles/{id}/submit
+POST / api / author / articles / { id } / submit;
 
 // Delete
-DELETE /api/author/articles/{id}
+DELETE / api / author / articles / { id };
 ```
 
 ---
 
 ### 3. Editor
+
 **Permissions:**
+
 - Review pending articles
 - Approve articles
 - Reject articles with reason
@@ -443,6 +472,7 @@ DELETE /api/author/articles/{id}
 **Dashboard:** `/editor`
 
 **Workflow:**
+
 1. View pending articles
 2. Read article details
 3. Approve (status: approved) OR
@@ -450,27 +480,30 @@ DELETE /api/author/articles/{id}
 5. Track approval statistics
 
 **Key API Calls:**
+
 ```javascript
 // Get pending
-GET /api/editor/articles/pending
+GET / api / editor / articles / pending;
 
 // Approve
-POST /api/editor/articles/{id}/approve
+POST / api / editor / articles / { id } / approve;
 
 // Reject
-POST /api/editor/articles/{id}/reject
+POST / api / editor / articles / { id } / reject;
 
 // Suggest edit
-POST /api/editor/articles/{id}/suggest-edit
+POST / api / editor / articles / { id } / suggest - edit;
 
 // Get stats
-GET /api/editor/articles/stats/me
+GET / api / editor / articles / stats / me;
 ```
 
 ---
 
 ### 4. Admin
+
 **Permissions:**
+
 - Full system access
 - Publish approved articles
 - Delete any article
@@ -482,6 +515,7 @@ GET /api/editor/articles/stats/me
 **Dashboard:** `/admin`
 
 **Workflow:**
+
 1. View all articles (all statuses)
 2. Publish approved articles (status: published)
 3. Delete articles if needed
@@ -490,26 +524,27 @@ GET /api/editor/articles/stats/me
 6. Monitor system activity
 
 **Key API Calls:**
+
 ```javascript
 // Get all articles
-GET /api/admin/articles/all
+GET / api / admin / articles / all;
 
 // Publish
-POST /api/admin/articles/{id}/publish
+POST / api / admin / articles / { id } / publish;
 
 // Delete
-DELETE /api/admin/articles/{id}
+DELETE / api / admin / articles / { id };
 
 // Manage users
-GET /api/admin/users
-PUT /api/admin/users/{id}/role
-PUT /api/admin/users/{id}/suspend
+GET / api / admin / users;
+PUT / api / admin / users / { id } / role;
+PUT / api / admin / users / { id } / suspend;
 
 // Get stats
-GET /api/admin/stats
+GET / api / admin / stats;
 
 // View logs
-GET /api/admin/logs
+GET / api / admin / logs;
 ```
 
 ---
@@ -585,34 +620,36 @@ GET /api/admin/logs
 ## Error Handling
 
 ### Frontend Error Handling
+
 ```jsx
 import { useAuth } from '../hooks/useApi';
 
 function LoginComponent() {
-  const { login, error, loading } = useAuth();
+   const { login, error, loading } = useAuth();
 
-  const handleLogin = async (email, password) => {
-    try {
-      await login(email, password);
-      // Success
-    } catch (error) {
-      // Error is in the error state
-      console.error(error);
-      // Show error to user
-    }
-  };
+   const handleLogin = async (email, password) => {
+      try {
+         await login(email, password);
+         // Success
+      } catch (error) {
+         // Error is in the error state
+         console.error(error);
+         // Show error to user
+      }
+   };
 
-  return (
-    <div>
-      {error && <div className="error">{error}</div>}
-      {loading && <div>Loading...</div>}
-      {/* Form */}
-    </div>
-  );
+   return (
+      <div>
+         {error && <div className="error">{error}</div>}
+         {loading && <div>Loading...</div>}
+         {/* Form */}
+      </div>
+   );
 }
 ```
 
 ### Backend Error Handling
+
 ```javascript
 // All errors return JSON with message
 {
@@ -634,6 +671,7 @@ function LoginComponent() {
 ## Testing
 
 ### Test Accounts (Pre-seeded)
+
 ```
 Author 1:
   Email: author1@baorong.com
@@ -657,15 +695,18 @@ Admin:
 ```
 
 ### Running Development Environment
+
 ```bash
 npm run dev
 ```
 
 This starts:
+
 - Backend API: http://localhost:5000
 - Frontend: http://localhost:3003 (or next available)
 
 ### Testing Backend Only
+
 ```bash
 npm run dev:server
 ```
@@ -673,6 +714,7 @@ npm run dev:server
 Test with cURL or Postman at `http://localhost:5000/api`
 
 ### Testing Frontend Only
+
 ```bash
 npm run dev:client
 ```
@@ -700,15 +742,17 @@ Frontend will try to connect to backend API at `http://localhost:5000`
 ## Troubleshooting
 
 ### Backend Connection Refused
+
 ```
 Problem: Frontend can't reach backend
-Solution: 
+Solution:
   1. Check backend is running: npm run dev:server
   2. Check port 5000 is available
   3. Check CORS_ORIGIN in .env
 ```
 
 ### Token Expired
+
 ```
 Problem: 401 Unauthorized after 7 days
 Solution: User must login again
@@ -716,15 +760,17 @@ Future: Implement refresh token
 ```
 
 ### Database Locked
+
 ```
 Problem: Database is locked
 Solution: Restart server (kills any locked connections)
 ```
 
 ### Port Already in Use
+
 ```
 Problem: Port 5000 or 3003 in use
-Solution: 
+Solution:
   Kill process: lsof -ti:5000 | xargs kill -9
   Or use different port: PORT=5001 npm run dev:server
 ```

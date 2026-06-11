@@ -12,6 +12,7 @@ Tất cả ở trong docs/
 - dev
 
 ```bash
+npm i
 npm run dev
 ```
 

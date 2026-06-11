@@ -52,10 +52,7 @@ function Header() {
                   {/* Logo */}
                   <Link to="/" className={styles.logo} aria-label="Rồng Vàng - Trang chủ">
                      <div className={styles.logoIcon}>
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                           <circle cx="24" cy="24" r="23" stroke="#C9A227" strokeWidth="2" fill="#1A1A1A"/>
-                           <text x="24" y="31" textAnchor="middle" fontSize="22" fill="#C9A227" fontFamily="serif" fontWeight="bold">龍</text>
-                        </svg>
+                        <img alt="icon" src="../../../logo512.png"></img>
                      </div>
                      <div className={styles.logoText}>
                         <span className={styles.logoTitle}>RỒNG VÀNG</span>
@@ -75,9 +72,16 @@ function Header() {
                         aria-label="Tìm kiếm tin tức"
                      />
                      <button type="submit" className={styles.searchBtn} aria-label="Tìm kiếm">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                           <circle cx="11" cy="11" r="8"/>
-                           <path d="m21 21-4.35-4.35"/>
+                        <svg
+                           width="18"
+                           height="18"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           stroke="currentColor"
+                           strokeWidth="2"
+                        >
+                           <circle cx="11" cy="11" r="8" />
+                           <path d="m21 21-4.35-4.35" />
                         </svg>
                      </button>
                   </form>
@@ -100,25 +104,44 @@ function Header() {
                                  ) : (
                                     <div className={styles.avatarPlaceholder}>
                                        {user.name ? user.name.charAt(0) : 'U'}
-                                     </div>
+                                    </div>
                                  )}
                               </div>
                               <span className={styles.userName}>{user.name}</span>
                            </Link>
-                           <Link to="/author" className={styles.authorLink} id="header-author-link" title="Quản lý bài viết">
+                           <Link
+                              to="/author"
+                              className={styles.authorLink}
+                              id="header-author-link"
+                              title="Quản lý bài viết"
+                           >
                               ✍️
                            </Link>
-                           <Link to="/editor" className={styles.editorLink} id="header-editor-link" title="Duyệt bài viết">
+                           <Link
+                              to="/editor"
+                              className={styles.editorLink}
+                              id="header-editor-link"
+                              title="Duyệt bài viết"
+                           >
                               📋
                            </Link>
-                           <Link to="/admin" className={styles.adminLink} id="header-admin-link" title="Quản lý hệ thống">
+                           <Link
+                              to="/admin"
+                              className={styles.adminLink}
+                              id="header-admin-link"
+                              title="Quản lý hệ thống"
+                           >
                               ⚙️
                            </Link>
                         </div>
                      ) : (
                         <>
-                           <Link to="/login" className={styles.btnLogin} id="btn-login">Đăng nhập</Link>
-                           <Link to="/register" className={styles.btnRegister} id="btn-register">Đăng ký</Link>
+                           <Link to="/login" className={styles.btnLogin} id="btn-login">
+                              Đăng nhập
+                           </Link>
+                           <Link to="/register" className={styles.btnRegister} id="btn-register">
+                              Đăng ký
+                           </Link>
                         </>
                      )}
                   </div>
@@ -131,7 +154,8 @@ function Header() {
             <div className={styles.container}>
                <div className={styles.navRow}>
                   {NAV_ITEMS.map((item) => {
-                     const isActive = location.pathname === item.path ||
+                     const isActive =
+                        location.pathname === item.path ||
                         (item.path !== '/' && location.pathname.startsWith(item.path));
                      return (
                         <Link
@@ -141,8 +165,14 @@ function Header() {
                            className={`${styles.navLink} ${isActive ? styles.navActive : ''}`}
                         >
                            {item.id === 'home' && (
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{marginRight: '4px', verticalAlign: 'middle'}}>
-                                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                              <svg
+                                 width="14"
+                                 height="14"
+                                 viewBox="0 0 24 24"
+                                 fill="currentColor"
+                                 style={{ marginRight: '4px', verticalAlign: 'middle' }}
+                              >
+                                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                               </svg>
                            )}
                            {item.label}
@@ -155,7 +185,9 @@ function Header() {
                      aria-label="Thêm danh mục"
                      id="btn-menu-toggle"
                   >
-                     <span></span><span></span><span></span>
+                     <span></span>
+                     <span></span>
+                     <span></span>
                   </button>
                </div>
             </div>

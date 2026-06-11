@@ -5,6 +5,7 @@
 I have successfully created a **complete backend system** for your Báo Rồng Vàng news website. The system now includes:
 
 ### 1. **Express.js Backend** (Port 5000)
+
 - ✅ User authentication with JWT
 - ✅ SQLite database with 6 tables
 - ✅ Role-based access control (4 roles)
@@ -13,12 +14,14 @@ I have successfully created a **complete backend system** for your Báo Rồng V
 - ✅ Database seeding with test data
 
 ### 2. **Frontend Integration**
+
 - ✅ React hooks for all API calls
 - ✅ API client with token management
 - ✅ Error handling throughout
 - ✅ Ready for component updates
 
 ### 3. **Comprehensive Documentation**
+
 - ✅ API reference guide
 - ✅ Backend setup guide
 - ✅ Integration guide
@@ -31,17 +34,20 @@ I have successfully created a **complete backend system** for your Báo Rồng V
 ## 🚀 Quick Start
 
 ### Start the Application
+
 ```bash
 cd /Users/longnguyen/Documents/BaoProject
 npm run dev
 ```
 
 ### Access
+
 - **Frontend**: http://localhost:3003
 - **Backend API**: http://localhost:5000
 - **API Health**: http://localhost:5000/api/health
 
 ### Test Login
+
 ```
 Email: author1@baorong.com
 Password: password123
@@ -52,6 +58,7 @@ Password: password123
 ## 📁 Backend Files Created
 
 ### Core Infrastructure
+
 ```
 src/backend/
 ├── config/
@@ -74,11 +81,13 @@ src/backend/
 ```
 
 ### Configuration
+
 ```
 .env                ← Environment variables
 ```
 
 ### Frontend Integration
+
 ```
 src/
 ├── utils/
@@ -92,12 +101,14 @@ src/
 ## 🔐 User Roles & Features
 
 ### 👤 Guest (Default)
+
 - Browse published articles
 - Search articles
 - View article details
 - **No login needed**
 
 ### 📝 Author
+
 - Create draft articles
 - Edit draft articles
 - Submit for review
@@ -105,6 +116,7 @@ src/
 - **Dashboard**: `/author`
 
 ### ✏️ Editor
+
 - Review pending articles
 - Approve/reject articles
 - Suggest edits
@@ -112,6 +124,7 @@ src/
 - **Dashboard**: `/editor`
 
 ### ⚙️ Admin
+
 - Full system access
 - Publish articles
 - Manage users & categories
@@ -130,7 +143,7 @@ Draft ──(Author submits)──> Pending ──(Editor approves)──> Appro
                                                     (Author edits)
                                                             │
                                                          Draft
-                                    
+
 Approved ──(Admin publishes)──> Published ──(Visible to all)──> Home Page
 ```
 
@@ -138,22 +151,23 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 
 ## 📚 Documentation Files
 
-| File | Purpose |
-|------|---------|
-| `GETTING_STARTED.md` | Step-by-step tutorial |
-| `SYSTEM_COMPLETE_GUIDE.md` | Overall system overview |
-| `BACKEND_API_GUIDE.md` | Complete API documentation |
-| `BACKEND_QUICK_START.md` | Backend setup & commands |
-| `INTEGRATION_GUIDE.md` | Backend-frontend integration |
-| `FRONTEND_INTEGRATION.md` | React component API usage |
-| `ARCHITECTURE_DIAGRAMS.md` | System architecture visuals |
-| `VERIFICATION_REPORT.md` | Project completion report |
+| File                       | Purpose                      |
+| -------------------------- | ---------------------------- |
+| `GETTING_STARTED.md`       | Step-by-step tutorial        |
+| `SYSTEM_COMPLETE_GUIDE.md` | Overall system overview      |
+| `BACKEND_API_GUIDE.md`     | Complete API documentation   |
+| `BACKEND_QUICK_START.md`   | Backend setup & commands     |
+| `INTEGRATION_GUIDE.md`     | Backend-frontend integration |
+| `FRONTEND_INTEGRATION.md`  | React component API usage    |
+| `ARCHITECTURE_DIAGRAMS.md` | System architecture visuals  |
+| `VERIFICATION_REPORT.md`   | Project completion report    |
 
 ---
 
 ## 🧪 Quick Test Scenario
 
 ### 1. Create Article (as Author)
+
 ```
 1. Login: author1@baorong.com / password123
 2. Go to: /author
@@ -162,6 +176,7 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 ```
 
 ### 2. Review Article (as Editor)
+
 ```
 1. Logout & Login: editor1@baorong.com / password123
 2. Go to: /editor
@@ -170,6 +185,7 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 ```
 
 ### 3. Publish Article (as Admin)
+
 ```
 1. Logout & Login: admin@baorong.com / password123
 2. Go to: /admin
@@ -178,6 +194,7 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 ```
 
 ### 4. View Article (as Public)
+
 ```
 1. Logout & go to: /
 2. See published article
@@ -189,6 +206,7 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 ## 🛠️ Technology Stack
 
 ### Backend
+
 - **Framework**: Express.js
 - **Database**: SQLite3
 - **Authentication**: JWT (jsonwebtoken)
@@ -196,6 +214,7 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 - **Utilities**: UUID, CORS, Morgan
 
 ### Frontend
+
 - **Framework**: React 19.2.6
 - **Router**: React Router 7.16.0
 - **Build**: Vite
@@ -206,18 +225,21 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 ## 📝 API Endpoints Quick Reference
 
 ### Authentication (4)
+
 - `POST /api/auth/register` - Create account
 - `POST /api/auth/login` - Login
 - `GET /api/auth/me` - Get current user
 - `PUT /api/auth/me` - Update profile
 
 ### Public Articles (4)
+
 - `GET /api/articles` - All published
 - `GET /api/articles/{id}` - Single article
 - `GET /api/articles/category/{cat}` - By category
 - `GET /api/articles/search/{q}` - Search
 
 ### Author (6)
+
 - `POST /api/author/articles` - Create
 - `GET /api/author/articles/my-articles` - My articles
 - `PUT /api/author/articles/{id}` - Edit
@@ -225,13 +247,15 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 - `DELETE /api/author/articles/{id}` - Delete
 
 ### Editor (7)
+
 - `GET /api/editor/articles/pending` - Pending
 - `POST /api/editor/articles/{id}/approve` - Approve
 - `POST /api/editor/articles/{id}/reject` - Reject
 - `GET /api/editor/articles/stats/me` - My stats
-- *...and more*
+- _...and more_
 
 ### Admin (13+)
+
 - Article management
 - Category management
 - User management
@@ -248,13 +272,14 @@ Approved ──(Admin publishes)──> Published ──(Visible to all)──> 
 ✅ Input validation  
 ✅ Database foreign keys  
 ✅ SQL injection prevention  
-✅ Audit logging  
+✅ Audit logging
 
 ---
 
 ## ⚙️ Environment Setup
 
 File: `.env`
+
 ```
 PORT=5000
 NODE_ENV=development
@@ -269,51 +294,54 @@ CORS_ORIGIN=http://localhost:5173
 ## 🧩 How to Use the API in React
 
 ### Example 1: Login
+
 ```jsx
 import { useAuth } from '../hooks/useApi';
 
 function LoginPage() {
-  const { login, loading, error } = useAuth();
-  
-  const handleLogin = async () => {
-    await login('email@test.com', 'password');
-  };
-  
-  return <button onClick={handleLogin}>Login</button>;
+   const { login, loading, error } = useAuth();
+
+   const handleLogin = async () => {
+      await login('email@test.com', 'password');
+   };
+
+   return <button onClick={handleLogin}>Login</button>;
 }
 ```
 
 ### Example 2: Get Articles
+
 ```jsx
 import { useArticles } from '../hooks/useApi';
 
 function HomePage() {
-  const { articles, loading } = useArticles();
-  
-  useEffect(() => {
-    getAll();
-  }, []);
-  
-  return articles.map(a => <ArticleCard key={a.id} article={a} />);
+   const { articles, loading } = useArticles();
+
+   useEffect(() => {
+      getAll();
+   }, []);
+
+   return articles.map((a) => <ArticleCard key={a.id} article={a} />);
 }
 ```
 
 ### Example 3: Create Article (Author)
+
 ```jsx
 import { useAuthorArticles } from '../hooks/useApi';
 
 function AuthorDashboard() {
-  const { createArticle } = useAuthorArticles();
-  
-  const handleCreate = async () => {
-    await createArticle({
-      title: 'My Article',
-      content: 'Article content',
-      category: 'Technology'
-    });
-  };
-  
-  return <button onClick={handleCreate}>Create</button>;
+   const { createArticle } = useAuthorArticles();
+
+   const handleCreate = async () => {
+      await createArticle({
+         title: 'My Article',
+         content: 'Article content',
+         category: 'Technology',
+      });
+   };
+
+   return <button onClick={handleCreate}>Create</button>;
 }
 ```
 
@@ -343,36 +371,42 @@ npm run build
 ## ✨ Key Features
 
 ✅ **Complete Authentication System**
+
 - Registration with validation
 - Login with JWT
 - Profile management
 - Role assignment
 
 ✅ **Article Management**
+
 - Create & edit articles
 - Status workflow
 - Approval process
 - Publishing system
 
 ✅ **Multi-User Support**
+
 - 4 user roles
 - Role-specific dashboards
 - Permission-based actions
 - Audit trail
 
 ✅ **Database System**
+
 - SQLite with 6 tables
 - Relationships & constraints
 - Automatic timestamps
 - Pre-seeded test data
 
 ✅ **API System**
+
 - 38+ endpoints
 - Error handling
 - CORS support
 - Token management
 
 ✅ **Frontend Ready**
+
 - React hooks for API
 - Token storage
 - Error handling
@@ -394,6 +428,7 @@ npm run build
 ## 🐛 Troubleshooting
 
 ### Backend won't start
+
 ```bash
 # Check if port 5000 is in use
 lsof -ti:5000 | xargs kill -9
@@ -401,11 +436,13 @@ npm run dev
 ```
 
 ### Can't login
+
 - Use correct test credentials: `admin@baorong.com / password123`
 - Check backend is running on port 5000
 - Clear browser cache
 
 ### API errors in console
+
 - Check CORS_ORIGIN in .env
 - Verify backend is responding: http://localhost:5000/api/health
 - Check Authorization header format
@@ -415,18 +452,21 @@ npm run dev
 ## 🎉 What's Next?
 
 ### Phase 1 ✅ (Complete)
+
 - Backend system
 - API endpoints
 - Frontend integration
 - Documentation
 
 ### Phase 2 (When Needed)
+
 - Email notifications
 - Image upload
 - Real-time features
 - Advanced search
 
 ### Phase 3 (For Production)
+
 - Deploy to server
 - Set up HTTPS
 - Database backups
@@ -437,6 +477,7 @@ npm run dev
 ## 📞 Support
 
 For help with:
+
 - **Setup**: See `BACKEND_QUICK_START.md`
 - **API**: See `BACKEND_API_GUIDE.md`
 - **Integration**: See `INTEGRATION_GUIDE.md`
@@ -457,7 +498,7 @@ Your Báo Rồng Vàng news platform is now **fully operational** with:
 ✅ Admin dashboard with management  
 ✅ Frontend integration ready  
 ✅ Comprehensive documentation  
-✅ Production-ready code  
+✅ Production-ready code
 
 **To start:** `npm run dev` → Open http://localhost:3003
 

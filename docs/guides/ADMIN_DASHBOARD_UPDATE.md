@@ -9,6 +9,7 @@ Các phần **"Bài chờ duyệt"** và **"Bài đã duyệt"** trong Admin Das
 ### 1. **Thêm 2 Component Mới**
 
 #### `ArticlesPendingTable` - Bài Viết Chờ Duyệt
+
 - Hiển thị danh sách bài viết cần được duyệt
 - Có tìm kiếm nhanh
 - Nút "Làm mới" để cập nhật danh sách
@@ -22,6 +23,7 @@ function ArticlesPendingTable({ articles }) {
 ```
 
 #### `ArticlesApprovedTable` - Bài Viết Đã Duyệt
+
 - Hiển thị danh sách bài viết đã được duyệt
 - Có tìm kiếm nhanh
 - Nút "Xuất bản tất cả" để hàng loạt xuất bản
@@ -39,8 +41,12 @@ function ArticlesApprovedTable({ articles }) {
 Trong component `AdminDashboard`, thêm các điều kiện render mới:
 
 ```jsx
-{activeTab === 'articles-pending' && <ArticlesPendingTable articles={articles} />}
-{activeTab === 'articles-approved' && <ArticlesApprovedTable articles={articles} />}
+{
+   activeTab === 'articles-pending' && <ArticlesPendingTable articles={articles} />;
+}
+{
+   activeTab === 'articles-approved' && <ArticlesApprovedTable articles={articles} />;
+}
 ```
 
 ### 3. **Thêm CSS Mới**
@@ -69,11 +75,13 @@ Thêm style cho nút "Approve" (duyệt):
 ## 📊 Dữ Liệu Hiển Thị
 
 ### Bài Chờ Duyệt (Pending)
+
 - Lấy 3 bài viết đầu tiên từ `MOCK_ARTICLES`
 - Các bài viết mặc định từ mock data
 - Có tất cả thông tin: ID, tiêu đề, tác giả, ngày gửi
 
 **Ví dụ:**
+
 ```
 #1 | Kinh tế Việt Nam 6 tháng đầu năm 2024 | Minh Anh | 12/06/2024 | [Xem] [Duyệt] [Từ chối]
 #2 | Quốc hội thông qua Luật Đất đai | Trần Thu Hà | 12/06/2024 | [Xem] [Duyệt] [Từ chối]
@@ -81,10 +89,12 @@ Thêm style cho nút "Approve" (duyệt):
 ```
 
 ### Bài Đã Duyệt (Approved)
+
 - Lấy bài viết từ thứ 4 đến thứ 8 từ `MOCK_ARTICLES`
 - Hiển thị thông tin: ID, tiêu đề, tác giả, ngày duyệt
 
 **Ví dụ:**
+
 ```
 #4 | ĐT Việt Nam giành chiến thắng | Phạm Quang Huy | 12/06/2024 | [Xem] [Sửa] [Xóa]
 #5 | Taylor Swift xác nhận lưu diễn | Nguyễn Thảo My | 12/06/2024 | [Xem] [Sửa] [Xóa]
@@ -94,6 +104,7 @@ Thêm style cho nút "Approve" (duyệt):
 ## 🎯 Tính Năng
 
 ### Bài Chờ Duyệt
+
 - **Tìm kiếm**: Tìm bài theo tiêu đề, tác giả
 - **Làm mới**: Cập nhật danh sách từ máy chủ
 - **Xem**: Xem chi tiết bài viết
@@ -101,6 +112,7 @@ Thêm style cho nút "Approve" (duyệt):
 - **Từ chối**: ❌ Reject bài viết
 
 ### Bài Đã Duyệt
+
 - **Tìm kiếm**: Tìm bài
 - **Xuất bản tất cả**: Hàng loạt xuất bản các bài
 - **Xem**: Xem chi tiết
@@ -110,18 +122,20 @@ Thêm style cho nút "Approve" (duyệt):
 ## 🎨 Giao Diện
 
 ### Sidebar Menu
+
 - **📋 Bài chờ duyệt** (3) - Badge hiển thị số lượng chờ duyệt
 - **✅ Bài đã duyệt** (8) - Badge hiển thị số lượng đã duyệt
 
 ### Bảng (Table)
+
 - **Header**: ID, Tiêu đề, Tác giả, Ngày, Hành động
 - **Rows**: Dữ liệu bài viết với hover effect
-- **Buttons**: 
-  - Xem (Neutral)
-  - Duyệt (✅ Green - Approve)
-  - Từ chối (❌ Red - Danger)
-  - Sửa (Neutral)
-  - Xóa (Red - Danger)
+- **Buttons**:
+   - Xem (Neutral)
+   - Duyệt (✅ Green - Approve)
+   - Từ chối (❌ Red - Danger)
+   - Sửa (Neutral)
+   - Xóa (Red - Danger)
 
 ## 📝 Files Được Sửa
 

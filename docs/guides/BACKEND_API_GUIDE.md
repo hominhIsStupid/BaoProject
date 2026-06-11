@@ -1,11 +1,13 @@
 # Backend API Documentation
 
 ## Overview
+
 Complete backend system for Báo Rồng Vàng with support for multiple user roles (Guest, Author, Editor, Admin).
 
 ## Architecture
 
 ### Database Schema
+
 - **Users**: User accounts with roles and status
 - **Articles**: Articles with status tracking (draft → pending → approved → published)
 - **Categories**: Article categories
@@ -27,11 +29,13 @@ Complete backend system for Báo Rồng Vàng with support for multiple user rol
 ## Authentication
 
 ### JWT Token
+
 - Token stored in `Authorization: Bearer <token>` header
 - Expires in 7 days (configurable in .env)
 - Required for all protected routes
 
 ### Register
+
 ```http
 POST /api/auth/register
 Content-Type: application/json
@@ -52,6 +56,7 @@ Response:
 ```
 
 ### Login
+
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -70,6 +75,7 @@ Response:
 ```
 
 ### Get Current User
+
 ```http
 GET /api/auth/me
 Authorization: Bearer <token>
@@ -89,6 +95,7 @@ Response:
 ```
 
 ### Update Profile
+
 ```http
 PUT /api/auth/me
 Authorization: Bearer <token>
@@ -111,6 +118,7 @@ Response:
 ## Public Articles API
 
 ### Get All Published Articles
+
 ```http
 GET /api/articles?limit=20&offset=0
 
@@ -118,6 +126,7 @@ Response: Array of published articles
 ```
 
 ### Get Article by ID
+
 ```http
 GET /api/articles/{id}
 
@@ -125,6 +134,7 @@ Response: Full article details with author info
 ```
 
 ### Get Articles by Category
+
 ```http
 GET /api/articles/category/{category}?limit=20&offset=0
 
@@ -132,6 +142,7 @@ Response: Array of published articles in category
 ```
 
 ### Search Articles
+
 ```http
 GET /api/articles/search/{query}?limit=20&offset=0
 
@@ -141,6 +152,7 @@ Response: Array of matching published articles
 ## Author API
 
 ### Create Article
+
 ```http
 POST /api/author/articles
 Authorization: Bearer <token>
@@ -163,6 +175,7 @@ Response:
 ```
 
 ### Get My Articles
+
 ```http
 GET /api/author/articles/my-articles?limit=20&offset=0
 Authorization: Bearer <token>
@@ -171,6 +184,7 @@ Response: Array of author's articles (all statuses)
 ```
 
 ### Get Specific Article
+
 ```http
 GET /api/author/articles/{id}
 Authorization: Bearer <token>
@@ -179,6 +193,7 @@ Response: Article details (if author owns it)
 ```
 
 ### Update Article
+
 ```http
 PUT /api/author/articles/{id}
 Authorization: Bearer <token>
@@ -200,6 +215,7 @@ Note: Only draft articles can be edited
 ```
 
 ### Submit Article for Review
+
 ```http
 POST /api/author/articles/{id}/submit
 Authorization: Bearer <token>
@@ -213,6 +229,7 @@ Note: Moves article from 'draft' to 'pending' status
 ```
 
 ### Delete Article
+
 ```http
 DELETE /api/author/articles/{id}
 Authorization: Bearer <token>
@@ -228,6 +245,7 @@ Note: Only draft articles can be deleted
 ## Editor API
 
 ### Get Pending Articles
+
 ```http
 GET /api/editor/articles/pending?limit=20&offset=0
 Authorization: Bearer <token>
@@ -236,6 +254,7 @@ Response: Array of pending articles
 ```
 
 ### Get Approved Articles
+
 ```http
 GET /api/editor/articles/approved?limit=20&offset=0
 Authorization: Bearer <token>
@@ -244,6 +263,7 @@ Response: Array of articles approved by editors
 ```
 
 ### Get Rejected Articles
+
 ```http
 GET /api/editor/articles/rejected?limit=20&offset=0
 Authorization: Bearer <token>
@@ -252,6 +272,7 @@ Response: Array of rejected articles
 ```
 
 ### Approve Article
+
 ```http
 POST /api/editor/articles/{id}/approve
 Authorization: Bearer <token>
@@ -265,6 +286,7 @@ Note: Updates editor stats
 ```
 
 ### Reject Article
+
 ```http
 POST /api/editor/articles/{id}/reject
 Authorization: Bearer <token>
@@ -284,6 +306,7 @@ Note: Updates editor stats
 ```
 
 ### Suggest Edit
+
 ```http
 POST /api/editor/articles/{id}/suggest-edit
 Authorization: Bearer <token>
@@ -300,6 +323,7 @@ Response:
 ```
 
 ### Get Editor Stats
+
 ```http
 GET /api/editor/articles/stats/me
 Authorization: Bearer <token>
@@ -321,6 +345,7 @@ Response:
 ### Article Management
 
 #### Get All Articles
+
 ```http
 GET /api/admin/articles/all?limit=50&offset=0
 Authorization: Bearer <token>
@@ -329,6 +354,7 @@ Response: Array of all articles (all statuses)
 ```
 
 #### Publish Article
+
 ```http
 POST /api/admin/articles/{id}/publish
 Authorization: Bearer <token>
@@ -342,6 +368,7 @@ Note: Only approved articles can be published
 ```
 
 #### Delete Article
+
 ```http
 DELETE /api/admin/articles/{id}
 Authorization: Bearer <token>
@@ -355,6 +382,7 @@ Response:
 ### Category Management
 
 #### Create Category
+
 ```http
 POST /api/admin/categories
 Authorization: Bearer <token>
@@ -376,6 +404,7 @@ Response:
 ```
 
 #### Get All Categories
+
 ```http
 GET /api/admin/categories
 Authorization: Bearer <token>
@@ -384,6 +413,7 @@ Response: Array of all categories
 ```
 
 #### Update Category
+
 ```http
 PUT /api/admin/categories/{id}
 Authorization: Bearer <token>
@@ -402,6 +432,7 @@ Response:
 ```
 
 #### Delete Category
+
 ```http
 DELETE /api/admin/categories/{id}
 Authorization: Bearer <token>
@@ -415,6 +446,7 @@ Response:
 ### User Management
 
 #### Get All Users
+
 ```http
 GET /api/admin/users?limit=50&offset=0
 Authorization: Bearer <token>
@@ -423,6 +455,7 @@ Response: Array of all users
 ```
 
 #### Get Users by Role
+
 ```http
 GET /api/admin/users/role/{role}
 Authorization: Bearer <token>
@@ -431,6 +464,7 @@ Response: Array of users with specific role
 ```
 
 #### Update User Role
+
 ```http
 PUT /api/admin/users/{id}/role
 Authorization: Bearer <token>
@@ -450,6 +484,7 @@ Note: Valid roles: author, editor, admin, guest
 ```
 
 #### Suspend User
+
 ```http
 PUT /api/admin/users/{id}/suspend
 Authorization: Bearer <token>
@@ -461,6 +496,7 @@ Response:
 ```
 
 #### Activate User
+
 ```http
 PUT /api/admin/users/{id}/activate
 Authorization: Bearer <token>
@@ -474,6 +510,7 @@ Response:
 ### Dashboard Statistics
 
 #### Get Dashboard Stats
+
 ```http
 GET /api/admin/stats
 Authorization: Bearer <token>
@@ -490,6 +527,7 @@ Response:
 ```
 
 #### Get System Logs
+
 ```http
 GET /api/admin/logs?limit=50&offset=0
 Authorization: Bearer <token>
@@ -500,41 +538,47 @@ Response: Array of system audit logs
 ## Error Responses
 
 ### 400 Bad Request
+
 ```json
 {
-  "message": "Missing required fields"
+   "message": "Missing required fields"
 }
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
-  "message": "Invalid token"
+   "message": "Invalid token"
 }
 ```
 
 ### 403 Forbidden
+
 ```json
 {
-  "message": "Access denied. Insufficient permissions"
+   "message": "Access denied. Insufficient permissions"
 }
 ```
 
 ### 404 Not Found
+
 ```json
 {
-  "message": "Article not found"
+   "message": "Article not found"
 }
 ```
 
 ### 409 Conflict
+
 ```json
 {
-  "message": "Email already registered"
+   "message": "Email already registered"
 }
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "message": "Internal server error",
@@ -545,12 +589,15 @@ Response: Array of system audit logs
 ## Setup Instructions
 
 ### 1. Install Dependencies
+
 ```bash
 npm install express cors dotenv uuid jsonwebtoken bcryptjs sqlite3 morgan body-parser
 ```
 
 ### 2. Environment Variables
+
 Create `.env` file:
+
 ```
 PORT=5000
 NODE_ENV=development
@@ -561,6 +608,7 @@ CORS_ORIGIN=http://localhost:5173
 ```
 
 ### 3. Start Server
+
 ```bash
 npm run dev:server
 ```
@@ -572,6 +620,7 @@ Server will run on `http://localhost:5000`
 ### Using cURL
 
 #### Register
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -584,6 +633,7 @@ curl -X POST http://localhost:5000/api/auth/register \
 ```
 
 #### Login
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \

@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getArticlesByCategory, MOCK_ARTICLES, getFeaturedArticles } from '../../utils/mockData';
 import { CATEGORIES } from '../../constant/global';
 import ArticleGrid from '../components/ArticleGrid';
-import styles from './HomePage.module.css';
+import styles from './CategoryPage.module.css';
 
 function CategoryPage() {
    const { category } = useParams();
@@ -24,7 +24,7 @@ function CategoryPage() {
       : `${normalizedCategory.charAt(0).toUpperCase() + normalizedCategory.slice(1)} Articles`;
 
    return (
-      <div className={styles.homePage}>
+      <div className={styles.categoryPage}>
          {/* Featured Section */}
          {featuredArticles.length > 0 && (
             <section className={styles.featured} aria-labelledby="featured-heading">

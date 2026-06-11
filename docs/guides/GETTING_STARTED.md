@@ -8,12 +8,14 @@ npm run dev
 ```
 
 **Expected Output:**
+
 ```
 [0] Server is running on port 5000
 [1] ➜ Local: http://localhost:3003/
 ```
 
 **Access Points:**
+
 - **Backend API**: http://localhost:5000
 - **Frontend App**: http://localhost:3003
 
@@ -22,19 +24,22 @@ npm run dev
 ## Step 2: Test Backend (Optional)
 
 ### Check Server Health
+
 ```bash
 curl http://localhost:5000/api/health
 ```
 
 **Response:**
+
 ```json
 {
-  "status": "Server is running",
-  "timestamp": "2024-06-11T10:30:00.000Z"
+   "status": "Server is running",
+   "timestamp": "2024-06-11T10:30:00.000Z"
 }
 ```
 
 ### Login with curl
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -45,16 +50,17 @@ curl -X POST http://localhost:5000/api/auth/login \
 ```
 
 **Response:**
+
 ```json
 {
-  "message": "Login successful",
-  "user": {
-    "id": "user-uuid-here",
-    "email": "author1@baorong.com",
-    "fullName": "Nguyễn Văn An",
-    "role": "author"
-  },
-  "token": "eyJhbGc..."
+   "message": "Login successful",
+   "user": {
+      "id": "user-uuid-here",
+      "email": "author1@baorong.com",
+      "fullName": "Nguyễn Văn An",
+      "role": "author"
+   },
+   "token": "eyJhbGc..."
 }
 ```
 
@@ -74,6 +80,7 @@ Copy the token for testing other endpoints.
 4. **Click** "Đăng nhập" (Login)
 
 **You should see:**
+
 - Redirected to home page
 - User menu in header shows your name
 - Dashboard link available
@@ -95,6 +102,7 @@ Copy the token for testing other endpoints.
 6. **Click** "Save as Draft"
 
 **Result:**
+
 - Article saved with status "draft"
 - Visible in "My Articles" section
 - Only you can see it (private)
@@ -108,6 +116,7 @@ Copy the token for testing other endpoints.
 3. **Click** "Confirm"
 
 **Result:**
+
 - Article status changed to "pending"
 - Visible to editors for review
 - You can't edit it anymore
@@ -130,11 +139,13 @@ Copy the token for testing other endpoints.
 6. **Choose action:**
 
 ### Option A: Approve Article
+
 1. **Click** "✅ Approve" button
 2. **Article status** changes to "approved"
 3. **Your stats** update
 
 ### Option B: Reject Article
+
 1. **Click** "❌ Reject" button
 2. **Enter reason**: "Article needs more detail"
 3. **Click** "Confirm"
@@ -174,6 +185,7 @@ Copy the token for testing other endpoints.
 ## 🔄 Complete Article Workflow Example
 
 ### Timeline
+
 ```
 Time 0:00   Author creates draft article
             ↓
@@ -187,17 +199,19 @@ Time 1:31   Article visible to all users
 ```
 
 ### Status Changes
+
 ```
 draft → pending → approved → published
 ```
 
 ### Actors
-| Step | Actor | Action | Result |
-|------|-------|--------|--------|
-| 1 | Author | Create & edit | status: draft |
-| 2 | Author | Submit review | status: pending |
-| 3 | Editor | Approve | status: approved |
-| 4 | Admin | Publish | status: published |
+
+| Step | Actor  | Action        | Result            |
+| ---- | ------ | ------------- | ----------------- |
+| 1    | Author | Create & edit | status: draft     |
+| 2    | Author | Submit review | status: pending   |
+| 3    | Editor | Approve       | status: approved  |
+| 4    | Admin  | Publish       | status: published |
 
 ---
 
@@ -242,6 +256,7 @@ draft → pending → approved → published
 ## 📱 Testing Each User Role
 
 ### As GUEST (No Login)
+
 - ✅ Browse home page
 - ✅ Read published articles
 - ✅ Search articles
@@ -250,6 +265,7 @@ draft → pending → approved → published
 - ❌ Access dashboards
 
 ### As AUTHOR
+
 - ✅ Create draft articles
 - ✅ Edit draft articles
 - ✅ Submit for review
@@ -260,6 +276,7 @@ draft → pending → approved → published
 - ❌ Publish articles
 
 ### As EDITOR
+
 - ✅ View pending articles
 - ✅ Approve articles
 - ✅ Reject with reason
@@ -270,6 +287,7 @@ draft → pending → approved → published
 - ❌ Publish articles (only admin)
 
 ### As ADMIN
+
 - ✅ View all articles
 - ✅ Publish articles
 - ✅ Delete articles
@@ -285,59 +303,67 @@ draft → pending → approved → published
 
 ### Login Credentials
 
-| Role | Email | Password |
-|------|-------|----------|
+| Role     | Email               | Password    |
+| -------- | ------------------- | ----------- |
 | Author 1 | author1@baorong.com | password123 |
 | Author 2 | author2@baorong.com | password123 |
 | Editor 1 | editor1@baorong.com | password123 |
 | Editor 2 | editor2@baorong.com | password123 |
-| Admin | admin@baorong.com | password123 |
+| Admin    | admin@baorong.com   | password123 |
 
 ### Key URLs
 
-| Page | URL |
-|------|-----|
-| Home | http://localhost:3003 |
-| Author Dashboard | http://localhost:3003/author |
-| Editor Dashboard | http://localhost:3003/editor |
-| Admin Dashboard | http://localhost:3003/admin |
-| Login | http://localhost:3003/login |
-| Search | http://localhost:3003/search?q=keyword |
+| Page             | URL                                    |
+| ---------------- | -------------------------------------- |
+| Home             | http://localhost:3003                  |
+| Author Dashboard | http://localhost:3003/author           |
+| Editor Dashboard | http://localhost:3003/editor           |
+| Admin Dashboard  | http://localhost:3003/admin            |
+| Login            | http://localhost:3003/login            |
+| Search           | http://localhost:3003/search?q=keyword |
 
 ### Backend API
 
-| Purpose | URL |
-|---------|-----|
-| Health Check | http://localhost:5000/api/health |
-| Login | POST http://localhost:5000/api/auth/login |
-| Get Articles | GET http://localhost:5000/api/articles |
+| Purpose      | URL                                       |
+| ------------ | ----------------------------------------- |
+| Health Check | http://localhost:5000/api/health          |
+| Login        | POST http://localhost:5000/api/auth/login |
+| Get Articles | GET http://localhost:5000/api/articles    |
 
 ---
 
 ## ⚠️ Common Issues & Solutions
 
 ### Issue: "Cannot reach backend"
+
 **Solution:**
+
 1. Make sure `npm run dev` is running
 2. Check backend console shows "Server is running on port 5000"
 3. Visit http://localhost:5000/api/health to verify
 4. Check `.env` has `CORS_ORIGIN=http://localhost:5173`
 
 ### Issue: "Login failed"
+
 **Solution:**
+
 1. Check email & password are correct
 2. Use test accounts (listed above)
 3. Check database was created (`src/backend/Data/database.sqlite` should exist)
 
 ### Issue: "Page not found after login"
+
 **Solution:**
+
 1. Page might not exist - check URL
 2. Clear browser cache (Cmd+Shift+R)
 3. Check browser console for errors
 4. Verify backend is responding
 
 ### Issue: "Database locked"
+
 **Solution:**
+
 1. Restart backend: Kill process and run `npm run dev:server` again
 2. If error persists, delete database file and restart
    ```bash
@@ -349,15 +375,15 @@ draft → pending → approved → published
 
 ## 🔗 Documentation Links
 
-| Document | Purpose |
-|----------|---------|
-| `SYSTEM_COMPLETE_GUIDE.md` | Overall system overview |
-| `BACKEND_QUICK_START.md` | Backend setup & commands |
-| `BACKEND_API_GUIDE.md` | Complete API reference |
-| `INTEGRATION_GUIDE.md` | Backend-frontend integration |
-| `FRONTEND_INTEGRATION.md` | How to update React components |
-| `ARCHITECTURE_DIAGRAMS.md` | Visual system architecture |
-| `VERIFICATION_REPORT.md` | Project completion report |
+| Document                   | Purpose                        |
+| -------------------------- | ------------------------------ |
+| `SYSTEM_COMPLETE_GUIDE.md` | Overall system overview        |
+| `BACKEND_QUICK_START.md`   | Backend setup & commands       |
+| `BACKEND_API_GUIDE.md`     | Complete API reference         |
+| `INTEGRATION_GUIDE.md`     | Backend-frontend integration   |
+| `FRONTEND_INTEGRATION.md`  | How to update React components |
+| `ARCHITECTURE_DIAGRAMS.md` | Visual system architecture     |
+| `VERIFICATION_REPORT.md`   | Project completion report      |
 
 ---
 
@@ -389,6 +415,7 @@ draft → pending → approved → published
 ## 🎓 What You've Learned
 
 ### Backend Concepts
+
 - Express.js routing
 - SQLite database
 - JWT authentication
@@ -396,6 +423,7 @@ draft → pending → approved → published
 - RESTful API design
 
 ### Frontend Concepts
+
 - React hooks (useEffect, useState)
 - API integration
 - Token management
@@ -403,6 +431,7 @@ draft → pending → approved → published
 - Component lifecycle
 
 ### Full-Stack Workflow
+
 - User registration & authentication
 - Data flow between frontend-backend
 - Article lifecycle management
@@ -414,12 +443,14 @@ draft → pending → approved → published
 ## 🚀 Next: Customize & Deploy
 
 ### To Customize:
+
 1. Update article categories in database
 2. Add more user roles if needed
 3. Customize UI/styling in React components
 4. Add more fields to articles/users
 
 ### To Deploy:
+
 1. Update `.env` with production settings
 2. Deploy backend to server (Heroku, DigitalOcean, etc.)
 3. Deploy frontend (Vercel, Netlify, etc.)
