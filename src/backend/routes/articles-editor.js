@@ -5,6 +5,7 @@ const articleRepository = require('../Repositories/articleRepository');
 const userRepository = require('../Repositories/userRepository');
 const { authMiddleware, roleMiddleware } = require('../Middleware/auth');
 const { db } = require('../config/database');
+const notificationRepository = require('../Repositories/notificationRepository');
 
 // EDITOR ROUTES
 
@@ -60,6 +61,15 @@ router.post('/:id/approve', authMiddleware, roleMiddleware(['editor']), async (r
     await articleRepository.updateStatus(req.params.id, 'approved');
     await articleRepository.assignEditor(req.params.id, req.user.id);
 
+    // Create notification for author
+    await notificationRepository.create({
+      id: uuidv4(),
+      user_id: article.author_id,
+      title: 'Bài viết được phê duyệt',
+      message: `Bài viết "${article.title}" của bạn đã được phê duyệt bởi biên tập viên.`,
+      type: 'approval'
+    });
+
     // Update editor stats
     db.run(
       `UPDATE editor_stats SET articlesApproved = articlesApproved + 1, articlesReviewed = articlesReviewed + 1 
@@ -88,6 +98,15 @@ router.post('/:id/reject', authMiddleware, roleMiddleware(['editor']), async (re
     }
 
     await articleRepository.updateStatus(req.params.id, 'rejected', reason);
+
+    // Create notification for author
+    await notificationRepository.create({
+      id: uuidv4(),
+      user_id: article.author_id,
+      title: 'Bài viết bị từ chối',
+      message: `Bài viết "${article.title}" của bạn đã bị từ chối. Lý do: ${reason || 'Không có lý do cụ thể.'}`,
+      type: 'rejection'
+    });
 
     // Update editor stats
     db.run(

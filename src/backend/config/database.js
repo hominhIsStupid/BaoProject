@@ -113,6 +113,33 @@ const initDatabase = () => {
       )
     `);
 
+    // Bookmarks table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS bookmarks (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        article_id TEXT NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY(article_id) REFERENCES articles(id) ON DELETE CASCADE,
+        UNIQUE(user_id, article_id)
+      )
+    `);
+
+    // Notifications table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        type TEXT CHECK(type IN ('system', 'approval', 'rejection', 'comment')) DEFAULT 'system',
+        isRead INTEGER DEFAULT 0,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `);
+
     console.log('Database schema initialized');
   });
 };

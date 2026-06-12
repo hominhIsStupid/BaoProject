@@ -1,4 +1,4 @@
-const { db } = require('./config/database');
+const { db } = require('./database');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
@@ -104,43 +104,88 @@ const seedDatabase = async () => {
     }
   ];
 
-  // Insert users
-  users.forEach(user => {
-    db.run(
-      `INSERT OR IGNORE INTO users (id, email, password, fullName, role, bio, avatar, phone)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user.id, user.email, user.password, user.fullName, user.role, user.bio, user.avatar, user.phone]
-    );
-  });
+  const runQuery = (query, params = []) => {
+    return new Promise((resolve, reject) => {
+      db.run(query, params, function(err) {
+        if (err) reject(err);
+        else resolve(this);
+      });
+    });
+  };
 
-  // Insert categories
-  categories.forEach(category => {
-    db.run(
-      `INSERT OR IGNORE INTO categories (id, name, slug, description, color, icon)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [category.id, category.name, category.slug, category.description, category.color, category.icon]
-    );
-  });
+  const getQuery = (query, params = []) => {
+    return new Promise((resolve, reject) => {
+      db.get(query, params, (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+  };
 
-  // Initialize editor stats for editors
-  const editors = users.filter(u => u.role === 'editor');
-  editors.forEach(editor => {
-    db.run(
-      `INSERT OR IGNORE INTO editor_stats (id, editor_id, articlesReviewed, articlesApproved, articlesRejected, approvalRate)
-       VALUES (?, ?, 0, 0, 0, 0)`,
-      [uuidv4(), editor.id]
-    );
-  });
+  try {
+    // Insert/update users sequentially
+    for (const user of users) {
+      const existingUser = await getQuery('SELECT id FROM users WHERE email = ?', [user.email]);
+      if (existingUser) {
+        user.id = existingUser.id;
+        await runQuery(
+          `UPDATE users SET 
+           password = ?, fullName = ?, role = ?, bio = ?, avatar = ?, phone = ?, updatedAt = CURRENT_TIMESTAMP
+           WHERE id = ?`,
+          [user.password, user.fullName, user.role, user.bio, user.avatar, user.phone, user.id]
+        );
+      } else {
+        await runQuery(
+          `INSERT INTO users (id, email, password, fullName, role, bio, avatar, phone)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [user.id, user.email, user.password, user.fullName, user.role, user.bio, user.avatar, user.phone]
+        );
+      }
+    }
 
-  console.log('✓ Database seeded with sample data');
-  console.log('\nTest Accounts:');
-  console.log('─────────────────────────────────────');
-  console.log('Author: author1@baorong.com / password123');
-  console.log('Author: author2@baorong.com / password123');
-  console.log('Editor: editor1@baorong.com / password123');
-  console.log('Editor: editor2@baorong.com / password123');
-  console.log('Admin:  admin@baorong.com / password123');
-  console.log('─────────────────────────────────────');
+    // Insert/update categories sequentially
+    for (const category of categories) {
+      const existingCategory = await getQuery('SELECT id FROM categories WHERE slug = ?', [category.slug]);
+      if (existingCategory) {
+        category.id = existingCategory.id;
+        await runQuery(
+          `UPDATE categories SET name = ?, description = ?, color = ?, icon = ? WHERE id = ?`,
+          [category.name, category.description, category.color, category.icon, category.id]
+        );
+      } else {
+        await runQuery(
+          `INSERT INTO categories (id, name, slug, description, color, icon)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [category.id, category.name, category.slug, category.description, category.color, category.icon]
+        );
+      }
+    }
+
+    // Initialize editor stats for editors
+    const editors = users.filter(u => u.role === 'editor');
+    for (const editor of editors) {
+      const existingStats = await getQuery('SELECT id FROM editor_stats WHERE editor_id = ?', [editor.id]);
+      if (!existingStats) {
+        await runQuery(
+          `INSERT INTO editor_stats (id, editor_id, articlesReviewed, articlesApproved, articlesRejected, approvalRate)
+           VALUES (?, ?, 0, 0, 0, 0)`,
+          [uuidv4(), editor.id]
+        );
+      }
+    }
+
+    console.log('✓ Database seeded with sample data');
+    console.log('\nTest Accounts:');
+    console.log('─────────────────────────────────────');
+    console.log('Author: author1@baorong.com / password123');
+    console.log('Author: author2@baorong.com / password123');
+    console.log('Editor: editor1@baorong.com / password123');
+    console.log('Editor: editor2@baorong.com / password123');
+    console.log('Admin:  admin@baorong.com / password123');
+    console.log('─────────────────────────────────────');
+  } catch (error) {
+    console.error('Error seeding database:', error);
+  }
 };
 
 module.exports = { seedDatabase };

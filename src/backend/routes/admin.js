@@ -233,40 +233,41 @@ router.put('/users/:id/activate', authMiddleware, roleMiddleware(['admin']), asy
 // Get dashboard statistics
 router.get('/stats', authMiddleware, roleMiddleware(['admin']), async (req, res) => {
   try {
-    const stats = {
-      totalArticles: 0,
-      publishedArticles: 0,
-      pendingArticles: 0,
-      totalUsers: 0,
-      totalAuthors: 0,
-      totalEditors: 0
+    const dbGet = (query) => {
+      return new Promise((resolve, reject) => {
+        db.get(query, (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        });
+      });
     };
 
-    // Count articles by status
-    db.get(`SELECT COUNT(*) as count FROM articles`, (err, row) => {
-      if (!err) stats.totalArticles = row?.count || 0;
-    });
+    const [
+      totalArticlesRow,
+      publishedArticlesRow,
+      pendingArticlesRow,
+      totalUsersRow,
+      totalAuthorsRow,
+      totalEditorsRow
+    ] = await Promise.all([
+      dbGet(`SELECT COUNT(*) as count FROM articles`),
+      dbGet(`SELECT COUNT(*) as count FROM articles WHERE status = 'published'`),
+      dbGet(`SELECT COUNT(*) as count FROM articles WHERE status = 'pending'`),
+      dbGet(`SELECT COUNT(*) as count FROM users`),
+      dbGet(`SELECT COUNT(*) as count FROM users WHERE role = 'author'`),
+      dbGet(`SELECT COUNT(*) as count FROM users WHERE role = 'editor'`)
+    ]);
 
-    db.get(`SELECT COUNT(*) as count FROM articles WHERE status = 'published'`, (err, row) => {
-      if (!err) stats.publishedArticles = row?.count || 0;
-    });
+    const stats = {
+      totalArticles: totalArticlesRow?.count || 0,
+      publishedArticles: publishedArticlesRow?.count || 0,
+      pendingArticles: pendingArticlesRow?.count || 0,
+      totalUsers: totalUsersRow?.count || 0,
+      totalAuthors: totalAuthorsRow?.count || 0,
+      totalEditors: totalEditorsRow?.count || 0
+    };
 
-    db.get(`SELECT COUNT(*) as count FROM articles WHERE status = 'pending'`, (err, row) => {
-      if (!err) stats.pendingArticles = row?.count || 0;
-    });
-
-    db.get(`SELECT COUNT(*) as count FROM users`, (err, row) => {
-      if (!err) stats.totalUsers = row?.count || 0;
-    });
-
-    db.get(`SELECT COUNT(*) as count FROM users WHERE role = 'author'`, (err, row) => {
-      if (!err) stats.totalAuthors = row?.count || 0;
-    });
-
-    db.get(`SELECT COUNT(*) as count FROM users WHERE role = 'editor'`, (err, row) => {
-      if (!err) stats.totalEditors = row?.count || 0;
-      res.json(stats);
-    });
+    res.json(stats);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch stats', error: error.message });
   }

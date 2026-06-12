@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 // Token management
 const tokenStorage = {
@@ -175,6 +175,45 @@ const adminAPI = {
     apiCall('GET', `/admin/logs?limit=${limit}&offset=${offset}`)
 };
 
+// COMMENTS API
+const commentsAPI = {
+  create: (articleId, content) =>
+    apiCall('POST', `/comments/${articleId}`, { content }),
+
+  getByArticle: (articleId) =>
+    apiCall('GET', `/comments/${articleId}`),
+
+  delete: (commentId) =>
+    apiCall('DELETE', `/comments/${commentId}`),
+
+  updateStatus: (commentId, status) =>
+    apiCall('PUT', `/comments/${commentId}/status`, { status })
+};
+
+// BOOKMARKS API
+const bookmarksAPI = {
+  add: (articleId) =>
+    apiCall('POST', `/bookmarks/${articleId}`),
+
+  getAll: () =>
+    apiCall('GET', '/bookmarks'),
+
+  delete: (articleId) =>
+    apiCall('DELETE', `/bookmarks/${articleId}`)
+};
+
+// NOTIFICATIONS API
+const notificationsAPI = {
+  getAll: () =>
+    apiCall('GET', '/notifications'),
+
+  readAll: () =>
+    apiCall('PUT', '/notifications/read-all'),
+
+  markAsRead: (id) =>
+    apiCall('PUT', `/notifications/${id}/read`)
+};
+
 // Export all APIs
 module.exports = {
   tokenStorage,
@@ -183,5 +222,8 @@ module.exports = {
   authorAPI,
   editorAPI,
   adminAPI,
+  commentsAPI,
+  bookmarksAPI,
+  notificationsAPI,
   apiCall
 };
