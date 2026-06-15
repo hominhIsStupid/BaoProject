@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import ArticleCard from '../components/ArticleCard';
+import ArticleCard from '../../../src/client/components/ArticleCard';
 
 const mockArticle = {
    id: 1,

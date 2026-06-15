@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import ArticleGrid from '../components/ArticleGrid';
+import ArticleGrid from '../../../src/client/components/ArticleGrid';
 
 const mockArticles = [
    {
