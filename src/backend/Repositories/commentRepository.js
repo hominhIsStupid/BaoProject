@@ -12,6 +12,17 @@ class CommentRepository {
     return result.rows[0];
   }
 
+  async findAll() {
+    const result = await pool.query(
+      `SELECT c.*, u."fullName" as "userName", u.email as "userEmail", a.title as "articleTitle"
+       FROM comments c
+       JOIN users u ON c.user_id = u.id
+       JOIN articles a ON c.article_id = a.id
+       ORDER BY c."createdAt" DESC`
+    );
+    return result.rows;
+  }
+
   async findByArticle(articleId) {
     const result = await pool.query(
       `SELECT c.*, u."fullName" as "userName", u.avatar as "userAvatar"

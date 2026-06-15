@@ -1013,3 +1013,21 @@
       padding-left: 0 !important;
    }
 }
+
+.bookmarked {
+   color: rgb(221, 180, 107) !important;
+   border-color: rgb(221, 180, 107) !important;
+   background: rgba(221, 180, 107, 0.1) !important;
+}
+
+.liked {
+   color: #E53E3E !important;
+   border-color: #E53E3E !important;
+   background: rgba(229, 62, 62, 0.1) !important;
+}
+
+.likeCount {
+   font-size: 0.7rem;
+   font-weight: 700;
+   margin-left: 0.2rem;
+}

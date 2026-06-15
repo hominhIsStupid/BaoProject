@@ -186,6 +186,11 @@ const getMockFallback = (method, endpoint, data) => {
       if (path === '/comments/my-comments') {
          return [];
       }
+
+      // 9b. All comments (admin)
+      if (path === '/comments') {
+         return [];
+      }
    }
 
    if (method === 'PUT') {
@@ -286,11 +291,17 @@ const apiCall = async (method, endpoint, data = null) => {
       const responseData = await response.json();
 
       if (!response.ok) {
-         throw new Error(responseData.message || 'API error');
+         const err = new Error(responseData.message || 'API error');
+         err.status = response.status;
+         throw err;
       }
 
       return responseData;
    } catch (error) {
+      // Do not use mock fallback for auth or validation errors from server
+      if (error.status === 400 || error.status === 401 || error.status === 403) {
+         throw error;
+      }
       console.warn(`API call failed for ${method} ${endpoint}, falling back to mock data:`, error.message);
       try {
          return getMockFallback(method, endpoint, data);
@@ -421,6 +432,8 @@ const commentsAPI = {
    updateStatus: (commentId, status) => apiCall('PUT', `/comments/${commentId}/status`, { status }),
 
    getMyComments: () => apiCall('GET', '/comments/my-comments'),
+
+   getAll: () => apiCall('GET', '/comments'),
 };
 
 // BOOKMARKS API
@@ -441,6 +454,30 @@ const notificationsAPI = {
    markAsRead: (id) => apiCall('PUT', `/notifications/${id}/read`),
 };
 
+// RECOMMENDATION API
+const recommendationAPI = {
+   trackRead: (articleId, category) =>
+      apiCall('POST', '/recommendations/track-read', { articleId, category }),
+
+   like: (articleId, category) =>
+      apiCall('POST', `/recommendations/${articleId}/like`, { category }),
+
+   unlike: (articleId) =>
+      apiCall('DELETE', `/recommendations/${articleId}/like`),
+
+   getLikeStatus: (articleId) =>
+      apiCall('GET', `/recommendations/${articleId}/like-status`),
+
+   getRecommendations: (limit = 12) =>
+      apiCall('GET', `/recommendations/recommendations?limit=${limit}`),
+
+   getPopular: (limit = 12) =>
+      apiCall('GET', `/recommendations/popular?limit=${limit}`),
+
+   getPreferences: () =>
+      apiCall('GET', '/recommendations/preferences'),
+};
+
 export {
    tokenStorage,
    authAPI,
@@ -451,5 +488,7 @@ export {
    commentsAPI,
    bookmarksAPI,
    notificationsAPI,
+   recommendationAPI,
    apiCall,
 };
+

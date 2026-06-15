@@ -5,6 +5,16 @@ const articleRepository = require('../Repositories/articleRepository');
 const notificationRepository = require('../Repositories/notificationRepository');
 const { authMiddleware, roleMiddleware, optionalAuth } = require('../Middleware/auth');
 
+// Retrieve all comments (editors & admins only)
+router.get('/', authMiddleware, roleMiddleware(['editor', 'admin']), async (req, res) => {
+  try {
+    const comments = await commentRepository.findAll();
+    res.json(comments);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch comments', error: error.message });
+  }
+});
+
 // Post a comment (authenticated users)
 router.post('/:articleId', authMiddleware, async (req, res) => {
   try {
@@ -42,7 +52,7 @@ router.post('/:articleId', authMiddleware, async (req, res) => {
     }
 
     res.status(201).json({
-      message: 'Comment submitted successfully, awaiting approval',
+      message: 'Comment submitted successfully',
       comment
     });
   } catch (error) {

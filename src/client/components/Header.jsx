@@ -12,7 +12,7 @@ const NAV_ITEMS = [
    { label: 'Giải Trí', path: '/category/entertainment', id: 'entertainment' },
    { label: 'Sức Khỏe', path: '/category/health', id: 'health' },
    { label: 'Giáo Dục', path: '/category/education', id: 'education' },
-   { label: 'Đời Sống', path: '/category/lifestyle', id: 'lifestyle' },
+   { label: 'Du Lịch', path: '/category/travel', id: 'travel' },
 ];
 
 function Header() {
