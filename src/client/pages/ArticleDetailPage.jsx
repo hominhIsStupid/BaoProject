@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { articlesAPI, commentsAPI, bookmarksAPI, recommendationAPI, tokenStorage } from '../../utils/api';
 import { CATEGORY_MAP } from '../../constant/global';
 import styles from './ArticleDetailPage.module.css';
@@ -275,7 +276,12 @@ function ArticleDetailPage() {
    };
 
    return (
-      <div className={styles.articlePage}>
+      <motion.div 
+         className={styles.articlePage}
+         initial={{ opacity: 0, y: 20 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.5, ease: "easeOut" }}
+      >
          {/* Toast Notification for copying link */}
          {copied && <div className={styles.toast}>Đã sao chép liên kết thành công!</div>}
 
@@ -645,7 +651,7 @@ function ArticleDetailPage() {
                </aside>
             </div>
          </div>
-      </div>
+      </motion.div>
    );
 }
 

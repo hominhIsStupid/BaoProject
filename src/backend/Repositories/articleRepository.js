@@ -137,6 +137,38 @@ class ArticleRepository {
     return { success: true };
   }
 
+  async getSuggestions(query) {
+    if (!query || !query.trim()) {
+      return { articles: [], tags: [] };
+    }
+    const cleanQuery = query.trim();
+    
+    // 1. Get matching articles (limit 4)
+    const articlesResult = await pool.query(
+      `SELECT id, title, image, category 
+       FROM v_published_articles
+       WHERE title ILIKE $1 OR excerpt ILIKE $1
+       ORDER BY "publishedAt" DESC
+       LIMIT 4`,
+      [`%${cleanQuery}%`]
+    );
+
+    // 2. Get matching tags (limit 3)
+    const tagsResult = await pool.query(
+      `SELECT name 
+       FROM tags 
+       WHERE name ILIKE $1 
+       ORDER BY "articleCount" DESC 
+       LIMIT 3`,
+      [`%${cleanQuery}%`]
+    );
+
+    return {
+      articles: articlesResult.rows,
+      tags: tagsResult.rows.map(t => t.name)
+    };
+  }
+
   async search(query, limit = 50, offset = 0) {
     if (!query || !query.trim()) {
       return this.findPublished(limit, offset);

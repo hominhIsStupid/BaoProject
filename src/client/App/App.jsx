@@ -26,10 +26,10 @@ function ProtectedRoute({ children, allowedRoles }) {
 
    if (allowedRoles && !allowedRoles.includes(user.role)) {
       return (
-         <div style={{ maxWidth: '1280px', margin: '6rem auto', padding: '3rem 2rem', color: '#E8E8E8', textAlign: 'center', background: '#141414', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+         <div style={{ maxWidth: '1280px', margin: '6rem auto', padding: '3rem 2rem', color: 'var(--text-primary)', textAlign: 'center', background: 'var(--bg-card)', border: '1px solid var(--bg-border)', borderRadius: '8px' }}>
             <h1 style={{ color: '#ff4757', marginBottom: '1rem' }}>🚫 Quyền truy cập bị từ chối</h1>
-            <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '2rem' }}>Tài khoản của bạn không có quyền xem trang này.</p>
-            <a href="/" style={{ display: 'inline-block', padding: '0.6rem 1.5rem', background: 'var(--gold-primary)', color: '#0E0E0E', textDecoration: 'none', fontWeight: 'bold', borderRadius: '4px' }}>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Tài khoản của bạn không có quyền xem trang này.</p>
+            <a href="/" style={{ display: 'inline-block', padding: '0.6rem 1.5rem', background: 'var(--gold-primary)', color: 'var(--text-white)', textDecoration: 'none', fontWeight: 'bold', borderRadius: '4px' }}>
                Quay lại Trang chủ
             </a>
          </div>
@@ -44,7 +44,7 @@ function AppLayout() {
    const isAuthPage = AUTH_ROUTES.includes(location.pathname);
 
    return (
-      <>
+      <div id="app-shell">
          {!isAuthPage && <Header />}
          <main>
             <Routes>
@@ -91,14 +91,14 @@ function AppLayout() {
                <Route
                   path="*"
                   element={
-                     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem', color: '#E8E8E8' }}>
+                     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem', color: 'var(--text-primary)' }}>
                         <h1>404 - Không tìm thấy trang</h1>
                      </div>
                   }
                />
             </Routes>
          </main>
-      </>
+      </div>
    );
 }
 

@@ -3,7 +3,7 @@
    ============================================ */
 
 .homePage {
-   background: var(--bg-primary);
+   background: transparent;
    min-height: 100vh;
 }
 
@@ -229,6 +229,23 @@
 .latestList {
    display: flex;
    flex-direction: column;
+   max-height: 480px;
+   overflow-y: auto;
+}
+
+/* Custom scrollbar for latestList */
+.latestList::-webkit-scrollbar {
+   width: 4px;
+}
+.latestList::-webkit-scrollbar-track {
+   background: rgba(255, 255, 255, 0.05);
+}
+.latestList::-webkit-scrollbar-thumb {
+   background: var(--gold-dark);
+   border-radius: 4px;
+}
+.latestList::-webkit-scrollbar-thumb:hover {
+   background: var(--gold-primary);
 }
 
 .latestItem {
@@ -629,25 +646,62 @@
 }
 
 .horizGrid {
-   display: grid;
-   grid-template-columns: repeat(4, 1fr);
-   gap: 1rem;
+   display: flex;
+   overflow-x: auto;
+   gap: 1.5rem;
+   padding-bottom: 1.5rem;
+   scroll-snap-type: x mandatory;
+}
+
+/* Custom horizontal scrollbar */
+.horizGrid::-webkit-scrollbar {
+   height: 6px;
+}
+.horizGrid::-webkit-scrollbar-track {
+   background: rgba(255, 255, 255, 0.05);
+   border-radius: 6px;
+}
+.horizGrid::-webkit-scrollbar-thumb {
+   background: var(--gold-dark);
+   border-radius: 6px;
+}
+.horizGrid::-webkit-scrollbar-thumb:hover {
+   background: var(--gold-primary);
 }
 
 .horizCard {
+   flex: 0 0 calc(25% - 1.125rem); /* 4 items wide minus gap */
+   min-width: 260px;
    display: flex;
    flex-direction: column;
    background: var(--bg-card);
-   border: 1px solid var(--bg-border);
-   border-radius: 8px;
+   border: 1px solid var(--glass-border);
+   border-radius: 12px;
    overflow: hidden;
    text-decoration: none;
-   transition: transform 0.2s, box-shadow 0.2s;
+   transition: var(--transition-smooth);
+   scroll-snap-align: start;
+   position: relative;
+}
+
+.horizCard::before {
+   content: '';
+   position: absolute;
+   inset: 0;
+   background: radial-gradient(circle at center, var(--gold-glow) 0%, transparent 70%);
+   opacity: 0;
+   transition: var(--transition-smooth);
+   pointer-events: none;
 }
 
 .horizCard:hover {
-   transform: translateY(-3px);
-   box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+   transform: translateY(-4px);
+   box-shadow: var(--shadow-md);
+   border-color: var(--gold-primary);
+}
+
+.horizCard:hover::before {
+   opacity: 1;
 }
 
 .horizImgWrap {
@@ -774,10 +828,6 @@
       display: none;
    }
 
-   .horizGrid {
-      grid-template-columns: repeat(3, 1fr);
-   }
-
    .recGrid {
       grid-template-columns: repeat(3, 1fr);
    }
@@ -804,10 +854,6 @@
       grid-template-columns: 1fr;
    }
 
-   .horizGrid {
-      grid-template-columns: repeat(2, 1fr);
-   }
-
    .recGrid {
       grid-template-columns: repeat(2, 1fr);
    }
@@ -824,10 +870,6 @@
 
    .heroTitle {
       font-size: 1rem;
-   }
-
-   .horizGrid {
-      grid-template-columns: 1fr;
    }
 
    .recGrid {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { articlesAPI, recommendationAPI, tokenStorage } from '../../utils/api';
 import { CATEGORY_MAP } from '../../constant/global';
 import styles from './HomePage.module.css';
@@ -114,7 +115,7 @@ function HorizontalSection({ title, icon, slug, articles, accentColor }) {
             </Link>
          </div>
          <div className={styles.horizGrid}>
-            {articles.slice(0, 4).map((article) => (
+            {articles.slice(0, 8).map((article) => (
                <Link key={article.id} to={`/article/${article.id}`} className={styles.horizCard}>
                   <div className={styles.horizImgWrap}>
                      <img
@@ -218,8 +219,13 @@ function HomePage() {
    const travelArticles = byCat('travel');
 
    return (
-      <div className={styles.homePage}>
-         {/* ========== HERO SECTION ========== */}
+      <motion.div 
+         className={styles.homeWrap}
+         initial={{ opacity: 0 }}
+         animate={{ opacity: 1 }}
+         transition={{ duration: 0.6 }}
+      >
+         {/* ========== HERO SECTION (LATEST NEWS) ========== */}
          <section className={styles.heroSection} aria-label="Tin nổi bật">
             <div className={styles.container}>
                <div className={styles.heroGrid}>
@@ -300,7 +306,13 @@ function HomePage() {
 
          {/* ========== ĐỀ XUẤT CHO BẠN (AI Recommendations) ========== */}
          {recommendations.length > 0 && (
-            <section className={styles.mainSections} aria-label="Đề xuất cho bạn">
+            <motion.section 
+               className={styles.mainSections} aria-label="Đề xuất cho bạn"
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true, margin: "-50px" }}
+               transition={{ duration: 0.5 }}
+            >
                <div className={styles.container}>
                   <div className={styles.recSection}>
                      <div className={styles.sectionHead}>
@@ -341,13 +353,19 @@ function HomePage() {
                      </div>
                   </div>
                </div>
-            </section>
+            </motion.section>
          )}
 
          <div className={styles.divider} />
 
          {/* ========== ROW 1: THỜI SỰ + CÔNG NGHỆ ========== */}
-         <section className={styles.mainSections} aria-label="Tin tức theo chuyên mục">
+         <motion.section 
+            className={styles.mainSections} aria-label="Tin tức theo chuyên mục"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
                   <CategorySection
@@ -360,24 +378,36 @@ function HomePage() {
                   />
                </div>
             </div>
-         </section>
+         </motion.section>
 
          <div className={styles.divider} />
 
          {/* ========== ROW 2: KINH DOANH (full width horizontal) ========== */}
-         <section className={styles.mainSections}>
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
             <div className={styles.container}>
                <HorizontalSection
                   title="KINH DOANH" icon="💰" slug="business"
                   articles={businessArticles} accentColor="#D4AF37"
                />
             </div>
-         </section>
+         </motion.section>
 
          <div className={styles.divider} />
 
          {/* ========== ROW 3: THỂ THAO + GIẢI TRÍ ========== */}
-         <section className={styles.mainSections}>
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
                   <CategorySection
@@ -390,24 +420,36 @@ function HomePage() {
                   />
                </div>
             </div>
-         </section>
+         </motion.section>
 
          <div className={styles.divider} />
 
          {/* ========== ROW 4: THẾ GIỚI (full width horizontal) ========== */}
-         <section className={styles.mainSections}>
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
             <div className={styles.container}>
                <HorizontalSection
                   title="THẾ GIỚI" icon="🌍" slug="thegioi"
                   articles={theGioiArticles} accentColor="#3182CE"
                />
             </div>
-         </section>
+         </motion.section>
 
          <div className={styles.divider} />
 
          {/* ========== ROW 5: SỨC KHỎE + GIÁO DỤC ========== */}
-         <section className={styles.mainSections}>
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
                   <CategorySection
@@ -420,19 +462,25 @@ function HomePage() {
                   />
                </div>
             </div>
-         </section>
+         </motion.section>
 
          <div className={styles.divider} />
 
          {/* ========== ROW 6: DU LỊCH (full width horizontal) ========== */}
-         <section className={styles.mainSections}>
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
             <div className={styles.container}>
                <HorizontalSection
                   title="DU LỊCH" icon="✈️" slug="travel"
                   articles={travelArticles} accentColor="#2C7A7B"
                />
             </div>
-         </section>
+         </motion.section>
 
          {/* ========== VALUES STRIP ========== */}
          <footer className={styles.valuesStrip} aria-label="Giá trị cốt lõi">
@@ -455,7 +503,7 @@ function HomePage() {
                </div>
             </div>
          </footer>
-      </div>
+      </motion.div>
    );
 }
 
