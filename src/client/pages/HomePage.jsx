@@ -150,17 +150,22 @@ function HomePage() {
    useEffect(() => {
       const fetchArticles = async () => {
          try {
-            const data = await articlesAPI.getAll(60, 0);
-            setArticles(data);
+            const data = await articlesAPI.getAll(100, 0);
+            const uniqueData = data.filter((item, index, self) => 
+               index === self.findIndex((t) => t.title === item.title)
+            );
+            setArticles(uniqueData);
 
             // Fetch personalized recommendations or popular
             try {
                if (loggedInUser) {
                   const recs = await recommendationAPI.getRecommendations(8);
-                  setRecommendations(recs);
+                  const uniqueRecs = recs.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title));
+                  setRecommendations(uniqueRecs);
                } else {
                   const popular = await recommendationAPI.getPopular(8);
-                  setRecommendations(popular);
+                  const uniquePop = popular.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title));
+                  setRecommendations(uniquePop);
                }
             } catch (recErr) {
                console.error('Recommendations error:', recErr);
@@ -169,7 +174,8 @@ function HomePage() {
             // Fetch daily highlights
             try {
                const daily = await recommendationAPI.getDaily(8);
-               setDailyHighlights(daily);
+               const uniqueDaily = daily.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title));
+               setDailyHighlights(uniqueDaily);
             } catch (dailyErr) {
                console.error('Daily highlights error:', dailyErr);
             }
@@ -214,7 +220,7 @@ function HomePage() {
    // Data slices from real API data
    const heroArticle = articles[0];
    const midArticles = articles.slice(1, 5);
-   const latestNews = articles.slice(0, 8);
+   const latestNews = articles.slice(0, 10);
 
    // Category filters
    const byCat = (cat) => articles.filter((a) => a.category === cat);
@@ -227,6 +233,11 @@ function HomePage() {
    const healthArticles = byCat('health');
    const educationArticles = byCat('education');
    const travelArticles = byCat('travel');
+   const khoaHocArticles = byCat('khoahoc');
+   const xeArticles = byCat('xe');
+   const doiSongArticles = byCat('doisong');
+   const tamSuArticles = byCat('tamsu');
+   const phapLuatArticles = byCat('phapluat');
 
    return (
       <motion.div 
@@ -501,6 +512,72 @@ function HomePage() {
                <HorizontalSection
                   title="DU LỊCH" icon="✈️" slug="travel"
                   articles={travelArticles} accentColor="#2C7A7B"
+               />
+            </div>
+         </motion.section>
+
+         <div className={styles.divider} />
+
+         {/* ========== ROW 7: KHOA HỌC + XE ========== */}
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
+            <div className={styles.container}>
+               <div className={styles.sectionsGrid}>
+                  <CategorySection
+                     title="KHOA HỌC" icon="🔬" slug="khoahoc"
+                     articles={khoaHocArticles} accentColor="#6B46C1"
+                  />
+                  <CategorySection
+                     title="XE" icon="🚗" slug="xe"
+                     articles={xeArticles} accentColor="#718096"
+                  />
+               </div>
+            </div>
+         </motion.section>
+
+         <div className={styles.divider} />
+
+         {/* ========== ROW 8: ĐỜI SỐNG + TÂM SỰ ========== */}
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
+            <div className={styles.container}>
+               <div className={styles.sectionsGrid}>
+                  <CategorySection
+                     title="ĐỜI SỐNG" icon="☕" slug="doisong"
+                     articles={doiSongArticles} accentColor="#F6AD55"
+                  />
+                  <CategorySection
+                     title="TÂM SỰ" icon="💌" slug="tamsu"
+                     articles={tamSuArticles} accentColor="#F687B3"
+                  />
+               </div>
+            </div>
+         </motion.section>
+
+         <div className={styles.divider} />
+
+         {/* ========== ROW 9: PHÁP LUẬT (full width horizontal) ========== */}
+         <motion.section 
+            className={styles.mainSections}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+         >
+            <div className={styles.container}>
+               <HorizontalSection
+                  title="PHÁP LUẬT" icon="⚖️" slug="phapluat"
+                  articles={phapLuatArticles} accentColor="#4A5568"
                />
             </div>
          </motion.section>

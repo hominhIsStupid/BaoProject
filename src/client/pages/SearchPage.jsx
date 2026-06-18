@@ -20,7 +20,10 @@ function SearchPage() {
          try {
             const cat = selectedCategory === 'all' ? null : selectedCategory;
             const data = await articlesAPI.getAll(50, 0, cat, query);
-            setResults(data);
+            const uniqueData = data.filter((item, index, self) => 
+               index === self.findIndex((t) => t.title === item.title)
+            );
+            setResults(uniqueData);
          } catch (err) {
             console.error('Failed to fetch search results:', err);
          } finally {

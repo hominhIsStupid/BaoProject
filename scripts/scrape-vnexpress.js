@@ -72,8 +72,8 @@ async function run() {
       console.log(`\nĐang cào chuyên mục: ${cat.slug} (${cat.url})`);
       try {
         const feed = await parser.parseURL(cat.url);
-        // Lấy 10 bài mới nhất
-        const items = feed.items.slice(0, 10);
+        // Lấy 20 bài mới nhất
+        const items = feed.items.slice(0, 20);
         
         let added = 0;
         for (const item of items) {

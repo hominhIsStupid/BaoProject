@@ -86,7 +86,7 @@ async function runScraper() {
     for (const cat of CATEGORIES) {
       try {
         const feed = await parser.parseURL(cat.url);
-        const items = feed.items.slice(0, 5); // Lấy 5 bài mới nhất mỗi lần quét
+        const items = feed.items.slice(0, 10); // Lấy 10 bài mới nhất mỗi lần quét
         
         let added = 0;
         for (const item of items) {
