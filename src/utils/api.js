@@ -290,20 +290,21 @@ const apiCall = async (method, endpoint, data = null) => {
 
    try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-
-      if (response.status === 401) {
-         tokenStorage.clearToken();
-         tokenStorage.clearUser();
-         window.location.href = '/login';
-         throw new Error('Session expired');
-      }
-
       const responseData = await response.json();
 
       if (!response.ok) {
          const err = new Error(responseData.message || 'API error');
          err.status = response.status;
          throw err;
+      }
+
+      if (response.status === 401) {
+         tokenStorage.clearToken();
+         tokenStorage.clearUser();
+         if (window.location.pathname !== '/login') {
+            window.location.href = '/login';
+         }
+         throw new Error(responseData);
       }
 
       // Save to cache for GET requests
@@ -315,16 +316,16 @@ const apiCall = async (method, endpoint, data = null) => {
       return responseData;
    } catch (error) {
       // Do not use mock fallback for auth or validation errors from server
-      if (error.status === 400 || error.status === 401 || error.status === 403) {
-         throw error;
-      }
-      console.warn(`API call failed for ${method} ${endpoint}, falling back to mock data:`, error.message);
-      try {
-         return getMockFallback(method, endpoint, data);
-      } catch (fallbackError) {
-         console.error('Fallback failed:', fallbackError);
-         throw error;
-      }
+      // if (error.status === 400 || error.status === 401 || error.status === 403) {
+      throw error;
+      // }
+      // console.warn(`API call failed for ${method} ${endpoint}, falling back to mock data:`, error.message);
+      // try {
+      //    return getMockFallback(method, endpoint, data);
+      // } catch (fallbackError) {
+      //    console.error('Fallback failed:', fallbackError);
+      //    throw error;
+      // }
    }
 };
 
@@ -472,25 +473,20 @@ const notificationsAPI = {
 
 // RECOMMENDATION API
 const recommendationAPI = {
-   trackRead: (articleId, category) =>
-      apiCall('POST', '/recommendations/track-read', { articleId, category }),
+   trackRead: (articleId, category) => apiCall('POST', '/recommendations/track-read', { articleId, category }),
 
-   like: (articleId, category) =>
-      apiCall('POST', `/recommendations/${articleId}/like`, { category }),
+   like: (articleId, category) => apiCall('POST', `/recommendations/${articleId}/like`, { category }),
 
-   unlike: (articleId) =>
-      apiCall('DELETE', `/recommendations/${articleId}/like`),
+   unlike: (articleId) => apiCall('DELETE', `/recommendations/${articleId}/like`),
 
-   getLikeStatus: (articleId) =>
-      apiCall('GET', `/recommendations/${articleId}/like-status`),
+   getLikeStatus: (articleId) => apiCall('GET', `/recommendations/${articleId}/like-status`),
 
    getRecommendations: (limit = 12) => apiCall('GET', `/recommendations/recommendations?limit=${limit}`),
    getPopular: (limit = 12) => apiCall('GET', `/recommendations/popular?limit=${limit}`),
    getDaily: (limit = 6) => apiCall('GET', `/recommendations/daily?limit=${limit}`),
    trackRead: (articleId, category) => apiCall('POST', '/recommendations/track-read', { articleId, category }),
 
-   getPreferences: () =>
-      apiCall('GET', '/recommendations/preferences'),
+   getPreferences: () => apiCall('GET', '/recommendations/preferences'),
 };
 
 export {
@@ -506,4 +502,3 @@ export {
    recommendationAPI,
    apiCall,
 };
-
