@@ -5,6 +5,8 @@
    margin: 0;
    padding: 0;
    box-sizing: border-box;
+
+   --transtion-duration: 500ms;
 }
 
 /* ============================================
@@ -17,21 +19,21 @@ body.theme-transitioning *,
 body.theme-transitioning *::before,
 body.theme-transitioning *::after {
    transition:
-      background-color 1.8s cubic-bezier(0.4, 0, 0.2, 1),
-      background-image 1.8s cubic-bezier(0.4, 0, 0.2, 1),
-      color            1.8s cubic-bezier(0.4, 0, 0.2, 1),
-      border-color     1.8s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow       1.8s cubic-bezier(0.4, 0, 0.2, 1),
-      fill             1.8s cubic-bezier(0.4, 0, 0.2, 1),
-      stroke           1.8s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity          1.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      background-color var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1),
+      background-image var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1),
+      color var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1),
+      border-color var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1),
+      fill var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1),
+      stroke var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1),
+      opacity var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* Also transition the background-image of #app-shell separately */
 body.theme-transitioning #app-shell {
    transition:
       background-color 2s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow       1.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      box-shadow var(--transtion-duration) cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 html {
@@ -43,7 +45,12 @@ html {
    GLOBAL BACKGROUND — Dark Dragon (behind the floating card)
    ============================================ */
 body {
-   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+   font-family:
+      'Inter',
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      sans-serif;
    color: var(--text-primary);
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
@@ -71,7 +78,13 @@ body::before {
    background:
       radial-gradient(ellipse 80% 60% at 20% -10%, rgba(212, 175, 55, 0.08) 0%, transparent 55%),
       radial-gradient(ellipse 60% 50% at 80% 110%, rgba(80, 40, 120, 0.12) 0%, transparent 55%),
-      linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.0) 30%, rgba(0,0,0,0.0) 70%, rgba(0,0,0,0.3) 100%);
+      linear-gradient(
+         180deg,
+         rgba(0, 0, 0, 0.3) 0%,
+         rgba(0, 0, 0, 0) 30%,
+         rgba(0, 0, 0, 0) 70%,
+         rgba(0, 0, 0, 0.3) 100%
+      );
 }
 
 body::after {
@@ -89,7 +102,7 @@ body::after {
    min-height: 100vh;
 
    /* Dark dragon background directly on the shell */
-   background-color: #0A0A0A;
+   background-color: #0a0a0a;
    background-image: url('/dragon-dark.png');
    background-size: cover;
    background-position: center center;
@@ -100,7 +113,9 @@ body::after {
       0 0 0 1px rgba(212, 175, 55, 0.12),
       0 20px 80px rgba(0, 0, 0, 0.8),
       0 40px 120px rgba(0, 0, 0, 0.6);
-   transition: background-color 0.5s ease, box-shadow 0.5s ease;
+   transition:
+      background-color 0.5s ease,
+      box-shadow 0.5s ease;
 }
 
 /* Dark translucent overlay so text remains readable while dragon shows through */
@@ -160,7 +175,7 @@ main {
    width: 6px;
 }
 ::-webkit-scrollbar-track {
-   background: rgba(255,255,255,0.05);
+   background: rgba(255, 255, 255, 0.05);
 }
 ::-webkit-scrollbar-thumb {
    background: var(--gold-dark);
@@ -174,11 +189,11 @@ main {
    LIGHT THEME — Light Elegance Dragon
    ============================================ */
 body.light-theme {
-   background-color: #F5F0E8;
+   background-color: #f5f0e8;
 }
 
 body.light-theme #app-shell {
-   background-color: #F8F4EC;
+   background-color: #f8f4ec;
    background-image: url('/dragon-light.png');
    box-shadow:
       0 0 0 1px rgba(212, 175, 55, 0.25),
@@ -190,5 +205,3 @@ body.light-theme #app-shell {
 body.light-theme #app-shell::before {
    background: rgba(248, 244, 236, 0.68);
 }
-
-
