@@ -123,7 +123,9 @@ function Header() {
                            placeholder="Tìm kiếm tin tức..."
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
-                           onFocus={() => { if(searchQuery.trim()) setShowDropdown(true); }}
+                           onFocus={() => {
+                              if (searchQuery.trim()) setShowDropdown(true);
+                           }}
                            aria-label="Tìm kiếm tin tức"
                            autoComplete="off"
                         />
@@ -156,11 +158,14 @@ function Header() {
                                        <h4 className={styles.suggestionHeader}>Từ khóa liên quan</h4>
                                        <div className={styles.tagList}>
                                           {suggestions.tags.map((tag, idx) => (
-                                             <Link 
-                                                key={idx} 
+                                             <Link
+                                                key={idx}
                                                 to={`/search?q=${encodeURIComponent(tag)}`}
                                                 className={styles.suggestionTag}
-                                                onClick={() => { setSearchQuery(tag); setShowDropdown(false); }}
+                                                onClick={() => {
+                                                   setSearchQuery(tag);
+                                                   setShowDropdown(false);
+                                                }}
                                              >
                                                 # {tag}
                                              </Link>
@@ -173,18 +178,26 @@ function Header() {
                                     <div className={styles.suggestionSection}>
                                        <h4 className={styles.suggestionHeader}>Bài viết đề xuất</h4>
                                        <div className={styles.articleList}>
-                                          {suggestions.articles.map(article => (
-                                             <Link 
-                                                key={article.id} 
+                                          {suggestions.articles.map((article) => (
+                                             <Link
+                                                key={article.id}
                                                 to={`/article/${article.id}`}
                                                 className={styles.suggestionArticle}
                                                 onClick={() => setShowDropdown(false)}
                                              >
                                                 <div className={styles.suggestionImageWrapper}>
-                                                   <img src={article.image || 'https://via.placeholder.com/50x50?text=News'} alt={article.title} className={styles.suggestionImage} />
+                                                   <img
+                                                      src={
+                                                         article.image || 'https://via.placeholder.com/50x50?text=News'
+                                                      }
+                                                      alt={article.title}
+                                                      className={styles.suggestionImage}
+                                                   />
                                                 </div>
                                                 <div className={styles.suggestionArticleInfo}>
-                                                   <span className={styles.suggestionArticleTitle}>{article.title}</span>
+                                                   <span className={styles.suggestionArticleTitle}>
+                                                      {article.title}
+                                                   </span>
                                                    <span className={styles.suggestionArticleCat}>
                                                       {article.category.toUpperCase()}
                                                    </span>
@@ -219,36 +232,50 @@ function Header() {
                                  ) : (
                                     <div className={styles.avatarPlaceholder}>
                                        {user.fullName ? user.fullName.charAt(0) : 'U'}
-                                     </div>
+                                    </div>
                                  )}
                               </div>
                               <span className={styles.userName}>{user.fullName}</span>
                            </Link>
-                           
+
                            {user.role === 'author' && (
-                              <Link to="/author" className={styles.authorLink} id="header-author-link" title="Quản lý bài viết">
+                              <Link
+                                 to="/author"
+                                 className={styles.authorLink}
+                                 id="header-author-link"
+                                 title="Quản lý bài viết"
+                              >
                                  ✍️
                               </Link>
                            )}
                            {user.role === 'editor' && (
-                              <Link to="/editor" className={styles.editorLink} id="header-editor-link" title="Duyệt bài viết">
+                              <Link
+                                 to="/editor"
+                                 className={styles.editorLink}
+                                 id="header-editor-link"
+                                 title="Duyệt bài viết"
+                              >
                                  📋
                               </Link>
                            )}
                            {user.role === 'admin' && (
-                              <Link to="/admin" className={styles.adminLink} id="header-admin-link" title="Quản lý hệ thống">
+                              <Link
+                                 to="/admin"
+                                 className={styles.adminLink}
+                                 id="header-admin-link"
+                                 title="Quản lý hệ thống"
+                              >
                                  ⚙️
                               </Link>
                            )}
-                           
-                           <button 
+
+                           <button
                               onClick={() => {
                                  localStorage.removeItem('auth_token');
                                  localStorage.removeItem('user');
                                  window.location.href = '/';
-                              }} 
-                              className={styles.btnLogout} 
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}
+                              }}
+                              className={styles.btnLogout}
                               title="Đăng xuất"
                            >
                               🚪
@@ -318,7 +345,7 @@ function Header() {
             <div className={styles.megaMenuContainer}>
                <h3 className={styles.megaMenuTitle}>TẤT CẢ CHUYÊN MỤC</h3>
                <div className={styles.megaMenuGrid}>
-                  {CATEGORIES.map(cat => (
+                  {CATEGORIES.map((cat) => (
                      <Link
                         key={cat.id}
                         to={`/category/${cat.slug}`}

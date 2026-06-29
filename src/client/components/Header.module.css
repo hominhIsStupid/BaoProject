@@ -201,6 +201,24 @@
    transform: translateY(-1px);
 }
 
+.btnLogout:hover {
+   background: var(--gold-glow);
+   box-shadow: var(--shadow-gold-glow);
+   color: var(--text-white);
+}
+
+.btnLogout {
+   padding: 0.4rem 0.5rem;
+   border: 1px solid var(--gold-primary);
+   border-radius: 6px;
+   color: var(--gold-primary);
+   font-size: 0.85rem;
+   font-weight: 600;
+   background: transparent;
+   transition: var(--transition-fast);
+   white-space: nowrap;
+}
+
 /* ============ NAV BAR ============ */
 .navBar {
    position: relative;
