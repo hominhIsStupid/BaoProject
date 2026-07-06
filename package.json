@@ -31,7 +31,11 @@
       "dev:client": "vite --host",
       "dev:server": "node --watch src/server/app.js",
       "build": "vite build",
-      "test": "react-scripts test",
+      "test": "npm run test:unit && npm run test:integration && npm run test:regression && npm run test:performance",
+      "test:integration": "jest --testPathPattern=tests/integration --runInBand --forceExit --testTimeout=30000",
+      "test:performance": "jest --testPathPattern=tests/performance --runInBand --forceExit --testTimeout=120000",
+      "test:regression": "jest --testPathPattern=tests/regression --runInBand --forceExit --testTimeout=30000",
+      "test:unit": "jest --testPathPattern=tests/unit --runInBand --forceExit --testTimeout=10000",
       "eject": "react-scripts eject",
       "db:migrate": "node src/backend/database/migrate.js",
       "db:seed": "node src/backend/config/seed.js",
@@ -39,6 +43,16 @@
       "db:setup": "node src/backend/database/setup.js",
       "db:reset-full": "npm run db:reset && npm run db:setup",
       "scraper": "node scripts/scrape-vnexpress.js"
+   },
+   "jest": {
+      "testEnvironment": "node",
+      "testMatch": [
+         "**/tests/integration/**/*.test.js",
+         "**/tests/performance/**/*.test.js",
+         "**/tests/regression/**/*.test.js",
+         "**/tests/unit/**/*.test.js"
+      ],
+      "verbose": true
    },
    "eslintConfig": {
       "extends": [
@@ -63,10 +77,13 @@
       "@types/react": "^19.2.17",
       "@types/react-dom": "^19.2.3",
       "@vitejs/plugin-react": "^6.0.2",
+      "autocannon": "^8.0.0",
       "concurrently": "^10.0.0",
       "husky": "^9.1.7",
+      "jest": "^27.5.1",
       "lint-staged": "^17.0.7",
       "prettier": "^3.8.3",
+      "supertest": "^7.2.2",
       "typescript": "^4.9.5",
       "vite": "^8.0.14"
    },
