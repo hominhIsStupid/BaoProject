@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const articleRepository = require('../Repositories/articleRepository');
-const categoryRepository = require('../Repositories/categoryRepository');
-const userRepository = require('../Repositories/userRepository');
+const articleRepository = require('../repositories/articleRepository');
+const categoryRepository = require('../repositories/categoryRepository');
+const userRepository = require('../repositories/userRepository');
 const { authMiddleware, roleMiddleware } = require('../middleware/auth');
 const { pool } = require('../config/database');
 

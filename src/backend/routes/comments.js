@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const commentRepository = require('../Repositories/commentRepository');
-const articleRepository = require('../Repositories/articleRepository');
-const notificationRepository = require('../Repositories/notificationRepository');
+const commentRepository = require('../repositories/commentRepository');
+const articleRepository = require('../repositories/articleRepository');
+const notificationRepository = require('../repositories/notificationRepository');
 const { authMiddleware, roleMiddleware, optionalAuth } = require('../middleware/auth');
 
 // Retrieve all comments (editors & admins only)

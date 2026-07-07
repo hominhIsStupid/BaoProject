@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const articleRepository = require('../Repositories/articleRepository');
-const userRepository = require('../Repositories/userRepository');
+const articleRepository = require('../repositories/articleRepository');
+const userRepository = require('../repositories/userRepository');
 const { authMiddleware, roleMiddleware } = require('../middleware/auth');
 const { pool } = require('../config/database');
-const notificationRepository = require('../Repositories/notificationRepository');
+const notificationRepository = require('../repositories/notificationRepository');
 
 // EDITOR ROUTES
 

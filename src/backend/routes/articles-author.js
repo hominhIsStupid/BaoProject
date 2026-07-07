@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const articleRepository = require('../Repositories/articleRepository');
-const userRepository = require('../Repositories/userRepository');
+const articleRepository = require('../repositories/articleRepository');
+const userRepository = require('../repositories/userRepository');
 const { authMiddleware, roleMiddleware } = require('../middleware/auth');
 
 // AUTHOR ROUTES

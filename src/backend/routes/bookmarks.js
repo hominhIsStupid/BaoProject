@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const bookmarkRepository = require('../Repositories/bookmarkRepository');
-const articleRepository = require('../Repositories/articleRepository');
+const bookmarkRepository = require('../repositories/bookmarkRepository');
+const articleRepository = require('../repositories/articleRepository');
 const { authMiddleware } = require('../middleware/auth');
 
 // Bookmark a published article (authenticated users)

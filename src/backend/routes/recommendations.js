@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const recommendationRepository = require('../Repositories/recommendationRepository');
+const recommendationRepository = require('../repositories/recommendationRepository');
 const { authMiddleware } = require('../middleware/auth');
 
 // ====== GET DAILY RECOMMENDATIONS ======
