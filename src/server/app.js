@@ -15,6 +15,7 @@ const commentsRoutes = require('../backend/routes/comments');
 const bookmarksRoutes = require('../backend/routes/bookmarks');
 const notificationsRoutes = require('../backend/routes/notifications');
 const recommendationRoutes = require('../backend/routes/recommendations');
+const weatherRoutes = require('../backend/routes/weather');
 
 // Create Express app
 const app = express();
@@ -43,6 +44,7 @@ app.use('/api/comments', commentsRoutes);
 app.use('/api/bookmarks', bookmarksRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/weather', weatherRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

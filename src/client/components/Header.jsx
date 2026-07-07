@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import styles from './Header.module.css';
 import ThemeToggle from './ThemeToggle/ThemeToggle';
 import { CATEGORIES } from '../../constant/global';
+import { useWeather } from '../../hooks/useWeather';
 
 const NAV_ITEMS = [
    { label: 'Trang Chủ', path: '/', id: 'home' },
@@ -26,6 +27,7 @@ function Header() {
    const searchRef = useRef(null);
 
    const [menuOpen, setMenuOpen] = useState(false);
+   const { weather, loading: weatherLoading } = useWeather('Hanoi');
    const [user, setUser] = useState(() => {
       const savedUser = localStorage.getItem('user');
       return savedUser ? JSON.parse(savedUser) : null;
@@ -217,11 +219,23 @@ function Header() {
                   <div className={styles.topRight}>
                      <ThemeToggle />
                      <div className={styles.weather}>
-                        <span className={styles.weatherIcon}>⛅</span>
-                        <div className={styles.weatherInfo}>
-                           <span className={styles.weatherCity}>Hà Nội</span>
-                           <span className={styles.weatherTemp}>28°C</span>
-                        </div>
+                        {weatherLoading ? (
+                           <span className={styles.weatherSkeleton}>—</span>
+                        ) : weather ? (
+                           <>
+                              <span className={styles.weatherIcon} title={weather.condition}>
+                                 {weather.icon}
+                              </span>
+                              <div className={styles.weatherInfo}>
+                                 <span className={styles.weatherCity}>{weather.city}</span>
+                                 <span className={styles.weatherTemp}>
+                                    {weather.tempC}°C · {weather.label}
+                                 </span>
+                              </div>
+                           </>
+                        ) : (
+                           <span className={styles.weatherCity}>—</span>
+                        )}
                      </div>
                      {user ? (
                         <div className={styles.userMenu}>
