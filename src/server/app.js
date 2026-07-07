@@ -28,15 +28,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const { startScraperService } = require('../backend/services/scraperService');
 
 // Initialize database (run pending migrations)
-initDatabase()
-   .then(() => {
-      // Bắt đầu cào dữ liệu định kỳ sau khi DB đã kết nối
-      // startScraperService();
-   })
-   .catch((err) => {
-      console.error('Failed to initialize database:', err);
-      process.exit(1);
-   });
+initDatabase().catch((err) => {
+   console.error('Failed to initialize database:', err);
+   process.exit(1);
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
