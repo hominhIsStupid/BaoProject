@@ -3,10 +3,11 @@ import { useState, useEffect, useRef } from 'react';
 import styles from './Header.module.css';
 import ThemeToggle from './ThemeToggle/ThemeToggle';
 import { CATEGORIES } from '../../constant/global';
+import { useWeather } from '../../hooks/useWeather';
 
 const NAV_ITEMS = [
    { label: 'Trang Chủ', path: '/', id: 'home' },
-   ...CATEGORIES.map(cat => ({ label: cat.name, path: `/category/${cat.slug}`, id: cat.id })),
+   ...CATEGORIES.map((cat) => ({ label: cat.name, path: `/category/${cat.slug}`, id: cat.id })),
 ];
 
 const WEEKDAYS = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
@@ -36,41 +37,41 @@ function getWeatherIcon(code) {
 const VIETNAM_CITIES = [
    // 6 Thành phố trực thuộc Trung ương
    { name: 'Hà Nội', lat: 21.0285, lon: 105.8542 },
-   { name: 'TP. Hồ Chí Minh', lat: 10.8231, lon: 106.6297 },  // HCM + Bình Dương + Bà Rịa-Vũng Tàu
-   { name: 'Đà Nẵng', lat: 16.0544, lon: 108.2022 },           // Đà Nẵng + Quảng Nam
-   { name: 'Hải Phòng', lat: 20.8449, lon: 106.6881 },          // Hải Phòng + Hải Dương
-   { name: 'Cần Thơ', lat: 10.0452, lon: 105.7469 },            // Cần Thơ + Hậu Giang + Sóc Trăng
+   { name: 'TP. Hồ Chí Minh', lat: 10.8231, lon: 106.6297 }, // HCM + Bình Dương + Bà Rịa-Vũng Tàu
+   { name: 'Đà Nẵng', lat: 16.0544, lon: 108.2022 }, // Đà Nẵng + Quảng Nam
+   { name: 'Hải Phòng', lat: 20.8449, lon: 106.6881 }, // Hải Phòng + Hải Dương
+   { name: 'Cần Thơ', lat: 10.0452, lon: 105.7469 }, // Cần Thơ + Hậu Giang + Sóc Trăng
    { name: 'Huế', lat: 16.4637, lon: 107.5909 },
    // 28 Tỉnh (sau sáp nhập)
    { name: 'Cao Bằng', lat: 22.6666, lon: 106.2578 },
-   { name: 'Điện Biên', lat: 21.3860, lon: 103.0230 },
+   { name: 'Điện Biên', lat: 21.386, lon: 103.023 },
    { name: 'Lai Châu', lat: 22.3964, lon: 103.4702 },
    { name: 'Lạng Sơn', lat: 21.8534, lon: 106.7614 },
-   { name: 'Sơn La', lat: 21.3270, lon: 103.9028 },
-   { name: 'Hà Tĩnh', lat: 18.3560, lon: 105.8877 },
+   { name: 'Sơn La', lat: 21.327, lon: 103.9028 },
+   { name: 'Hà Tĩnh', lat: 18.356, lon: 105.8877 },
    { name: 'Nghệ An', lat: 18.6733, lon: 105.6733 },
    { name: 'Thanh Hóa', lat: 19.8067, lon: 105.7852 },
    { name: 'Quảng Ninh', lat: 21.0064, lon: 107.2925 },
-   { name: 'Tuyên Quang', lat: 21.7768, lon: 105.2280 },        // Hà Giang + Tuyên Quang
-   { name: 'Lào Cai', lat: 22.3380, lon: 104.1488 },            // Yên Bái + Lào Cai
-   { name: 'Thái Nguyên', lat: 21.5928, lon: 105.8442 },        // Bắc Kạn + Thái Nguyên
-   { name: 'Bắc Ninh', lat: 21.1861, lon: 106.0763 },           // Bắc Giang + Bắc Ninh
-   { name: 'Phú Thọ', lat: 21.3225, lon: 105.4017 },            // Vĩnh Phúc + Hòa Bình + Phú Thọ
-   { name: 'Hưng Yên', lat: 20.6465, lon: 106.0512 },           // Hưng Yên + Thái Bình
-   { name: 'Ninh Bình', lat: 20.2506, lon: 105.9745 },          // Hà Nam + Nam Định + Ninh Bình
-   { name: 'Quảng Trị', lat: 16.7505, lon: 107.1854 },          // Quảng Bình + Quảng Trị
-   { name: 'Quảng Ngãi', lat: 15.1214, lon: 108.8044 },         // Quảng Ngãi + Kon Tum
-   { name: 'Bình Định', lat: 13.7765, lon: 109.2237 },           // Bình Định + Phú Yên
-   { name: 'Khánh Hòa', lat: 12.2585, lon: 109.0526 },          // Khánh Hòa + Ninh Thuận
-   { name: 'Đắk Lắk', lat: 12.7100, lon: 108.2378 },            // Đắk Lắk + Đắk Nông
+   { name: 'Tuyên Quang', lat: 21.7768, lon: 105.228 }, // Hà Giang + Tuyên Quang
+   { name: 'Lào Cai', lat: 22.338, lon: 104.1488 }, // Yên Bái + Lào Cai
+   { name: 'Thái Nguyên', lat: 21.5928, lon: 105.8442 }, // Bắc Kạn + Thái Nguyên
+   { name: 'Bắc Ninh', lat: 21.1861, lon: 106.0763 }, // Bắc Giang + Bắc Ninh
+   { name: 'Phú Thọ', lat: 21.3225, lon: 105.4017 }, // Vĩnh Phúc + Hòa Bình + Phú Thọ
+   { name: 'Hưng Yên', lat: 20.6465, lon: 106.0512 }, // Hưng Yên + Thái Bình
+   { name: 'Ninh Bình', lat: 20.2506, lon: 105.9745 }, // Hà Nam + Nam Định + Ninh Bình
+   { name: 'Quảng Trị', lat: 16.7505, lon: 107.1854 }, // Quảng Bình + Quảng Trị
+   { name: 'Quảng Ngãi', lat: 15.1214, lon: 108.8044 }, // Quảng Ngãi + Kon Tum
+   { name: 'Bình Định', lat: 13.7765, lon: 109.2237 }, // Bình Định + Phú Yên
+   { name: 'Khánh Hòa', lat: 12.2585, lon: 109.0526 }, // Khánh Hòa + Ninh Thuận
+   { name: 'Đắk Lắk', lat: 12.71, lon: 108.2378 }, // Đắk Lắk + Đắk Nông
    { name: 'Gia Lai', lat: 13.9752, lon: 108.0005 },
-   { name: 'Lâm Đồng', lat: 11.9404, lon: 108.4583 },           // Lâm Đồng + Bình Thuận
-   { name: 'Đồng Nai', lat: 10.9415, lon: 106.8246 },           // Bình Phước + Đồng Nai
-   { name: 'Tây Ninh', lat: 11.3184, lon: 106.0985 },            // Long An + Tây Ninh
-   { name: 'Đồng Tháp', lat: 10.4938, lon: 105.6882 },          // Tiền Giang + Đồng Tháp
-   { name: 'Vĩnh Long', lat: 10.2537, lon: 105.9722 },          // Bến Tre + Trà Vinh + Vĩnh Long
-   { name: 'An Giang', lat: 10.3899, lon: 105.4353 },            // An Giang + Kiên Giang
-   { name: 'Cà Mau', lat: 9.1527, lon: 105.1961 },              // Bạc Liêu + Cà Mau
+   { name: 'Lâm Đồng', lat: 11.9404, lon: 108.4583 }, // Lâm Đồng + Bình Thuận
+   { name: 'Đồng Nai', lat: 10.9415, lon: 106.8246 }, // Bình Phước + Đồng Nai
+   { name: 'Tây Ninh', lat: 11.3184, lon: 106.0985 }, // Long An + Tây Ninh
+   { name: 'Đồng Tháp', lat: 10.4938, lon: 105.6882 }, // Tiền Giang + Đồng Tháp
+   { name: 'Vĩnh Long', lat: 10.2537, lon: 105.9722 }, // Bến Tre + Trà Vinh + Vĩnh Long
+   { name: 'An Giang', lat: 10.3899, lon: 105.4353 }, // An Giang + Kiên Giang
+   { name: 'Cà Mau', lat: 9.1527, lon: 105.1961 }, // Bạc Liêu + Cà Mau
 ];
 
 function getWeatherDescription(code) {
@@ -96,6 +97,7 @@ function Header() {
    const navRowRef = useRef(null);
 
    const [menuOpen, setMenuOpen] = useState(false);
+   const { weather, loading: weatherLoading } = useWeather('Hanoi');
    const [user, setUser] = useState(() => {
       const savedUser = localStorage.getItem('user');
       return savedUser ? JSON.parse(savedUser) : null;
@@ -116,7 +118,7 @@ function Header() {
 
    // Reusable weather fetch function
    const fetchWeatherForCity = async (lat, lon, cityName) => {
-      setWeatherData(prev => ({ ...prev, loading: true }));
+      setWeatherData((prev) => ({ ...prev, loading: true }));
       try {
          const res = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FHo_Chi_Minh`
@@ -133,7 +135,7 @@ function Header() {
             localStorage.setItem('weather_city', JSON.stringify({ name: cityName, lat, lon }));
          }
       } catch {
-         setWeatherData(prev => ({ ...prev, city: cityName, loading: false }));
+         setWeatherData((prev) => ({ ...prev, city: cityName, loading: false }));
       }
    };
 
@@ -196,14 +198,14 @@ function Header() {
    }, []);
 
    const filteredCities = citySearch.trim()
-      ? VIETNAM_CITIES.filter(c => c.name.toLowerCase().includes(citySearch.toLowerCase()))
+      ? VIETNAM_CITIES.filter((c) => c.name.toLowerCase().includes(citySearch.toLowerCase()))
       : VIETNAM_CITIES;
 
    // Drag-to-scroll for nav bar
    useEffect(() => {
       const navRow = navRowRef.current;
       if (!navRow) return;
-      
+
       let isDown = false;
       let startX;
       let scrollLeft;
@@ -315,7 +317,15 @@ function Header() {
             <div className={styles.container}>
                <div className={styles.infoRow}>
                   <div className={styles.dateSection}>
-                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}>
+                     <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        style={{ flexShrink: 0 }}
+                     >
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                         <line x1="16" y1="2" x2="16" y2="6" />
                         <line x1="8" y1="2" x2="8" y2="6" />
@@ -323,16 +333,24 @@ function Header() {
                      </svg>
                      <span>{dateStr}</span>
                   </div>
-                  
+
                   {/* Quick Links */}
                   <div className={styles.quickLinks}>
-                     <Link to="/category/tin-moi" className={styles.quickLink}>Mới nhất</Link>
+                     <Link to="/category/tin-moi" className={styles.quickLink}>
+                        Mới nhất
+                     </Link>
                      <span className={styles.divider}>|</span>
-                     <Link to="/category/thoi-su" className={styles.quickLink}>Thời sự</Link>
+                     <Link to="/category/thoi-su" className={styles.quickLink}>
+                        Thời sự
+                     </Link>
                      <span className={styles.divider}>|</span>
-                     <Link to="/category/kinh-doanh" className={styles.quickLink}>Kinh doanh</Link>
+                     <Link to="/category/kinh-doanh" className={styles.quickLink}>
+                        Kinh doanh
+                     </Link>
                      <span className={styles.divider}>|</span>
-                     <Link to="/category/the-gioi" className={styles.quickLink}>Quốc tế</Link>
+                     <Link to="/category/the-gioi" className={styles.quickLink}>
+                        Quốc tế
+                     </Link>
                   </div>
                   <div className={styles.infoRight} ref={cityPickerRef}>
                      <div className={styles.weatherBadge}>
@@ -340,29 +358,41 @@ function Header() {
                            <span className={styles.weatherLoading}>Đang tải...</span>
                         ) : (
                            <>
-                              <span className={styles.weatherEmoji}>
-                                 {getWeatherIcon(weatherData.weatherCode)}
-                              </span>
+                              <span className={styles.weatherEmoji}>{getWeatherIcon(weatherData.weatherCode)}</span>
                               <div className={styles.weatherDetails}>
                                  <button
                                     className={styles.weatherCityBtn}
                                     onClick={() => setShowCityPicker(!showCityPicker)}
                                     title="Đổi thành phố"
                                  >
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '3px', flexShrink: 0 }}>
+                                    <svg
+                                       width="10"
+                                       height="10"
+                                       viewBox="0 0 24 24"
+                                       fill="currentColor"
+                                       style={{ marginRight: '3px', flexShrink: 0 }}
+                                    >
                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                     </svg>
                                     {weatherData.city}
-                                    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginLeft: '3px' }}>
+                                    <svg
+                                       width="8"
+                                       height="8"
+                                       viewBox="0 0 24 24"
+                                       fill="none"
+                                       stroke="currentColor"
+                                       strokeWidth="3"
+                                       style={{ marginLeft: '3px' }}
+                                    >
                                        <polyline points="6 9 12 15 18 9" />
                                     </svg>
                                  </button>
                                  <span className={styles.weatherTemp}>{weatherData.temp}°C</span>
-                                 <span className={styles.weatherDesc}>{getWeatherDescription(weatherData.weatherCode)}</span>
+                                 <span className={styles.weatherDesc}>
+                                    {getWeatherDescription(weatherData.weatherCode)}
+                                 </span>
                                  {weatherData.humidity !== null && (
-                                    <span className={styles.weatherHumidity}>
-                                       💧 {weatherData.humidity}%
-                                    </span>
+                                    <span className={styles.weatherHumidity}>💧 {weatherData.humidity}%</span>
                                  )}
                               </div>
                            </>
@@ -373,7 +403,14 @@ function Header() {
                      {showCityPicker && (
                         <div className={styles.cityPicker}>
                            <div className={styles.citySearchWrapper}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <svg
+                                 width="14"
+                                 height="14"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 strokeWidth="2"
+                              >
                                  <circle cx="11" cy="11" r="8" />
                                  <path d="m21 21-4.35-4.35" />
                               </svg>
@@ -390,13 +427,19 @@ function Header() {
                               {filteredCities.length === 0 ? (
                                  <div className={styles.cityEmpty}>Không tìm thấy</div>
                               ) : (
-                                 filteredCities.map(city => (
+                                 filteredCities.map((city) => (
                                     <button
                                        key={city.name}
                                        className={`${styles.cityItem} ${weatherData.city === city.name ? styles.cityItemActive : ''}`}
                                        onClick={() => handleCitySelect(city)}
                                     >
-                                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0, opacity: 0.5 }}>
+                                       <svg
+                                          width="12"
+                                          height="12"
+                                          viewBox="0 0 24 24"
+                                          fill="currentColor"
+                                          style={{ flexShrink: 0, opacity: 0.5 }}
+                                       >
                                           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                        </svg>
                                        {city.name}
@@ -436,7 +479,9 @@ function Header() {
                            placeholder="Tìm kiếm tin tức..."
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
-                           onFocus={() => { if(searchQuery.trim()) setShowDropdown(true); }}
+                           onFocus={() => {
+                              if (searchQuery.trim()) setShowDropdown(true);
+                           }}
                            aria-label="Tìm kiếm tin tức"
                            autoComplete="off"
                         />
@@ -458,7 +503,16 @@ function Header() {
                      {/* Hot Tags */}
                      <div className={styles.hotTags}>
                         <span className={styles.hotTagsLabel}>
-                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                           <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                           >
                               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
                               <polyline points="17 6 23 6 23 12"></polyline>
                            </svg>
@@ -483,11 +537,14 @@ function Header() {
                                        <h4 className={styles.suggestionHeader}>Từ khóa liên quan</h4>
                                        <div className={styles.tagList}>
                                           {suggestions.tags.map((tag, idx) => (
-                                             <Link 
-                                                key={idx} 
+                                             <Link
+                                                key={idx}
                                                 to={`/search?q=${encodeURIComponent(tag)}`}
                                                 className={styles.suggestionTag}
-                                                onClick={() => { setSearchQuery(tag); setShowDropdown(false); }}
+                                                onClick={() => {
+                                                   setSearchQuery(tag);
+                                                   setShowDropdown(false);
+                                                }}
                                              >
                                                 # {tag}
                                              </Link>
@@ -500,18 +557,26 @@ function Header() {
                                     <div className={styles.suggestionSection}>
                                        <h4 className={styles.suggestionHeader}>Bài viết đề xuất</h4>
                                        <div className={styles.articleList}>
-                                          {suggestions.articles.map(article => (
-                                             <Link 
-                                                key={article.id} 
+                                          {suggestions.articles.map((article) => (
+                                             <Link
+                                                key={article.id}
                                                 to={`/article/${article.id}`}
                                                 className={styles.suggestionArticle}
                                                 onClick={() => setShowDropdown(false)}
                                              >
                                                 <div className={styles.suggestionImageWrapper}>
-                                                   <img src={article.image || 'https://via.placeholder.com/50x50?text=News'} alt={article.title} className={styles.suggestionImage} />
+                                                   <img
+                                                      src={
+                                                         article.image || 'https://via.placeholder.com/50x50?text=News'
+                                                      }
+                                                      alt={article.title}
+                                                      className={styles.suggestionImage}
+                                                   />
                                                 </div>
                                                 <div className={styles.suggestionArticleInfo}>
-                                                   <span className={styles.suggestionArticleTitle}>{article.title}</span>
+                                                   <span className={styles.suggestionArticleTitle}>
+                                                      {article.title}
+                                                   </span>
                                                    <span className={styles.suggestionArticleCat}>
                                                       {article.category.toUpperCase()}
                                                    </span>
@@ -539,36 +604,50 @@ function Header() {
                                  ) : (
                                     <div className={styles.avatarPlaceholder}>
                                        {user.fullName ? user.fullName.charAt(0) : 'U'}
-                                     </div>
+                                    </div>
                                  )}
                               </div>
                               <span className={styles.userName}>{user.fullName}</span>
                            </Link>
-                           
+
                            {user.role === 'author' && (
-                              <Link to="/author" className={styles.authorLink} id="header-author-link" title="Quản lý bài viết">
+                              <Link
+                                 to="/author"
+                                 className={styles.authorLink}
+                                 id="header-author-link"
+                                 title="Quản lý bài viết"
+                              >
                                  ✍️
                               </Link>
                            )}
                            {user.role === 'editor' && (
-                              <Link to="/editor" className={styles.editorLink} id="header-editor-link" title="Duyệt bài viết">
+                              <Link
+                                 to="/editor"
+                                 className={styles.editorLink}
+                                 id="header-editor-link"
+                                 title="Duyệt bài viết"
+                              >
                                  📋
                               </Link>
                            )}
                            {user.role === 'admin' && (
-                              <Link to="/admin" className={styles.adminLink} id="header-admin-link" title="Quản lý hệ thống">
+                              <Link
+                                 to="/admin"
+                                 className={styles.adminLink}
+                                 id="header-admin-link"
+                                 title="Quản lý hệ thống"
+                              >
                                  ⚙️
                               </Link>
                            )}
-                           
-                           <button 
+
+                           <button
                               onClick={() => {
                                  localStorage.removeItem('auth_token');
                                  localStorage.removeItem('user');
                                  window.location.href = '/';
-                              }} 
-                              className={styles.btnLogout} 
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}
+                              }}
+                              className={styles.btnLogout}
                               title="Đăng xuất"
                            >
                               🚪
@@ -594,8 +673,7 @@ function Header() {
             <div className={styles.navRow} ref={navRowRef}>
                {NAV_ITEMS.map((item) => {
                   const isActive =
-                     location.pathname === item.path ||
-                     (item.path !== '/' && location.pathname.startsWith(item.path));
+                     location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
                   return (
                      <Link
                         key={item.id}
@@ -636,7 +714,7 @@ function Header() {
             <div className={styles.megaMenuContainer}>
                <h3 className={styles.megaMenuTitle}>TẤT CẢ CHUYÊN MỤC</h3>
                <div className={styles.megaMenuGrid}>
-                  {CATEGORIES.map(cat => (
+                  {CATEGORIES.map((cat) => (
                      <Link
                         key={cat.id}
                         to={`/category/${cat.slug}`}

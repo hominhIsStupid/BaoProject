@@ -30,14 +30,16 @@ const { startScraperService } = require('../backend/services/scraperService');
 const { startResearchScraperService } = require('../backend/services/researchScraperService');
 
 // Initialize database (run pending migrations)
-initDatabase().then(() => {
-  // Bắt đầu cào dữ liệu định kỳ sau khi DB đã kết nối
-  startScraperService();
-  startResearchScraperService();
-}).catch((err) => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
-});
+initDatabase()
+   .then(() => {
+      // Bắt đầu cào dữ liệu định kỳ sau khi DB đã kết nối
+      startScraperService();
+      startResearchScraperService();
+   })
+   .catch((err) => {
+      console.error('Failed to initialize database:', err);
+      process.exit(1);
+   });
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -53,21 +55,21 @@ app.use('/api/research', researchRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
+   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    message: err.message || 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err : {}
-  });
+   console.error('Error:', err);
+   res.status(err.status || 500).json({
+      message: err.message || 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? err : {},
+   });
 });
 
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
+   console.log(`Server is running on port ${PORT}`);
+   console.log(`Environment: ${process.env.NODE_ENV}`);
 });

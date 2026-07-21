@@ -20,11 +20,29 @@ const mockUsersManager = {
    getUsers: () => {
       const usersStr = localStorage.getItem('mock_users_db');
       if (usersStr) return JSON.parse(usersStr);
-      
+
       // Seed default users if none exists
       const defaultUsers = [
-         { id: 'admin-1', email: 'admin@baorong.com', fullName: 'Quản Trị Viên', role: 'admin', status: 'active', balance: 99999999, plan: 'pro', planExpiry: new Date(2100, 0, 1).toISOString() },
-         { id: 'user-1', email: 'guest@baorong.com', fullName: 'Độc Giả', role: 'guest', status: 'active', balance: 250000, plan: null, planExpiry: null },
+         {
+            id: 'admin-1',
+            email: 'admin@baorong.com',
+            fullName: 'Quản Trị Viên',
+            role: 'admin',
+            status: 'active',
+            balance: 99999999,
+            plan: 'pro',
+            planExpiry: new Date(2100, 0, 1).toISOString(),
+         },
+         {
+            id: 'user-1',
+            email: 'guest@baorong.com',
+            fullName: 'Độc Giả',
+            role: 'guest',
+            status: 'active',
+            balance: 250000,
+            plan: null,
+            planExpiry: null,
+         },
       ];
       localStorage.setItem('mock_users_db', JSON.stringify(defaultUsers));
       return defaultUsers;
@@ -34,7 +52,7 @@ const mockUsersManager = {
    },
    getUserByEmail: (email) => {
       const users = mockUsersManager.getUsers();
-      return users.find(u => u.email === email);
+      return users.find((u) => u.email === email);
    },
    createUser: (userData) => {
       const users = mockUsersManager.getUsers();
@@ -46,7 +64,7 @@ const mockUsersManager = {
          status: 'active',
          balance: 0,
          plan: null,
-         planExpiry: null
+         planExpiry: null,
       };
       users.push(newUser);
       mockUsersManager.saveUsers(users);
@@ -54,12 +72,12 @@ const mockUsersManager = {
    },
    updateWallet: (id, balanceAdd, newPlan) => {
       const users = mockUsersManager.getUsers();
-      const userIndex = users.findIndex(u => u.id === id);
+      const userIndex = users.findIndex((u) => u.id === id);
       if (userIndex === -1) throw new Error('User not found');
-      
+
       const user = users[userIndex];
       user.balance = (user.balance || 0) + (Number(balanceAdd) || 0);
-      
+
       if (newPlan && newPlan !== 'none') {
          user.plan = newPlan;
          // Set expiry to 30 days from now
@@ -70,11 +88,11 @@ const mockUsersManager = {
          user.plan = null;
          user.planExpiry = null;
       }
-      
+
       users[userIndex] = user;
       mockUsersManager.saveUsers(users);
       return user;
-   }
+   },
 };
 
 // Default headers with token
@@ -232,7 +250,7 @@ const getMockFallback = (method, endpoint, data) => {
             throw new Error('Unauthorized');
          }
          // Refresh user data from mock DB to get latest balance/plan
-         const dbUser = mockUsersManager.getUsers().find(u => u.id === user.id);
+         const dbUser = mockUsersManager.getUsers().find((u) => u.id === user.id);
          if (dbUser) {
             user = { ...user, ...dbUser };
             tokenStorage.setUser(user);
@@ -297,23 +315,39 @@ const getMockFallback = (method, endpoint, data) => {
       // Login: /auth/login
       if (path === '/auth/login') {
          const email = data?.email || 'guest@baorong.com';
-         
+
          let dbUser = mockUsersManager.getUserByEmail(email);
          if (!dbUser) {
             // Auto create if not found for testing flexibility
-            const role = email.includes('admin') ? 'admin' : email.includes('editor') ? 'editor' : email.includes('author') ? 'author' : 'guest';
-            const fullName = role === 'admin' ? 'Quản Trị Viên' : role === 'editor' ? 'Biên Tập Viên' : role === 'author' ? 'Tác Giả' : 'Độc Giả';
+            const role = email.includes('admin')
+               ? 'admin'
+               : email.includes('editor')
+                 ? 'editor'
+                 : email.includes('author')
+                   ? 'author'
+                   : 'guest';
+            const fullName =
+               role === 'admin'
+                  ? 'Quản Trị Viên'
+                  : role === 'editor'
+                    ? 'Biên Tập Viên'
+                    : role === 'author'
+                      ? 'Tác Giả'
+                      : 'Độc Giả';
             dbUser = mockUsersManager.createUser({ email, fullName, role });
          }
 
          // Ensure wallet is sync'd to rongvang_wallet for backward compatibility with frontend mock
-         localStorage.setItem('rongvang_wallet', JSON.stringify({
-            balance: dbUser.balance,
-            plan: dbUser.plan,
-            planExpiry: dbUser.planExpiry,
-            dailyUsed: 0,
-            monthlyUsed: 0
-         }));
+         localStorage.setItem(
+            'rongvang_wallet',
+            JSON.stringify({
+               balance: dbUser.balance,
+               plan: dbUser.plan,
+               planExpiry: dbUser.planExpiry,
+               dailyUsed: 0,
+               monthlyUsed: 0,
+            })
+         );
 
          return {
             token: 'mock-jwt-token',
@@ -330,17 +364,20 @@ const getMockFallback = (method, endpoint, data) => {
          const newUser = mockUsersManager.createUser({
             email,
             fullName: data?.fullName || 'Người Dùng Mới',
-            role: data?.role || 'guest'
+            role: data?.role || 'guest',
          });
-         
+
          // Ensure wallet is sync'd
-         localStorage.setItem('rongvang_wallet', JSON.stringify({
-            balance: newUser.balance,
-            plan: newUser.plan,
-            planExpiry: newUser.planExpiry,
-            dailyUsed: 0,
-            monthlyUsed: 0
-         }));
+         localStorage.setItem(
+            'rongvang_wallet',
+            JSON.stringify({
+               balance: newUser.balance,
+               plan: newUser.plan,
+               planExpiry: newUser.planExpiry,
+               dailyUsed: 0,
+               monthlyUsed: 0,
+            })
+         );
 
          return {
             token: 'mock-jwt-token',
@@ -383,20 +420,21 @@ const apiCall = async (method, endpoint, data = null) => {
 
    try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-
-      if (response.status === 401) {
-         tokenStorage.clearToken();
-         tokenStorage.clearUser();
-         window.location.href = '/login';
-         throw new Error('Session expired');
-      }
-
       const responseData = await response.json();
 
       if (!response.ok) {
          const err = new Error(responseData.message || 'API error');
          err.status = response.status;
          throw err;
+      }
+
+      if (response.status === 401) {
+         tokenStorage.clearToken();
+         tokenStorage.clearUser();
+         if (window.location.pathname !== '/login') {
+            window.location.href = '/login';
+         }
+         throw new Error(responseData);
       }
 
       // Save to cache for GET requests
@@ -408,16 +446,16 @@ const apiCall = async (method, endpoint, data = null) => {
       return responseData;
    } catch (error) {
       // Do not use mock fallback for auth or validation errors from server
-      if (error.status === 400 || error.status === 401 || error.status === 403) {
-         throw error;
-      }
-      console.warn(`API call failed for ${method} ${endpoint}, falling back to mock data:`, error.message);
-      try {
-         return getMockFallback(method, endpoint, data);
-      } catch (fallbackError) {
-         console.error('Fallback failed:', fallbackError);
-         throw error;
-      }
+      // if (error.status === 400 || error.status === 401 || error.status === 403) {
+      throw error;
+      // }
+      // console.warn(`API call failed for ${method} ${endpoint}, falling back to mock data:`, error.message);
+      // try {
+      //    return getMockFallback(method, endpoint, data);
+      // } catch (fallbackError) {
+      //    console.error('Fallback failed:', fallbackError);
+      //    throw error;
+      // }
    }
 };
 
@@ -567,25 +605,20 @@ const notificationsAPI = {
 
 // RECOMMENDATION API
 const recommendationAPI = {
-   trackRead: (articleId, category) =>
-      apiCall('POST', '/recommendations/track-read', { articleId, category }),
+   trackRead: (articleId, category) => apiCall('POST', '/recommendations/track-read', { articleId, category }),
 
-   like: (articleId, category) =>
-      apiCall('POST', `/recommendations/${articleId}/like`, { category }),
+   like: (articleId, category) => apiCall('POST', `/recommendations/${articleId}/like`, { category }),
 
-   unlike: (articleId) =>
-      apiCall('DELETE', `/recommendations/${articleId}/like`),
+   unlike: (articleId) => apiCall('DELETE', `/recommendations/${articleId}/like`),
 
-   getLikeStatus: (articleId) =>
-      apiCall('GET', `/recommendations/${articleId}/like-status`),
+   getLikeStatus: (articleId) => apiCall('GET', `/recommendations/${articleId}/like-status`),
 
    getRecommendations: (limit = 12) => apiCall('GET', `/recommendations/recommendations?limit=${limit}`),
    getPopular: (limit = 12) => apiCall('GET', `/recommendations/popular?limit=${limit}`),
    getDaily: (limit = 6) => apiCall('GET', `/recommendations/daily?limit=${limit}`),
    trackRead: (articleId, category) => apiCall('POST', '/recommendations/track-read', { articleId, category }),
 
-   getPreferences: () =>
-      apiCall('GET', '/recommendations/preferences'),
+   getPreferences: () => apiCall('GET', '/recommendations/preferences'),
 };
 
 export {
@@ -601,4 +634,3 @@ export {
    recommendationAPI,
    apiCall,
 };
-

@@ -30,40 +30,30 @@ export default function ThemeToggle() {
       // Step 2: Wait one browser frame so the transition class is applied
       // before we trigger the color change
       requestAnimationFrame(() => {
-         requestAnimationFrame(() => {
+         // Step 3: Now apply the theme — all CSS variable-dependent colors
+         // will smoothly interpolate over 1.8s because we added the transition class
+         setIsDark(newDark);
+         if (newDark) {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('theme', 'dark');
+         } else {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('theme', 'light');
+         }
 
-            // Step 3: Now apply the theme — all CSS variable-dependent colors
-            // will smoothly interpolate over 1.8s because we added the transition class
-            setIsDark(newDark);
-            if (newDark) {
-               document.body.classList.remove('light-theme');
-               localStorage.setItem('theme', 'dark');
-            } else {
-               document.body.classList.add('light-theme');
-               localStorage.setItem('theme', 'light');
-            }
-
-            // Step 4: Remove the transition class after the animation completes (2s)
-            // so normal hover / other transitions remain snappy
-            setTimeout(() => {
-               document.body.classList.remove('theme-transitioning');
-               isAnimating.current = false;
-            }, 2100);
-
-         });
+         // Step 4: Remove the transition class after the animation completes (2s)
+         // so normal hover / other transitions remain snappy
+         const removeTransition = 510;
+         setTimeout(() => {
+            document.body.classList.remove('theme-transitioning');
+            isAnimating.current = false;
+         }, removeTransition);
       });
-
    }, [isDark]);
 
    return (
-      <div
-         className={styles.toggleContainer}
-         title="Chuyển chế độ: Sáng / Tối"
-      >
-         <div
-            className={`${styles.toggleSwitch} ${isDark ? styles.isDark : ''}`}
-            onClick={handleToggle}
-         >
+      <div className={styles.toggleContainer} title="Chuyển chế độ: Sáng / Tối">
+         <div className={`${styles.toggleSwitch}`} onClick={handleToggle}>
             {/* Sun Icon */}
             <svg
                className={`${styles.icon} ${styles.sunIcon} ${!isDark ? styles.iconActive : styles.iconInactive}`}
@@ -87,7 +77,7 @@ export default function ThemeToggle() {
             </svg>
 
             {/* Metallic Knob */}
-            <div className={`${styles.thumb} ${isDark ? styles.thumbRight : styles.thumbLeft}`}>
+            <div id="thumb" className={`${styles.thumb} ${isDark ? styles.thumbDark : ''}`}>
                <div className={styles.thumbInner}></div>
             </div>
 

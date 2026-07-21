@@ -479,6 +479,24 @@
    transform: translateY(-1px);
 }
 
+.btnLogout:hover {
+   background: var(--gold-glow);
+   box-shadow: var(--shadow-gold-glow);
+   color: var(--text-white);
+}
+
+.btnLogout {
+   padding: 0.4rem 0.5rem;
+   border: 1px solid var(--gold-primary);
+   border-radius: 6px;
+   color: var(--gold-primary);
+   font-size: 0.85rem;
+   font-weight: 600;
+   background: transparent;
+   transition: var(--transition-fast);
+   white-space: nowrap;
+}
+
 /* ============ NAV BAR ============ */
 .navBar {
    position: relative;
@@ -581,6 +599,7 @@
    .topRow {
       gap: 0.75rem;
    }
+
    .searchForm {
       max-width: 300px;
    }
@@ -600,12 +619,15 @@
    .logoTitle {
       font-size: 1rem;
    }
+
    .logoSub {
       display: none;
    }
+
    .searchForm {
       max-width: 200px;
    }
+
    .btnLogin {
       display: none;
    }
@@ -734,7 +756,6 @@
    text-overflow: ellipsis;
 }
 
-
 /* --- Search Suggestions Dropdown --- */
 .searchDropdown {
    position: absolute;
@@ -761,6 +782,7 @@
       opacity: 0;
       transform: translateY(-8px);
    }
+
    to {
       opacity: 1;
       transform: translateY(0);
@@ -898,7 +920,7 @@ body:not(.light-theme) .suggestionArticle:hover {
    padding: 2rem 0;
 }
 
-:global([data-theme="dark"]) .megaMenuOverlay {
+body:not(.light-theme) .megaMenuOverlay {
    background: rgba(18, 18, 18, 0.95);
 }
 
