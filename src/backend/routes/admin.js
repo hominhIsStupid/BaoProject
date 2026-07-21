@@ -31,8 +31,8 @@ router.post('/articles/:id/publish', authMiddleware, roleMiddleware(['admin']), 
       return res.status(404).json({ message: 'Article not found' });
     }
 
-    if (article.status !== 'approved') {
-      return res.status(400).json({ message: 'Only approved articles can be published' });
+    if (article.status !== 'approved' && article.status !== 'pending') {
+      return res.status(400).json({ message: 'Only approved or pending articles can be published' });
     }
 
     await articleRepository.updateStatus(req.params.id, 'published');

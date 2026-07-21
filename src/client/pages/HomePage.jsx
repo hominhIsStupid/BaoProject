@@ -235,6 +235,7 @@ function HomePage() {
    const [articles, setArticles] = useState(initialArticles);
    const [recommendations, setRecommendations] = useState([]);
    const [dailyHighlights, setDailyHighlights] = useState([]);
+   const [researchArticles, setResearchArticles] = useState([]);
    const [loading, setLoading] = useState(!cachedData);
    const [error, setError] = useState(null);
    const loggedInUser = tokenStorage.getUser();
@@ -270,6 +271,17 @@ function HomePage() {
                setDailyHighlights(uniqueDaily);
             } catch (dailyErr) {
                console.error('Daily highlights error:', dailyErr);
+            }
+
+            // Fetch Research Articles
+            try {
+               const researchRes = await fetch('/api/research?limit=4');
+               if (researchRes.ok) {
+                  const researchData = await researchRes.json();
+                  setResearchArticles(researchData.articles || []);
+               }
+            } catch (rErr) {
+               console.error('Failed to fetch research articles:', rErr);
             }
 
             setLoading(false);
@@ -402,6 +414,46 @@ function HomePage() {
                   articles={dailyHighlights}
                   accentColor="#FF4757"
                />
+            </div>
+         )}
+
+         {/* ========== NGHIÊN CỨU KHOA HỌC ========== */}
+         {researchArticles.length > 0 && (
+            <div className={styles.container} style={{ marginTop: '3rem' }}>
+               <div className={styles.sectionHead}>
+                  <div className={styles.sectionHeadLeft}>
+                     <span className={styles.sectionIcon}>🔬</span>
+                     <h2 className={styles.sectionName}>Nghiên cứu khoa học</h2>
+                  </div>
+                  <Link to="/research" className={styles.viewAll}>
+                     Xem tất cả →
+                  </Link>
+               </div>
+               <div className={styles.recGrid}>
+                  {researchArticles.map(article => (
+                     <Link key={article.id} to={`/research/${article.id}`} className={styles.recCard}>
+                        <div className={styles.recImgWrap}>
+                           <img
+                              src={article.thumbnail || 'https://via.placeholder.com/400x250?text=Research'}
+                              alt={article.title}
+                              className={styles.recImg}
+                              loading="lazy"
+                           />
+                           <span className={styles.catBadge} style={{ background: '#2c3e50' }}>{article.category}</span>
+                        </div>
+                        <div className={styles.recContent}>
+                           <h3 className={styles.recTitle}>{article.title}</h3>
+                           <div className={styles.recMeta}>
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>👤 {article.author}</span>
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>⏱ {article.readingTime} phút đọc</span>
+                              <span style={{ color: 'var(--gold-primary)', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                                 🔒 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(article.price || 50000)}
+                              </span>
+                           </div>
+                        </div>
+                     </Link>
+                  ))}
+               </div>
             </div>
          )}
 

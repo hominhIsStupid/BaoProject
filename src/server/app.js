@@ -15,6 +15,7 @@ const commentsRoutes = require('../backend/routes/comments');
 const bookmarksRoutes = require('../backend/routes/bookmarks');
 const notificationsRoutes = require('../backend/routes/notifications');
 const recommendationRoutes = require('../backend/routes/recommendations');
+const researchRoutes = require('../backend/routes/research');
 
 // Create Express app
 const app = express();
@@ -26,11 +27,13 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 const { startScraperService } = require('../backend/services/scraperService');
+const { startResearchScraperService } = require('../backend/services/researchScraperService');
 
 // Initialize database (run pending migrations)
 initDatabase().then(() => {
   // Bắt đầu cào dữ liệu định kỳ sau khi DB đã kết nối
   startScraperService();
+  startResearchScraperService();
 }).catch((err) => {
   console.error('Failed to initialize database:', err);
   process.exit(1);
@@ -46,6 +49,7 @@ app.use('/api/comments', commentsRoutes);
 app.use('/api/bookmarks', bookmarksRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/research', researchRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

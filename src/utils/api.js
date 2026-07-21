@@ -15,6 +15,68 @@ const tokenStorage = {
    clearUser: () => localStorage.removeItem('user'),
 };
 
+// ─── MOCK USERS MANAGER (Simulating Database) ───
+const mockUsersManager = {
+   getUsers: () => {
+      const usersStr = localStorage.getItem('mock_users_db');
+      if (usersStr) return JSON.parse(usersStr);
+      
+      // Seed default users if none exists
+      const defaultUsers = [
+         { id: 'admin-1', email: 'admin@baorong.com', fullName: 'Quản Trị Viên', role: 'admin', status: 'active', balance: 99999999, plan: 'pro', planExpiry: new Date(2100, 0, 1).toISOString() },
+         { id: 'user-1', email: 'guest@baorong.com', fullName: 'Độc Giả', role: 'guest', status: 'active', balance: 250000, plan: null, planExpiry: null },
+      ];
+      localStorage.setItem('mock_users_db', JSON.stringify(defaultUsers));
+      return defaultUsers;
+   },
+   saveUsers: (users) => {
+      localStorage.setItem('mock_users_db', JSON.stringify(users));
+   },
+   getUserByEmail: (email) => {
+      const users = mockUsersManager.getUsers();
+      return users.find(u => u.email === email);
+   },
+   createUser: (userData) => {
+      const users = mockUsersManager.getUsers();
+      const newUser = {
+         id: 'user-' + Date.now(),
+         email: userData.email,
+         fullName: userData.fullName || 'Người Dùng Mới',
+         role: userData.role || 'guest',
+         status: 'active',
+         balance: 0,
+         plan: null,
+         planExpiry: null
+      };
+      users.push(newUser);
+      mockUsersManager.saveUsers(users);
+      return newUser;
+   },
+   updateWallet: (id, balanceAdd, newPlan) => {
+      const users = mockUsersManager.getUsers();
+      const userIndex = users.findIndex(u => u.id === id);
+      if (userIndex === -1) throw new Error('User not found');
+      
+      const user = users[userIndex];
+      user.balance = (user.balance || 0) + (Number(balanceAdd) || 0);
+      
+      if (newPlan && newPlan !== 'none') {
+         user.plan = newPlan;
+         // Set expiry to 30 days from now
+         const expiry = new Date();
+         expiry.setDate(expiry.getDate() + 30);
+         user.planExpiry = expiry.toISOString();
+      } else if (newPlan === 'none') {
+         user.plan = null;
+         user.planExpiry = null;
+      }
+      
+      users[userIndex] = user;
+      mockUsersManager.saveUsers(users);
+      return user;
+   }
+};
+
 // Default headers with token
 const getHeaders = () => {
    const token = tokenStorage.getToken();
@@ -165,9 +227,15 @@ const getMockFallback = (method, endpoint, data) => {
 
       // 6. User profile /auth/me
       if (path === '/auth/me') {
-         const user = tokenStorage.getUser();
+         let user = tokenStorage.getUser();
          if (!user) {
             throw new Error('Unauthorized');
+         }
+         // Refresh user data from mock DB to get latest balance/plan
+         const dbUser = mockUsersManager.getUsers().find(u => u.id === user.id);
+         if (dbUser) {
+            user = { ...user, ...dbUser };
+            tokenStorage.setUser(user);
          }
          return user;
       }
@@ -191,11 +259,24 @@ const getMockFallback = (method, endpoint, data) => {
       if (path === '/comments') {
          return [];
       }
+
+      // 10. Admin users list
+      if (path === '/admin/users') {
+         return mockUsersManager.getUsers().slice(offset, offset + limit);
+      }
    }
 
    if (method === 'PUT') {
       if (path === '/auth/change-password') {
          return { message: 'Đổi mật khẩu thành công' };
+      }
+
+      // Admin update user wallet
+      const updateWalletMatch = path.match(/^\/admin\/users\/([a-zA-Z0-9-]+)\/wallet$/);
+      if (updateWalletMatch) {
+         const id = updateWalletMatch[1];
+         const updatedUser = mockUsersManager.updateWallet(id, data.addedBalance, data.plan);
+         return updatedUser;
       }
    }
 
@@ -216,42 +297,54 @@ const getMockFallback = (method, endpoint, data) => {
       // Login: /auth/login
       if (path === '/auth/login') {
          const email = data?.email || 'guest@baorong.com';
-         const role = email.includes('admin')
-            ? 'admin'
-            : email.includes('editor')
-              ? 'editor'
-              : email.includes('author')
-                ? 'author'
-                : 'guest';
-         const fullName =
-            role === 'admin'
-               ? 'Quản Trị Viên'
-               : role === 'editor'
-                 ? 'Biên Tập Viên'
-                 : role === 'author'
-                   ? 'Tác Giả'
-                   : 'Độc Giả';
+         
+         let dbUser = mockUsersManager.getUserByEmail(email);
+         if (!dbUser) {
+            // Auto create if not found for testing flexibility
+            const role = email.includes('admin') ? 'admin' : email.includes('editor') ? 'editor' : email.includes('author') ? 'author' : 'guest';
+            const fullName = role === 'admin' ? 'Quản Trị Viên' : role === 'editor' ? 'Biên Tập Viên' : role === 'author' ? 'Tác Giả' : 'Độc Giả';
+            dbUser = mockUsersManager.createUser({ email, fullName, role });
+         }
+
+         // Ensure wallet is sync'd to rongvang_wallet for backward compatibility with frontend mock
+         localStorage.setItem('rongvang_wallet', JSON.stringify({
+            balance: dbUser.balance,
+            plan: dbUser.plan,
+            planExpiry: dbUser.planExpiry,
+            dailyUsed: 0,
+            monthlyUsed: 0
+         }));
+
          return {
             token: 'mock-jwt-token',
-            user: {
-               id: 'mock-user-id',
-               email: email,
-               fullName: fullName,
-               role: role,
-            },
+            user: dbUser,
          };
       }
 
       // Register: /auth/register
       if (path === '/auth/register') {
+         const email = data?.email || 'newuser@baorong.com';
+         if (mockUsersManager.getUserByEmail(email)) {
+            throw new Error('Email đã được sử dụng');
+         }
+         const newUser = mockUsersManager.createUser({
+            email,
+            fullName: data?.fullName || 'Người Dùng Mới',
+            role: data?.role || 'guest'
+         });
+         
+         // Ensure wallet is sync'd
+         localStorage.setItem('rongvang_wallet', JSON.stringify({
+            balance: newUser.balance,
+            plan: newUser.plan,
+            planExpiry: newUser.planExpiry,
+            dailyUsed: 0,
+            monthlyUsed: 0
+         }));
+
          return {
             token: 'mock-jwt-token',
-            user: {
-               id: 'mock-user-id',
-               email: data?.email || 'newuser@baorong.com',
-               fullName: data?.fullName || 'Người Dùng Mới',
-               role: data?.role || 'guest',
-            },
+            user: newUser,
          };
       }
    }
@@ -430,6 +523,8 @@ const adminAPI = {
    suspendUser: (id) => apiCall('PUT', `/admin/users/${id}/suspend`),
 
    activateUser: (id) => apiCall('PUT', `/admin/users/${id}/activate`),
+
+   updateUserWallet: (id, addedBalance, plan) => apiCall('PUT', `/admin/users/${id}/wallet`, { addedBalance, plan }),
 
    // Statistics
    getStats: () => apiCall('GET', '/admin/stats'),

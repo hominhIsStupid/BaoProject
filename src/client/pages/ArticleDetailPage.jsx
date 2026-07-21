@@ -250,10 +250,29 @@ function ArticleDetailPage() {
 
    const renderContent = () => {
       if (!article.content) return null;
+      let finalContent = article.content;
+      if (typeof window !== 'undefined' && window.DOMParser) {
+         try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(finalContent, 'text/html');
+            const imgs = doc.querySelectorAll('img');
+            const seen = new Set();
+            imgs.forEach(img => {
+               // Normalise src by removing query params for comparison to catch resized variants
+               const rawSrc = img.src.split('?')[0];
+               if (seen.has(rawSrc)) {
+                  img.remove();
+               } else {
+                  seen.add(rawSrc);
+               }
+            });
+            finalContent = doc.body.innerHTML;
+         } catch(e) {}
+      }
       return (
          <div 
             className={styles.htmlContent}
-            dangerouslySetInnerHTML={{ __html: article.content }} 
+            dangerouslySetInnerHTML={{ __html: finalContent }} 
          />
       );
    };
@@ -408,10 +427,12 @@ function ArticleDetailPage() {
                   </div>
 
                   {/* Hero Image */}
-                  <div className={styles.heroWrapper}>
-                     <img src={article.image || 'https://via.placeholder.com/800x600?text=No+Image'} alt={article.title} className={styles.heroImage} />
-                     {article.caption && <div className={styles.heroCaption}>{article.caption}</div>}
-                  </div>
+                  {!(article.content && /<img/i.test(article.content)) && (
+                     <div className={styles.heroWrapper}>
+                        <img src={article.image || 'https://via.placeholder.com/800x600?text=No+Image'} alt={article.title} className={styles.heroImage} />
+                        {article.caption && <div className={styles.heroCaption}>{article.caption}</div>}
+                     </div>
+                  )}
 
                   {/* Article content (Adjustable text size) */}
                   <div 

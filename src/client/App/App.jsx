@@ -1,9 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
+import PremiumButton from '../components/PremiumButton';
 import HomePage from '../pages/HomePage';
 import ArticleDetailPage from '../pages/ArticleDetailPage';
 import SearchPage from '../pages/SearchPage';
 import CategoryPage from '../pages/CategoryPage';
+import ResearchPage from '../pages/ResearchPage';
+import ResearchDetailPage from '../pages/ResearchDetailPage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import ProfileEditPage from '../pages/ProfileEditPage';
@@ -44,61 +47,66 @@ function AppLayout() {
    const isAuthPage = AUTH_ROUTES.includes(location.pathname);
 
    return (
-      <div id="app-shell">
-         {!isAuthPage && <Header />}
-         <main>
-            <Routes>
-               <Route path="/" element={<HomePage />} />
-               <Route path="/login" element={<LoginPage />} />
-               <Route path="/register" element={<RegisterPage />} />
-               <Route path="/article/:id" element={<ArticleDetailPage />} />
-               <Route path="/search" element={<SearchPage />} />
-               <Route path="/category/:category" element={<CategoryPage />} />
+      <>
+         <div id="app-shell">
+            {!isAuthPage && <Header />}
+            <main>
+               <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/article/:id" element={<ArticleDetailPage />} />
+                  <Route path="/search" element={<SearchPage />} />
+                  <Route path="/category/:category" element={<CategoryPage />} />
+                  <Route path="/research" element={<ResearchPage />} />
+                  <Route path="/research/:id" element={<ResearchDetailPage />} />
 
-               <Route
-                  path="/profile"
-                  element={
-                     <ProtectedRoute>
-                        <ProfileEditPage />
-                     </ProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/author"
-                  element={
-                     <ProtectedRoute allowedRoles={['author']}>
-                        <AuthorDashboard />
-                     </ProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/editor"
-                  element={
-                     <ProtectedRoute allowedRoles={['editor']}>
-                        <EditorDashboard />
-                     </ProtectedRoute>
-                  }
-               />
-               <Route
-                  path="/admin"
-                  element={
-                     <ProtectedRoute allowedRoles={['admin']}>
-                        <AdminDashboard />
-                     </ProtectedRoute>
-                  }
-               />
+                  <Route
+                     path="/profile"
+                     element={
+                        <ProtectedRoute>
+                           <ProfileEditPage />
+                        </ProtectedRoute>
+                     }
+                  />
+                  <Route
+                     path="/author"
+                     element={
+                        <ProtectedRoute allowedRoles={['author']}>
+                           <AuthorDashboard />
+                        </ProtectedRoute>
+                     }
+                  />
+                  <Route
+                     path="/editor"
+                     element={
+                        <ProtectedRoute allowedRoles={['editor']}>
+                           <EditorDashboard />
+                        </ProtectedRoute>
+                     }
+                  />
+                  <Route
+                     path="/admin"
+                     element={
+                        <ProtectedRoute allowedRoles={['admin']}>
+                           <AdminDashboard />
+                        </ProtectedRoute>
+                     }
+                  />
 
-               <Route
-                  path="*"
-                  element={
-                     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem', color: 'var(--text-primary)' }}>
-                        <h1>404 - Không tìm thấy trang</h1>
-                     </div>
-                  }
-               />
-            </Routes>
-         </main>
-      </div>
+                  <Route
+                     path="*"
+                     element={
+                        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem', color: 'var(--text-primary)' }}>
+                           <h1>404 - Không tìm thấy trang</h1>
+                        </div>
+                     }
+                  />
+               </Routes>
+            </main>
+         </div>
+         <PremiumButton />
+      </>
    );
 }
 

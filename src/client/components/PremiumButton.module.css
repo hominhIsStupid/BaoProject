@@ -1,0 +1,1044 @@
+/* ============================================
+   PREMIUM FLOATING BUTTON — Fixed bottom-left
+   ============================================ */
+
+.floatingBtn {
+   position: fixed;
+   bottom: 24px;
+   left: 24px;
+   z-index: 9999;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   padding: 12px 22px;
+   border: none;
+   border-radius: 50px;
+   cursor: pointer;
+   font-family: 'Inter', sans-serif;
+   font-size: 0.9rem;
+   font-weight: 700;
+   letter-spacing: 0.5px;
+   color: #1a0e00;
+   background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 40%, #B8860B 100%);
+   box-shadow:
+      0 4px 20px rgba(212, 175, 55, 0.45),
+      0 0 40px rgba(212, 175, 55, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+   animation: premiumPulse 3s ease-in-out infinite;
+}
+
+.floatingBtn:hover {
+   transform: translateY(-3px) scale(1.05);
+   box-shadow:
+      0 8px 32px rgba(212, 175, 55, 0.6),
+      0 0 60px rgba(212, 175, 55, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.floatingBtn:active {
+   transform: translateY(-1px) scale(1.02);
+}
+
+.btnIcon {
+   font-size: 1.2rem;
+   line-height: 1;
+}
+
+.btnText {
+   text-transform: uppercase;
+}
+
+@keyframes premiumPulse {
+   0%, 100% {
+      box-shadow:
+         0 4px 20px rgba(212, 175, 55, 0.45),
+         0 0 40px rgba(212, 175, 55, 0.15),
+         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+   }
+   50% {
+      box-shadow:
+         0 4px 28px rgba(212, 175, 55, 0.6),
+         0 0 60px rgba(212, 175, 55, 0.25),
+         inset 0 1px 0 rgba(255, 255, 255, 0.4);
+   }
+}
+
+/* ============================================
+   MODAL OVERLAY & CONTAINER
+   ============================================ */
+
+.overlay {
+   position: fixed;
+   inset: 0;
+   z-index: 10000;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background: rgba(0, 0, 0, 0.7);
+   backdrop-filter: blur(8px);
+   -webkit-backdrop-filter: blur(8px);
+   opacity: 0;
+   visibility: hidden;
+   transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.overlayOpen {
+   opacity: 1;
+   visibility: visible;
+}
+
+.modal {
+   position: relative;
+   width: 92%;
+   max-width: 880px;
+   max-height: 90vh;
+   overflow-y: auto;
+   border-radius: 20px;
+   background: var(--bg-secondary);
+   border: 1px solid rgba(212, 175, 55, 0.2);
+   box-shadow:
+      0 24px 80px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(212, 175, 55, 0.1);
+   transform: scale(0.9) translateY(20px);
+   opacity: 0;
+   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.overlayOpen .modal {
+   transform: scale(1) translateY(0);
+   opacity: 1;
+}
+
+/* Custom scrollbar for modal */
+.modal::-webkit-scrollbar {
+   width: 5px;
+}
+.modal::-webkit-scrollbar-track {
+   background: transparent;
+}
+.modal::-webkit-scrollbar-thumb {
+   background: var(--gold-dark);
+   border-radius: 3px;
+}
+
+/* ============================================
+   MODAL HEADER
+   ============================================ */
+
+.modalHeader {
+   position: sticky;
+   top: 0;
+   z-index: 2;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 24px 32px 20px;
+   background: var(--bg-secondary);
+   border-bottom: 1px solid var(--bg-border);
+}
+
+.modalTitleWrap {
+   display: flex;
+   align-items: center;
+   gap: 14px;
+}
+
+.backBtn {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 34px;
+   height: 34px;
+   border-radius: 10px;
+   background: var(--bg-hover);
+   color: var(--text-secondary);
+   font-size: 1.2rem;
+   border: 1px solid var(--bg-border);
+   cursor: pointer;
+   transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+   background: rgba(212, 175, 55, 0.12);
+   color: var(--gold-primary);
+   border-color: rgba(212, 175, 55, 0.3);
+}
+
+.modalLogo {
+   font-size: 2rem;
+   line-height: 1;
+   filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+}
+
+.modalTitle {
+   font-family: 'Merriweather', serif;
+   font-size: 1.4rem;
+   font-weight: 900;
+   background: linear-gradient(135deg, #F3E5AB, #D4AF37, #B8860B);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   background-clip: text;
+}
+
+.closeBtn {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 36px;
+   height: 36px;
+   border-radius: 50%;
+   background: var(--bg-hover);
+   color: var(--text-secondary);
+   font-size: 1.3rem;
+   transition: all 0.2s ease;
+   border: 1px solid var(--bg-border);
+}
+
+.closeBtn:hover {
+   background: rgba(255, 70, 70, 0.15);
+   color: #ff4757;
+   border-color: rgba(255, 70, 70, 0.3);
+}
+
+/* ============================================
+   TAB NAVIGATION
+   ============================================ */
+
+.tabNav {
+   display: flex;
+   gap: 4px;
+   padding: 16px 32px 0;
+   background: var(--bg-secondary);
+}
+
+.tabBtn {
+   flex: 1;
+   padding: 12px 20px;
+   border-radius: 12px 12px 0 0;
+   font-size: 0.9rem;
+   font-weight: 600;
+   color: var(--text-secondary);
+   background: transparent;
+   border: 1px solid transparent;
+   border-bottom: none;
+   transition: all 0.25s ease;
+   cursor: pointer;
+   position: relative;
+}
+
+.tabBtn:hover {
+   color: var(--text-primary);
+   background: var(--bg-hover);
+}
+
+.tabBtnActive {
+   color: var(--gold-primary);
+   background: var(--bg-card);
+   border-color: var(--bg-border);
+}
+
+.tabBtnActive::after {
+   content: '';
+   position: absolute;
+   bottom: -1px;
+   left: 0;
+   right: 0;
+   height: 2px;
+   background: var(--gold-primary);
+}
+
+/* ============================================
+   TAB CONTENT — shared
+   ============================================ */
+
+.tabContent {
+   padding: 28px 32px 32px;
+}
+
+/* ============================================
+   TAB 1 — NẠP TIỀN
+   ============================================ */
+
+.topupDescription {
+   text-align: center;
+   color: var(--text-secondary);
+   font-size: 0.92rem;
+   line-height: 1.6;
+   margin-bottom: 24px;
+}
+
+.topupGrid {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   gap: 14px;
+   margin-bottom: 28px;
+}
+
+.topupCard {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   padding: 20px 16px;
+   border-radius: 14px;
+   border: 2px solid var(--bg-border);
+   background: var(--bg-card);
+   cursor: pointer;
+   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.topupCard:hover {
+   border-color: rgba(212, 175, 55, 0.3);
+   background: var(--bg-hover);
+   transform: translateY(-2px);
+}
+
+.topupCardSelected {
+   border-color: var(--gold-primary) !important;
+   background: rgba(212, 175, 55, 0.08) !important;
+   box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+.topupCardSelected::before {
+   content: '✓';
+   position: absolute;
+   top: 8px;
+   right: 10px;
+   width: 22px;
+   height: 22px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: 50%;
+   background: var(--gold-primary);
+   color: #1a0e00;
+   font-size: 0.7rem;
+   font-weight: 800;
+}
+
+.topupEmoji {
+   font-size: 1.8rem;
+   margin-bottom: 8px;
+}
+
+.topupAmount {
+   font-size: 1.2rem;
+   font-weight: 800;
+   color: var(--text-primary);
+}
+
+.topupLabel {
+   font-size: 0.78rem;
+   color: var(--text-muted);
+   margin-top: 4px;
+}
+
+.topupSubmitBtn {
+   display: block;
+   width: 100%;
+   padding: 14px;
+   border-radius: 12px;
+   font-size: 1rem;
+   font-weight: 700;
+   color: #1a0e00;
+   background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #B8860B 100%);
+   border: none;
+   cursor: pointer;
+   transition: all 0.25s ease;
+   box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
+}
+
+.topupSubmitBtn:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 6px 24px rgba(212, 175, 55, 0.5);
+}
+
+.topupSubmitBtn:disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+   transform: none;
+}
+
+/* ============================================
+   TAB 2 — GÓI PREMIUM
+   ============================================ */
+
+.plansDescription {
+   text-align: center;
+   color: var(--text-secondary);
+   font-size: 0.92rem;
+   line-height: 1.6;
+   margin-bottom: 28px;
+}
+
+.plansGrid {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   gap: 18px;
+}
+
+/* Individual plan card */
+.planCard {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   padding: 28px 22px 24px;
+   border-radius: 16px;
+   border: 1px solid var(--bg-border);
+   background: var(--bg-card);
+   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+   overflow: hidden;
+}
+
+.planCard:hover {
+   transform: translateY(-4px);
+   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Featured card (V2 — Popular) */
+.planCardFeatured {
+   border-color: rgba(30, 144, 255, 0.4);
+   background: linear-gradient(180deg, rgba(30, 144, 255, 0.06) 0%, var(--bg-card) 100%);
+   box-shadow: 0 0 30px rgba(30, 144, 255, 0.1);
+}
+
+.planCardFeatured:hover {
+   box-shadow: 0 12px 40px rgba(30, 144, 255, 0.2);
+   border-color: rgba(30, 144, 255, 0.5);
+}
+
+/* Pro card — ultimate */
+.planCardPro {
+   border-color: rgba(212, 175, 55, 0.4);
+   background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, var(--bg-card) 100%);
+   box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+}
+
+.planCardPro:hover {
+   box-shadow: 0 12px 40px rgba(212, 175, 55, 0.2);
+   border-color: rgba(212, 175, 55, 0.5);
+}
+
+/* Badge */
+.planBadge {
+   position: absolute;
+   top: 0;
+   right: 0;
+   padding: 5px 14px;
+   border-radius: 0 16px 0 12px;
+   font-size: 0.7rem;
+   font-weight: 700;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+}
+
+.badgePopular {
+   background: linear-gradient(135deg, #70A1FF, #1E90FF);
+   color: #fff;
+}
+
+.badgeBest {
+   background: linear-gradient(135deg, #F3E5AB, #D4AF37);
+   color: #1a0e00;
+}
+
+/* Plan icon */
+.planIcon {
+   font-size: 2.2rem;
+   margin-bottom: 14px;
+   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+}
+
+/* Plan name */
+.planName {
+   font-family: 'Inter', sans-serif;
+   font-size: 1.1rem;
+   font-weight: 800;
+   color: var(--text-primary);
+   margin-bottom: 6px;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+}
+
+/* Plan price */
+.planPrice {
+   display: flex;
+   align-items: baseline;
+   gap: 4px;
+   margin-bottom: 18px;
+}
+
+.priceValue {
+   font-size: 1.6rem;
+   font-weight: 900;
+   color: var(--gold-primary);
+}
+
+.pricePeriod {
+   font-size: 0.8rem;
+   color: var(--text-muted);
+   font-weight: 500;
+}
+
+/* Plan features list */
+.planFeatures {
+   list-style: none;
+   padding: 0;
+   margin: 0 0 24px;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.planFeatures li {
+   display: flex;
+   align-items: flex-start;
+   gap: 8px;
+   font-size: 0.85rem;
+   color: var(--text-secondary);
+   line-height: 1.4;
+}
+
+.featureIcon {
+   flex-shrink: 0;
+   margin-top: 1px;
+   font-size: 0.85rem;
+}
+
+/* Subscribe button — default */
+.planBtn {
+   width: 100%;
+   padding: 12px;
+   border-radius: 10px;
+   font-size: 0.9rem;
+   font-weight: 700;
+   cursor: pointer;
+   border: 2px solid var(--bg-border);
+   background: transparent;
+   color: var(--text-primary);
+   transition: all 0.25s ease;
+}
+
+.planBtn:hover {
+   border-color: var(--text-muted);
+   background: var(--bg-hover);
+}
+
+/* Featured button (blue) */
+.planBtnFeatured {
+   border: none;
+   background: linear-gradient(135deg, #70A1FF 0%, #1E90FF 100%);
+   color: #fff;
+   box-shadow: 0 4px 16px rgba(30, 144, 255, 0.35);
+}
+
+.planBtnFeatured:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 6px 24px rgba(30, 144, 255, 0.5);
+   background: linear-gradient(135deg, #5B93FF 0%, #0D7BEA 100%);
+}
+
+/* Pro button (gold) */
+.planBtnPro {
+   border: none;
+   background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #B8860B 100%);
+   color: #1a0e00;
+   box-shadow: 0 4px 16px rgba(212, 175, 55, 0.35);
+}
+
+.planBtnPro:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 6px 24px rgba(212, 175, 55, 0.5);
+}
+
+/* ============================================
+   FOOTER NOTE
+   ============================================ */
+
+.footerNote {
+   text-align: center;
+   color: var(--text-muted);
+   font-size: 0.78rem;
+   margin-top: 24px;
+   line-height: 1.5;
+}
+
+.footerNote a {
+   color: var(--gold-primary);
+   text-decoration: underline;
+}
+
+/* ============================================
+   PAYMENT VIEW
+   ============================================ */
+
+.paymentView {
+   padding: 24px 32px 32px;
+}
+
+/* Order bar */
+.paymentOrderBar {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 12px 16px;
+   border-radius: 12px;
+   background: var(--bg-card);
+   border: 1px solid var(--bg-border);
+   margin-bottom: 16px;
+}
+
+.paymentOrderInfo {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+}
+
+.paymentOrderLabel {
+   font-size: 0.82rem;
+   color: var(--text-muted);
+}
+
+.paymentOrderCode {
+   font-size: 0.9rem;
+   font-weight: 700;
+   color: var(--gold-primary);
+   font-family: 'Courier New', monospace;
+   letter-spacing: 1px;
+}
+
+.paymentTimer {
+   font-size: 0.9rem;
+   font-weight: 700;
+   color: var(--text-secondary);
+   font-family: 'Courier New', monospace;
+   padding: 4px 12px;
+   border-radius: 8px;
+   background: rgba(255, 255, 255, 0.05);
+}
+
+.paymentTimerUrgent {
+   color: #ff4757 !important;
+   background: rgba(255, 71, 87, 0.1) !important;
+   animation: timerBlink 1s ease-in-out infinite;
+}
+
+@keyframes timerBlink {
+   0%, 100% { opacity: 1; }
+   50% { opacity: 0.5; }
+}
+
+.paymentDesc {
+   text-align: center;
+   font-size: 1rem;
+   font-weight: 600;
+   color: var(--text-primary);
+   margin-bottom: 24px;
+}
+
+/* Two-column layout */
+.paymentLayout {
+   display: grid;
+   grid-template-columns: auto 1fr;
+   gap: 28px;
+   margin-bottom: 20px;
+}
+
+/* Left — QR section */
+.paymentQRSection {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 10px;
+}
+
+.paymentQRLabel {
+   font-size: 0.82rem;
+   font-weight: 600;
+   color: var(--text-secondary);
+   text-align: center;
+}
+
+.paymentQRWrap {
+   width: 220px;
+   height: 220px;
+   border-radius: 16px;
+   overflow: hidden;
+   background: #fff;
+   padding: 8px;
+   box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(212, 175, 55, 0.15);
+}
+
+.paymentQRImg {
+   width: 100%;
+   height: 100%;
+   object-fit: contain;
+   border-radius: 8px;
+}
+
+.paymentQRHint {
+   font-size: 0.75rem;
+   color: var(--text-muted);
+   text-align: center;
+}
+
+/* Right — Bank details */
+.paymentDetailsSection {
+   display: flex;
+   flex-direction: column;
+   gap: 0;
+}
+
+.paymentDetailsTitle {
+   font-size: 0.95rem;
+   font-weight: 700;
+   color: var(--text-primary);
+   margin-bottom: 14px;
+   padding-bottom: 10px;
+   border-bottom: 1px solid var(--bg-border);
+}
+
+.paymentDetailRow {
+   display: flex;
+   flex-direction: column;
+   gap: 4px;
+   padding: 10px 0;
+   border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.paymentDetailRowHighlight {
+   padding: 12px;
+   margin: 4px -12px;
+   border-radius: 10px;
+   background: rgba(212, 175, 55, 0.06);
+   border: 1px dashed rgba(212, 175, 55, 0.25) !important;
+}
+
+.paymentDetailLabel {
+   font-size: 0.75rem;
+   font-weight: 500;
+   color: var(--text-muted);
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+}
+
+.paymentDetailValue {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 8px;
+   font-size: 0.9rem;
+   color: var(--text-primary);
+}
+
+.paymentDetailHighlight {
+   font-weight: 700;
+   font-family: 'Courier New', monospace;
+   letter-spacing: 0.5px;
+   color: var(--gold-primary);
+}
+
+.paymentDetailAmount {
+   font-weight: 800;
+   font-size: 1.1rem;
+   color: #2ED573;
+}
+
+/* Copy button */
+.copyBtn {
+   flex-shrink: 0;
+   padding: 4px 10px;
+   border-radius: 6px;
+   font-size: 0.72rem;
+   font-weight: 600;
+   color: var(--text-secondary);
+   background: var(--bg-hover);
+   border: 1px solid var(--bg-border);
+   cursor: pointer;
+   transition: all 0.2s ease;
+   white-space: nowrap;
+}
+
+.copyBtn:hover {
+   background: rgba(212, 175, 55, 0.12);
+   color: var(--gold-primary);
+   border-color: rgba(212, 175, 55, 0.3);
+}
+
+.copyBtnDone {
+   background: rgba(46, 213, 115, 0.15) !important;
+   color: #2ED573 !important;
+   border-color: rgba(46, 213, 115, 0.3) !important;
+}
+
+/* Warning box */
+.paymentWarning {
+   display: flex;
+   align-items: flex-start;
+   gap: 10px;
+   padding: 14px 16px;
+   border-radius: 12px;
+   background: rgba(255, 165, 2, 0.08);
+   border: 1px solid rgba(255, 165, 2, 0.2);
+   margin-bottom: 20px;
+}
+
+.paymentWarningIcon {
+   flex-shrink: 0;
+   font-size: 1.1rem;
+   margin-top: 1px;
+}
+
+.paymentWarning p {
+   font-size: 0.82rem;
+   color: var(--text-secondary);
+   line-height: 1.5;
+}
+
+.paymentWarning strong {
+   color: #FFA502;
+}
+
+/* Action buttons */
+.paymentActions {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.paymentConfirmBtn {
+   width: 100%;
+   padding: 15px;
+   border-radius: 12px;
+   font-size: 1rem;
+   font-weight: 700;
+   color: #fff;
+   background: linear-gradient(135deg, #2ED573 0%, #1E9B4F 100%);
+   border: none;
+   cursor: pointer;
+   transition: all 0.25s ease;
+   box-shadow: 0 4px 16px rgba(46, 213, 115, 0.3);
+}
+
+.paymentConfirmBtn:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 6px 24px rgba(46, 213, 115, 0.45);
+}
+
+.paymentCancelBtn {
+   width: 100%;
+   padding: 12px;
+   border-radius: 10px;
+   font-size: 0.88rem;
+   font-weight: 600;
+   color: var(--text-muted);
+   background: transparent;
+   border: 1px solid var(--bg-border);
+   cursor: pointer;
+   transition: all 0.2s ease;
+}
+
+.paymentCancelBtn:hover {
+   color: #ff4757;
+   border-color: rgba(255, 71, 87, 0.3);
+   background: rgba(255, 71, 87, 0.06);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+   .floatingBtn {
+      bottom: 16px;
+      left: 16px;
+      padding: 10px 18px;
+      font-size: 0.82rem;
+   }
+
+   .modal {
+      width: 96%;
+      max-height: 92vh;
+      border-radius: 16px;
+   }
+
+   .modalHeader {
+      padding: 18px 20px 14px;
+   }
+
+   .modalTitle {
+      font-size: 1.15rem;
+   }
+
+   .tabNav {
+      padding: 12px 20px 0;
+   }
+
+   .tabBtn {
+      padding: 10px 12px;
+      font-size: 0.82rem;
+   }
+
+   .tabContent {
+      padding: 20px 20px 24px;
+   }
+
+   .plansGrid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+   }
+
+   .planCard {
+      padding: 22px 18px 20px;
+   }
+
+   .topupGrid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+   }
+
+   /* Payment view responsive */
+   .paymentView {
+      padding: 18px 20px 24px;
+   }
+
+   .paymentLayout {
+      grid-template-columns: 1fr;
+      gap: 20px;
+   }
+
+   .paymentQRSection {
+      order: -1;
+   }
+
+   .paymentQRWrap {
+      width: 200px;
+      height: 200px;
+   }
+
+   .paymentOrderBar {
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+   }
+}
+
+@media (max-width: 480px) {
+   .floatingBtn {
+      bottom: 12px;
+      left: 12px;
+      padding: 10px 16px;
+      font-size: 0.78rem;
+      gap: 6px;
+   }
+
+   .btnIcon {
+      font-size: 1rem;
+   }
+
+   .modalHeader {
+      padding: 14px 16px 12px;
+   }
+
+   .modalLogo {
+      font-size: 1.6rem;
+   }
+
+   .modalTitle {
+      font-size: 1rem;
+   }
+
+   .closeBtn {
+      width: 32px;
+      height: 32px;
+      font-size: 1.1rem;
+   }
+
+   .tabNav {
+      padding: 10px 16px 0;
+   }
+
+   .tabContent {
+      padding: 16px 16px 20px;
+   }
+
+   .topupGrid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+   }
+
+   .topupCard {
+      padding: 16px 12px;
+   }
+
+   .topupEmoji {
+      font-size: 1.5rem;
+   }
+
+   .topupAmount {
+      font-size: 1rem;
+   }
+
+   .paymentView {
+      padding: 14px 16px 20px;
+   }
+
+   .paymentQRWrap {
+      width: 180px;
+      height: 180px;
+   }
+
+   .paymentDetailValue {
+      flex-wrap: wrap;
+   }
+}
+
+/* ============================================
+   LIGHT THEME fine-tuning
+   ============================================ */
+
+:global(body.light-theme) .modal {
+   box-shadow:
+      0 24px 80px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(212, 175, 55, 0.2);
+}
+
+:global(body.light-theme) .overlay {
+   background: rgba(0, 0, 0, 0.4);
+}
+
+:global(body.light-theme) .planCardFeatured {
+   background: linear-gradient(180deg, rgba(30, 144, 255, 0.05) 0%, #fff 100%);
+}
+
+:global(body.light-theme) .planCardPro {
+   background: linear-gradient(180deg, rgba(212, 175, 55, 0.07) 0%, #fff 100%);
+}
+
+:global(body.light-theme) .floatingBtn {
+   box-shadow:
+      0 4px 20px rgba(212, 175, 55, 0.35),
+      0 0 30px rgba(212, 175, 55, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+:global(body.light-theme) .paymentDetailRowHighlight {
+   background: rgba(212, 175, 55, 0.08);
+}
+
+:global(body.light-theme) .paymentWarning {
+   background: rgba(255, 165, 2, 0.06);
+}
+
+:global(body.light-theme) .paymentOrderBar {
+   background: #f5f5f5;
+}
+
+:global(body.light-theme) .paymentDetailRow {
+   border-bottom-color: rgba(0,0,0,0.06);
+}

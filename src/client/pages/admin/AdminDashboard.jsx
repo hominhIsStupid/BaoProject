@@ -11,6 +11,7 @@ function SidebarNav({ activeTab, onTabChange, pendingCount = 0, approvedCount = 
       { id: 'categories-manage', label: 'Quản lý chuyên mục', icon: '📂' },
       { id: 'comments-manage', label: 'Quản lý bình luận', icon: '💬' },
       { id: 'users-manage', label: 'Quản lý người dùng', icon: '👥' },
+      { id: 'research-manage', label: 'Nghiên cứu khoa học', icon: '🔬' },
       { id: 'logs', label: 'Nhật ký hệ thống', icon: '📜' },
       { id: 'settings', label: 'Cài đặt hệ thống', icon: '⚙️' },
    ];
@@ -89,7 +90,7 @@ function DashboardOverview({ stats }) {
    );
 }
 
-function ArticlesPendingTable({ articles, onView }) {
+function ArticlesPendingTable({ articles, onPublish }) {
    return (
       <section className={styles.managementSection}>
          <h1>Bài Viết Chờ Biên Tập Duyệt</h1>
@@ -99,7 +100,7 @@ function ArticlesPendingTable({ articles, onView }) {
                <span>Tiêu đề</span>
                <span>Tác giả</span>
                <span>Ngày tạo</span>
-               <span>Trạng thái</span>
+               <span>Hành động</span>
             </div>
             {articles.length === 0 ? (
                <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Không có bài viết chờ duyệt.</div>
@@ -110,7 +111,9 @@ function ArticlesPendingTable({ articles, onView }) {
                      <span className={styles.title}>{article.title}</span>
                      <span>{article.authorName || article.author || 'Tác giả'}</span>
                      <span>{new Date(article.createdAt).toLocaleDateString('vi-VN')}</span>
-                     <span style={{ color: 'var(--gold-primary)' }}>📋 Chờ duyệt</span>
+                     <span className={styles.actions}>
+                        <button className={styles.btnSmallApprove} onClick={() => onPublish(article.id)}>✅ Duyệt & Xuất bản</button>
+                     </span>
                   </div>
                ))
             )}
@@ -310,13 +313,30 @@ function CommentsManagement({ comments, onDelete }) {
    );
 }
 
-function UsersManagement({ users, onUpdateRole, onSuspend, onActivate }) {
+function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateWallet }) {
    const [search, setSearch] = useState('');
+   const [walletModalUserId, setWalletModalUserId] = useState(null);
+   const [walletForm, setWalletForm] = useState({ balanceAdd: '', newPlan: 'none' });
 
    const filtered = users.filter((u) => 
       u.email.toLowerCase().includes(search.toLowerCase()) || 
       (u.fullName && u.fullName.toLowerCase().includes(search.toLowerCase()))
    );
+
+   const formatMoney = (amount) => {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
+   };
+
+   const openWalletModal = (user) => {
+      setWalletModalUserId(user.id);
+      setWalletForm({ balanceAdd: '', newPlan: user.plan || 'none' });
+   };
+
+   const handleWalletSubmit = (e) => {
+      e.preventDefault();
+      onUpdateWallet(walletModalUserId, Number(walletForm.balanceAdd) || 0, walletForm.newPlan);
+      setWalletModalUserId(null);
+   };
 
    return (
       <section className={styles.managementSection}>
@@ -331,16 +351,17 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate }) {
             />
          </div>
 
-         <div className={styles.articlesTable}>
-            <div className={styles.tableHeader}>
+         <div className={styles.articlesTable} style={{ overflowX: 'auto' }}>
+            <div className={styles.tableHeader} style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 1.2fr 1fr 1.5fr' }}>
                <span>Tên thành viên</span>
                <span>Email</span>
                <span>Vai trò</span>
+               <span>Số dư & Gói</span>
                <span>Trạng thái</span>
                <span>Hành động</span>
             </div>
             {filtered.map((user) => (
-               <div key={user.id} className={styles.tableRow}>
+               <div key={user.id} className={styles.tableRow} style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 1.2fr 1fr 1.5fr', alignItems: 'center' }}>
                   <span className={styles.title}>{user.fullName || 'Chưa đặt tên'}</span>
                   <span>{user.email}</span>
                   <span>
@@ -355,21 +376,64 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate }) {
                         <option value="admin">Admin</option>
                      </select>
                   </span>
+                  <span style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
+                     <div style={{ color: 'var(--gold-primary)', fontWeight: 'bold' }}>{formatMoney(user.balance)}</div>
+                     <div style={{ color: 'var(--text-muted)' }}>Gói: <strong style={{color: 'var(--text-primary)', textTransform: 'uppercase'}}>{user.plan || 'Không'}</strong></div>
+                  </span>
                   <span>
                      <span style={{ color: user.status === 'suspended' ? '#ff4757' : '#2ed573' }}>
                         {user.status === 'suspended' ? '🚫 Khóa' : '✅ Active'}
                      </span>
                   </span>
-                  <span className={styles.actions}>
+                  <span className={styles.actions} style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                     <button className={styles.btnSmall} onClick={() => openWalletModal(user)}>💳 Ví & Gói</button>
                      {user.status === 'suspended' ? (
-                        <button className={styles.btnSmall} onClick={() => onActivate(user.id)}>🔓 Mở khóa</button>
+                        <button className={styles.btnSmall} onClick={() => onActivate(user.id)}>🔓</button>
                      ) : (
-                        <button className={styles.btnSmallDanger} onClick={() => onSuspend(user.id)}>🚫 Khóa</button>
+                        <button className={styles.btnSmallDanger} onClick={() => onSuspend(user.id)}>🚫</button>
                      )}
                   </span>
                </div>
             ))}
          </div>
+
+         {/* WALLET MODAL */}
+         {walletModalUserId && (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+               <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '400px', border: '1px solid var(--gold-primary)' }}>
+                  <h3 style={{ marginTop: 0, color: 'var(--gold-primary)' }}>Cập nhật Ví & Gói Premium</h3>
+                  <form onSubmit={handleWalletSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                     <div>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Cộng/trừ số dư (VNĐ):</label>
+                        <input 
+                           type="number" 
+                           value={walletForm.balanceAdd}
+                           onChange={(e) => setWalletForm({...walletForm, balanceAdd: e.target.value})}
+                           placeholder="Ví dụ: 100000 hoặc -50000"
+                           style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--bg-border)', background: 'var(--bg-secondary)', color: '#fff' }}
+                        />
+                     </div>
+                     <div>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Nâng cấp / Thay đổi gói:</label>
+                        <select 
+                           value={walletForm.newPlan}
+                           onChange={(e) => setWalletForm({...walletForm, newPlan: e.target.value})}
+                           style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--bg-border)', background: 'var(--bg-secondary)', color: '#fff' }}
+                        >
+                           <option value="none">Hủy gói / Không có gói</option>
+                           <option value="v1">Gói V1 (2 bài/ngày, 30 bài/tháng)</option>
+                           <option value="v2">Gói V2 (4 bài/ngày, 60 bài/tháng)</option>
+                           <option value="pro">Gói PRO (Không giới hạn)</option>
+                        </select>
+                     </div>
+                     <div style={{ display: 'flex', gap: '10px', marginTop: '1rem' }}>
+                        <button type="button" onClick={() => setWalletModalUserId(null)} style={{ flex: 1, padding: '10px', background: 'transparent', border: '1px solid var(--bg-border)', color: 'var(--text-primary)', borderRadius: '8px', cursor: 'pointer' }}>Hủy</button>
+                        <button type="submit" style={{ flex: 1, padding: '10px', background: 'var(--gold-primary)', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Lưu thay đổi</button>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         )}
       </section>
    );
 }
@@ -532,6 +596,16 @@ export default function AdminDashboard() {
       }
    };
 
+   const handleUpdateWallet = async (userId, addedBalance, plan) => {
+      try {
+         await adminAPI.updateUserWallet(userId, addedBalance, plan);
+         alert('Đã cập nhật Ví & Gói Premium thành công!');
+         fetchAdminData();
+      } catch (err) {
+         alert('Cập nhật ví thất bại: ' + err.message);
+      }
+   };
+
    const handleDeleteComment = async (id) => {
       if (!window.confirm('Bạn có chắc chắn muốn xóa bình luận này không?')) return;
       try {
@@ -563,17 +637,171 @@ export default function AdminDashboard() {
             ) : (
                <>
                   {activeTab === 'dashboard' && <DashboardOverview stats={stats} />}
-                  {activeTab === 'articles-pending' && <ArticlesPendingTable articles={pendingArticles} />}
+                  {activeTab === 'articles-pending' && <ArticlesPendingTable articles={pendingArticles} onPublish={handlePublish} />}
                   {activeTab === 'articles-approved' && <ArticlesApprovedTable articles={approvedArticles} onPublish={handlePublish} />}
                   {activeTab === 'articles-manage' && <ArticlesManagementTable articles={articles} onDelete={handleDeleteArticle} />}
                   {activeTab === 'categories-manage' && <CategoriesManagement categories={categories} onCreate={handleCreateCategory} onDelete={handleDeleteCategory} />}
                   {activeTab === 'comments-manage' && <CommentsManagement comments={comments} onDelete={handleDeleteComment} />}
-                  {activeTab === 'users-manage' && <UsersManagement users={users} onUpdateRole={handleUpdateUserRole} onSuspend={handleSuspendUser} onActivate={handleActivateUser} />}
+                  {activeTab === 'users-manage' && <UsersManagement users={users} onUpdateRole={handleUpdateUserRole} onSuspend={handleSuspendUser} onActivate={handleActivateUser} onUpdateWallet={handleUpdateWallet} />}
+                  {activeTab === 'research-manage' && <ResearchManagement />}
                   {activeTab === 'logs' && <SystemLogs logs={logs} />}
                   {activeTab === 'settings' && <SystemSettings />}
                </>
             )}
          </main>
       </div>
+   );
+}
+
+// === RESEARCH MANAGEMENT COMPONENT ===
+function ResearchManagement() {
+   const [articles, setArticles] = useState([]);
+   const [loading, setLoading] = useState(true);
+   const [showForm, setShowForm] = useState(false);
+   const [formData, setFormData] = useState({ id: null, title: '', summary: '', content: '', author: '', category: 'AI', thumbnail: '', readingTime: 5, price: 50000 });
+
+   useEffect(() => {
+      fetchArticles();
+   }, []);
+
+   const fetchArticles = async () => {
+      setLoading(true);
+      try {
+         const res = await fetch('/api/research?limit=50');
+         const data = await res.json();
+         setArticles(data.articles || []);
+      } catch (err) {
+         console.error(err);
+      } finally {
+         setLoading(false);
+      }
+   };
+
+   const handleEditClick = async (article) => {
+      try {
+         const token = tokenStorage.get();
+         // Pass mockRole=admin so the backend returns the full content regardless of purchase status
+         const res = await fetch(`/api/research/${article.id}?mockRole=admin`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+         });
+         if (res.ok) {
+            const fullArticle = await res.json();
+            setFormData(fullArticle);
+            setShowForm(true);
+         } else {
+            alert('Lỗi tải nội dung bài viết');
+         }
+      } catch (err) {
+         alert('Lỗi kết nối');
+      }
+   };
+
+   const handleSave = async (e) => {
+      e.preventDefault();
+      try {
+         const method = formData.id ? 'PUT' : 'POST';
+         const url = formData.id ? `/api/research/${formData.id}` : '/api/research';
+         const token = tokenStorage.get();
+         
+         const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(formData)
+         });
+         
+         if (res.ok) {
+            alert('Lưu thành công!');
+            setShowForm(false);
+            fetchArticles();
+         } else {
+            const err = await res.json();
+            alert('Lỗi: ' + err.message);
+         }
+      } catch (err) {
+         alert('Lỗi kết nối');
+      }
+   };
+
+   const handleDelete = async (id) => {
+      if (!window.confirm('Bạn có chắc chắn muốn xóa bài nghiên cứu này?')) return;
+      try {
+         const token = tokenStorage.get();
+         const res = await fetch(`/api/research/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+         });
+         if (res.ok) {
+            alert('Xóa thành công!');
+            fetchArticles();
+         }
+      } catch (err) {
+         alert('Lỗi kết nối');
+      }
+   };
+
+   if (loading) return <div>Đang tải dữ liệu nghiên cứu...</div>;
+
+   return (
+      <section className={styles.managementSection}>
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h1>Quản lý Nghiên cứu Khoa học</h1>
+            <button 
+               className={styles.actionBtn} 
+               style={{ background: 'var(--gold-primary)', color: '#000' }}
+               onClick={() => { setFormData({ id: null, title: '', summary: '', content: '', author: '', category: 'AI', thumbnail: '', readingTime: 5, price: 50000 }); setShowForm(true); }}
+            >
+               + Thêm bài mới
+            </button>
+         </div>
+
+         {showForm && (
+            <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
+               <h3 style={{ marginBottom: '1rem', color: 'var(--gold-primary)' }}>{formData.id ? 'Sửa bài' : 'Thêm bài mới'}</h3>
+               <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <input required placeholder="Tiêu đề" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  <input placeholder="Tác giả" value={formData.author} onChange={e => setFormData({...formData, author: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }}>
+                     {['AI', 'Công nghệ', 'Y học', 'Kinh tế', 'Giáo dục', 'Môi trường', 'Vật lý', 'Toán học'].map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <input placeholder="URL Thumbnail (Upload ảnh qua form ngoài hoặc dán URL)" value={formData.thumbnail} onChange={e => setFormData({...formData, thumbnail: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                     <input type="number" placeholder="Thời gian đọc (phút)" value={formData.readingTime} onChange={e => setFormData({...formData, readingTime: e.target.value})} style={{ flex: 1, padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                     <input type="number" placeholder="Giá (VNĐ)" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} style={{ flex: 1, padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  </div>
+                  <textarea required placeholder="Tóm tắt" value={formData.summary} onChange={e => setFormData({...formData, summary: e.target.value})} rows="3" style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  <textarea required placeholder="Nội dung chi tiết (HTML hỗ trợ)" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} rows="10" style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                     <button type="submit" style={{ padding: '0.8rem 2rem', background: 'var(--gold-primary)', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Lưu</button>
+                     <button type="button" onClick={() => setShowForm(false)} style={{ padding: '0.8rem 2rem', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px', cursor: 'pointer' }}>Hủy</button>
+                  </div>
+               </form>
+            </div>
+         )}
+
+         <table className={styles.articlesTable} style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+               <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left' }}>
+                  <th style={{ padding: '1rem' }}>Tiêu đề</th>
+                  <th style={{ padding: '1rem' }}>Lĩnh vực</th>
+                  <th style={{ padding: '1rem' }}>Tác giả</th>
+                  <th style={{ padding: '1rem' }}>Thao tác</th>
+               </tr>
+            </thead>
+            <tbody>
+               {articles.map(article => (
+                  <tr key={article.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                     <td style={{ padding: '1rem' }}>{article.title}</td>
+                     <td style={{ padding: '1rem' }}>{article.category}</td>
+                     <td style={{ padding: '1rem' }}>{article.author}</td>
+                     <td style={{ padding: '1rem' }}>
+                        <button onClick={() => handleEditClick(article)} style={{ background: 'transparent', border: '1px solid var(--gold-primary)', color: 'var(--gold-primary)', padding: '0.3rem 0.8rem', borderRadius: '4px', marginRight: '0.5rem', cursor: 'pointer' }}>Sửa</button>
+                        <button onClick={() => handleDelete(article.id)} style={{ background: 'transparent', border: '1px solid #ff4757', color: '#ff4757', padding: '0.3rem 0.8rem', borderRadius: '4px', cursor: 'pointer' }}>Xóa</button>
+                     </td>
+                  </tr>
+               ))}
+               {articles.length === 0 && <tr><td colSpan="4" style={{ padding: '1rem', textAlign: 'center' }}>Chưa có bài nghiên cứu nào</td></tr>}
+            </tbody>
+         </table>
+      </section>
    );
 }

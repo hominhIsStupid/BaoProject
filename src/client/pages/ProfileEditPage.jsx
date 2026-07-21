@@ -243,8 +243,25 @@ function ProfileEditPage() {
       navigate('/');
    };
 
+   // ─── Premium/Wallet state (localStorage demo) ───
+   const storedWallet = JSON.parse(localStorage.getItem('rongvang_wallet') || 'null');
+   const walletBalance = storedWallet?.balance ?? 250000;
+   const currentPlan = storedWallet?.plan ?? null; // null | 'v1' | 'v2' | 'pro'
+   const planExpiry = storedWallet?.planExpiry ?? null;
+   const dailyUsed = storedWallet?.dailyUsed ?? 0;
+   const monthlyUsed = storedWallet?.monthlyUsed ?? 0;
+
+   const PLAN_INFO = {
+      v1: { name: 'Premium V1', icon: '🥈', color: '#A1A1AA', dailyLimit: 2, monthlyLimit: 30, price: '99.000 ₫' },
+      v2: { name: 'Premium V2', icon: '🥇', color: '#1E90FF', dailyLimit: 4, monthlyLimit: 60, price: '149.000 ₫' },
+      pro: { name: 'Premium Pro', icon: '👑', color: '#D4AF37', dailyLimit: Infinity, monthlyLimit: Infinity, price: '299.000 ₫' },
+   };
+
+   const activePlan = currentPlan ? PLAN_INFO[currentPlan] : null;
+
    const sidebarMenuItems = [
       { id: 'profile', label: 'Thông tin cá nhân', icon: '👤' },
+      { id: 'wallet', label: 'Tài khoản & Premium', icon: '💎' },
       { id: 'password', label: 'Đổi mật khẩu', icon: '🔒' },
       { id: 'comments', label: 'Quản lý bình luận', icon: '💬' },
       { id: 'saved', label: 'Bài viết đã lưu', icon: '🔖' },
@@ -389,6 +406,172 @@ function ProfileEditPage() {
                            </div>
 
                         </form>
+                     </>
+                  ) : activeMenu === 'wallet' ? (
+                     <>
+                        <h2 className={styles.formTitle}>TÀI KHOẢN & PREMIUM</h2>
+
+                        {/* ─── Wallet Balance Card ─── */}
+                        <div className={styles.walletCard}>
+                           <div className={styles.walletCardInner}>
+                              <div className={styles.walletInfo}>
+                                 <span className={styles.walletLabel}>Số dư tài khoản</span>
+                                 <span className={styles.walletBalance}>
+                                    {new Intl.NumberFormat('vi-VN').format(walletBalance)} ₫
+                                 </span>
+                                 <span className={styles.walletHint}>
+                                    Dùng để mua bài báo khoa học đơn lẻ
+                                 </span>
+                              </div>
+                              <div className={styles.walletActions}>
+                                 <button
+                                    className={styles.walletTopupBtn}
+                                    onClick={() => {
+                                       // Dispatch custom event to open PremiumButton modal on topup tab
+                                       window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { tab: 'topup' } }));
+                                    }}
+                                 >
+                                    💳 Nạp tiền
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* ─── Premium Plan Status ─── */}
+                        <div className={styles.premiumSection}>
+                           <h3 className={styles.premiumSectionTitle}>Gói Premium hiện tại</h3>
+
+                           {activePlan ? (
+                              <div
+                                 className={styles.planStatusCard}
+                                 style={{ borderColor: activePlan.color + '40' }}
+                              >
+                                 <div className={styles.planStatusHeader}>
+                                    <div className={styles.planStatusNameWrap}>
+                                       <span className={styles.planStatusIcon}>{activePlan.icon}</span>
+                                       <span className={styles.planStatusName} style={{ color: activePlan.color }}>
+                                          {activePlan.name}
+                                       </span>
+                                    </div>
+                                    <span
+                                       className={styles.planStatusBadge}
+                                       style={{ background: activePlan.color + '20', color: activePlan.color, borderColor: activePlan.color + '40' }}
+                                    >
+                                       Đang hoạt động
+                                    </span>
+                                 </div>
+
+                                 {/* Usage bars — only for V1/V2 */}
+                                 {currentPlan !== 'pro' && (
+                                    <div className={styles.usageSection}>
+                                       <div className={styles.usageRow}>
+                                          <div className={styles.usageLabel}>
+                                             <span>Hôm nay</span>
+                                             <span className={styles.usageCount}>{dailyUsed} / {activePlan.dailyLimit} bài</span>
+                                          </div>
+                                          <div className={styles.usageBarTrack}>
+                                             <div
+                                                className={styles.usageBarFill}
+                                                style={{
+                                                   width: `${Math.min((dailyUsed / activePlan.dailyLimit) * 100, 100)}%`,
+                                                   background: activePlan.color,
+                                                }}
+                                             />
+                                          </div>
+                                       </div>
+                                       <div className={styles.usageRow}>
+                                          <div className={styles.usageLabel}>
+                                             <span>Tháng này</span>
+                                             <span className={styles.usageCount}>{monthlyUsed} / {activePlan.monthlyLimit} bài</span>
+                                          </div>
+                                          <div className={styles.usageBarTrack}>
+                                             <div
+                                                className={styles.usageBarFill}
+                                                style={{
+                                                   width: `${Math.min((monthlyUsed / activePlan.monthlyLimit) * 100, 100)}%`,
+                                                   background: activePlan.color,
+                                                }}
+                                             />
+                                          </div>
+                                       </div>
+                                    </div>
+                                 )}
+
+                                 {currentPlan === 'pro' && (
+                                    <div className={styles.proUnlimited}>
+                                       <span>♾️</span> Không giới hạn số bài đọc
+                                    </div>
+                                 )}
+
+                                 <div className={styles.planStatusFooter}>
+                                    <span className={styles.planExpiry}>
+                                       Hết hạn: {planExpiry ? new Date(planExpiry).toLocaleDateString('vi-VN') : '—'}
+                                    </span>
+                                    <span className={styles.planPrice}>{activePlan.price}/tháng</span>
+                                 </div>
+
+                                 {currentPlan !== 'pro' && (
+                                    <button
+                                       className={styles.planUpgradeBtn}
+                                       onClick={() => {
+                                          window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { tab: 'plans' } }));
+                                       }}
+                                    >
+                                       ⬆️ Nâng cấp gói
+                                    </button>
+                                 )}
+                              </div>
+                           ) : (
+                              <div className={styles.noPlanCard}>
+                                 <span className={styles.noPlanIcon}>🔓</span>
+                                 <h4 className={styles.noPlanTitle}>Chưa đăng ký Premium</h4>
+                                 <p className={styles.noPlanDesc}>
+                                    Đăng ký gói Premium để mở khóa và đọc các bài báo khoa học chuyên sâu
+                                    với giá ưu đãi.
+                                 </p>
+                                 <div className={styles.noPlanFeatures}>
+                                    <div className={styles.noPlanFeature}>
+                                       <span>🥈</span>
+                                       <div>
+                                          <strong>V1</strong> — 2 bài/ngày, 30 bài/tháng
+                                          <span className={styles.noPlanPrice}>99.000 ₫/tháng</span>
+                                       </div>
+                                    </div>
+                                    <div className={styles.noPlanFeature}>
+                                       <span>🥇</span>
+                                       <div>
+                                          <strong>V2</strong> — 4 bài/ngày, 60 bài/tháng
+                                          <span className={styles.noPlanPrice}>149.000 ₫/tháng</span>
+                                       </div>
+                                    </div>
+                                    <div className={styles.noPlanFeature}>
+                                       <span>👑</span>
+                                       <div>
+                                          <strong>Pro</strong> — Không giới hạn
+                                          <span className={styles.noPlanPrice}>299.000 ₫/tháng</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <button
+                                    className={styles.noPlanBtn}
+                                    onClick={() => {
+                                       window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { tab: 'plans' } }));
+                                    }}
+                                 >
+                                    👑 Đăng ký Premium ngay
+                                 </button>
+                              </div>
+                           )}
+                        </div>
+
+                        {/* Transaction history placeholder */}
+                        <div className={styles.premiumSection} style={{ marginTop: '1.5rem' }}>
+                           <h3 className={styles.premiumSectionTitle}>Lịch sử giao dịch</h3>
+                           <div className={styles.emptyState}>
+                              <span className={styles.emptyStateIcon}>📋</span>
+                              <p>Chưa có giao dịch nào.</p>
+                           </div>
+                        </div>
                      </>
                   ) : activeMenu === 'password' ? (
                      <>

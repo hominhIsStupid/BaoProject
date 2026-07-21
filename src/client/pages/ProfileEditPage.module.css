@@ -627,3 +627,343 @@
 .emptyStateIcon {
    font-size: 2rem;
 }
+
+/* ============================================================
+   WALLET & PREMIUM SECTION
+   ============================================================ */
+
+/* --- Wallet Balance Card --- */
+.walletCard {
+   border-radius: 12px;
+   padding: 2px;
+   background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 40%, #B8860B 100%);
+   margin-bottom: 1.5rem;
+}
+
+.walletCardInner {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 1.5rem;
+   padding: 1.5rem;
+   background: var(--bg-card);
+   border-radius: 10px;
+}
+
+.walletInfo {
+   display: flex;
+   flex-direction: column;
+   gap: 4px;
+}
+
+.walletLabel {
+   font-size: 0.78rem;
+   font-weight: 500;
+   color: var(--text-muted);
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+}
+
+.walletBalance {
+   font-size: 2rem;
+   font-weight: 900;
+   color: #D4AF37;
+   font-family: 'Inter', sans-serif;
+   line-height: 1.1;
+}
+
+.walletHint {
+   font-size: 0.75rem;
+   color: var(--text-muted);
+   margin-top: 2px;
+}
+
+.walletActions {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+}
+
+.walletTopupBtn {
+   padding: 10px 20px;
+   border-radius: 8px;
+   font-size: 0.85rem;
+   font-weight: 700;
+   color: #1a0e00;
+   background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #B8860B 100%);
+   border: none;
+   cursor: pointer;
+   transition: all 0.25s ease;
+   box-shadow: 0 3px 12px rgba(212, 175, 55, 0.3);
+   white-space: nowrap;
+   font-family: inherit;
+}
+
+.walletTopupBtn:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 5px 18px rgba(212, 175, 55, 0.45);
+}
+
+/* --- Premium Section --- */
+.premiumSection {
+   margin-top: 0;
+}
+
+.premiumSectionTitle {
+   font-size: 0.9rem;
+   font-weight: 700;
+   color: var(--text-primary);
+   margin: 0 0 1rem 0;
+   padding-bottom: 0.6rem;
+   border-bottom: 1px solid var(--bg-border);
+}
+
+/* --- Active Plan Status Card --- */
+.planStatusCard {
+   border: 1px solid var(--bg-border);
+   border-radius: 12px;
+   padding: 1.2rem;
+   background: var(--bg-secondary);
+   display: flex;
+   flex-direction: column;
+   gap: 1rem;
+}
+
+.planStatusHeader {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.planStatusNameWrap {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.planStatusIcon {
+   font-size: 1.6rem;
+}
+
+.planStatusName {
+   font-size: 1.1rem;
+   font-weight: 800;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+}
+
+.planStatusBadge {
+   font-size: 0.68rem;
+   font-weight: 700;
+   padding: 4px 10px;
+   border-radius: 20px;
+   border: 1px solid;
+   text-transform: uppercase;
+   letter-spacing: 0.3px;
+}
+
+/* --- Usage Progress Bars --- */
+.usageSection {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.usageRow {
+   display: flex;
+   flex-direction: column;
+   gap: 5px;
+}
+
+.usageLabel {
+   display: flex;
+   justify-content: space-between;
+   font-size: 0.78rem;
+   color: var(--text-secondary);
+}
+
+.usageCount {
+   font-weight: 600;
+   color: var(--text-primary);
+}
+
+.usageBarTrack {
+   width: 100%;
+   height: 6px;
+   border-radius: 3px;
+   background: var(--bg-hover);
+   overflow: hidden;
+}
+
+.usageBarFill {
+   height: 100%;
+   border-radius: 3px;
+   transition: width 0.5s ease;
+   min-width: 2px;
+}
+
+.proUnlimited {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   font-size: 0.9rem;
+   font-weight: 600;
+   color: #D4AF37;
+   padding: 10px 14px;
+   border-radius: 8px;
+   background: rgba(212, 175, 55, 0.06);
+}
+
+.planStatusFooter {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-size: 0.78rem;
+   color: var(--text-muted);
+   padding-top: 0.6rem;
+   border-top: 1px solid var(--bg-border);
+}
+
+.planExpiry {
+   font-weight: 500;
+}
+
+.planPrice {
+   font-weight: 700;
+   color: var(--text-secondary);
+}
+
+.planUpgradeBtn {
+   width: 100%;
+   padding: 10px;
+   border-radius: 8px;
+   font-size: 0.85rem;
+   font-weight: 700;
+   color: var(--text-primary);
+   background: transparent;
+   border: 1px solid var(--bg-border);
+   cursor: pointer;
+   transition: all 0.2s ease;
+   font-family: inherit;
+}
+
+.planUpgradeBtn:hover {
+   background: rgba(212, 175, 55, 0.08);
+   border-color: rgba(212, 175, 55, 0.3);
+   color: #D4AF37;
+}
+
+/* --- No Plan Card --- */
+.noPlanCard {
+   text-align: center;
+   padding: 2rem 1.5rem;
+   border: 1px dashed var(--bg-border);
+   border-radius: 12px;
+   background: var(--bg-secondary);
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 10px;
+}
+
+.noPlanIcon {
+   font-size: 2.5rem;
+}
+
+.noPlanTitle {
+   font-size: 1.05rem;
+   font-weight: 700;
+   color: var(--text-primary);
+   margin: 0;
+}
+
+.noPlanDesc {
+   font-size: 0.85rem;
+   color: var(--text-muted);
+   line-height: 1.5;
+   margin: 0;
+   max-width: 380px;
+}
+
+.noPlanFeatures {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   width: 100%;
+   max-width: 340px;
+   margin: 8px 0 4px;
+   text-align: left;
+}
+
+.noPlanFeature {
+   display: flex;
+   align-items: flex-start;
+   gap: 10px;
+   font-size: 0.82rem;
+   color: var(--text-secondary);
+   line-height: 1.4;
+}
+
+.noPlanFeature span {
+   font-size: 1.1rem;
+   flex-shrink: 0;
+   margin-top: -1px;
+}
+
+.noPlanFeature strong {
+   color: var(--text-primary);
+}
+
+.noPlanFeature div {
+   display: flex;
+   flex-direction: column;
+}
+
+.noPlanPrice {
+   font-size: 0.72rem;
+   color: var(--text-muted);
+   margin-top: 1px;
+}
+
+.noPlanBtn {
+   padding: 12px 28px;
+   border-radius: 10px;
+   font-size: 0.9rem;
+   font-weight: 700;
+   color: #1a0e00;
+   background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #B8860B 100%);
+   border: none;
+   cursor: pointer;
+   transition: all 0.25s ease;
+   box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+   margin-top: 6px;
+   font-family: inherit;
+}
+
+.noPlanBtn:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
+}
+
+/* Responsive wallet */
+@media (max-width: 480px) {
+   .walletCardInner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+   }
+
+   .walletBalance {
+      font-size: 1.6rem;
+   }
+
+   .walletActions {
+      width: 100%;
+   }
+
+   .walletTopupBtn {
+      width: 100%;
+      text-align: center;
+   }
+}
+

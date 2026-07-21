@@ -173,10 +173,10 @@ function startScraperService() {
     runScraper();
   }, 10000);
 
-  // Sau đó lặp lại mỗi 30 phút (30 * 60 * 1000 ms)
+  // Sau đó lặp lại mỗi 5 phút (5 * 60 * 1000 ms)
   setInterval(() => {
     runScraper();
-  }, 30 * 60 * 1000);
+  }, 5 * 60 * 1000);
 }
 
 module.exports = { startScraperService, runScraper };
