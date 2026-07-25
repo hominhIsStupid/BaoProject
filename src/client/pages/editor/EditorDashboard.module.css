@@ -24,11 +24,10 @@
    background: var(--bg-panel);
    border-right: var(--border);
    padding: 1.5rem 0;
-   position: fixed;
-   height: 100vh;
+   position: sticky;
+   height: calc(100vh - 143px);
    overflow-y: auto;
-   left: 0;
-   top: 0;
+   top: 143px;
 }
 
 .sidebarHeader {
@@ -110,7 +109,6 @@
 /* ========== MAIN CONTENT ========== */
 .mainContent {
    flex: 1;
-   margin-left: 260px;
    padding: 2rem;
    overflow-y: auto;
 }
@@ -559,7 +557,6 @@
    }
 
    .mainContent {
-      margin-left: 220px;
       padding: 1.5rem;
    }
 
@@ -579,7 +576,6 @@
    }
 
    .mainContent {
-      margin-left: 200px;
       padding: 1rem;
    }
 
@@ -588,8 +584,8 @@
       grid-template-columns: 1.5fr 1fr;
    }
 
-   .tableHeader span:nth-child(n+3),
-   .tableRow span:nth-child(n+3) {
+   .tableHeader span:nth-child(n + 3),
+   .tableRow span:nth-child(n + 3) {
       display: none;
    }
 
