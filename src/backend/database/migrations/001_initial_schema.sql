@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS users (
   bio                   TEXT,
   phone                 TEXT,
   status                TEXT CHECK(status IN ('active', 'inactive', 'suspended')) DEFAULT 'active',
-  "subscribedCategories" TEXT[] DEFAULT '{}',
   "loginCount"          INTEGER DEFAULT 0,
   "lastLogin"           TIMESTAMPTZ,
   "createdAt"           TIMESTAMPTZ DEFAULT NOW(),
@@ -51,6 +50,16 @@ CREATE TABLE IF NOT EXISTS categories (
   "isActive"   BOOLEAN DEFAULT TRUE,
   "sortOrder"  INTEGER DEFAULT 0,
   "createdAt"  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
+-- User Subscribed Categories (many-to-many)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS user_subscribed_categories (
+  user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  category_id UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+  "createdAt" TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (user_id, category_id)
 );
 
 -- ============================================================
