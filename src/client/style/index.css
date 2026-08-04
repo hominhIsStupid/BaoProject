@@ -133,7 +133,6 @@ body::after {
 @media (min-width: 1440px) {
    #app-shell {
       border-radius: 0 0 20px 20px;
-      margin-bottom: 2rem;
    }
 }
 
@@ -166,7 +165,7 @@ button {
 }
 
 main {
-   min-height: calc(100vh - var(--header-height));
+   /* min-height: calc(100vh - var(--header-height)); */
    background: transparent;
 }
 

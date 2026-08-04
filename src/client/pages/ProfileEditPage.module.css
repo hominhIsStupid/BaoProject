@@ -5,8 +5,8 @@
 .profilePage {
    background: transparent;
    color: var(--text-primary);
-   min-height: 100vh;
-   padding-bottom: 4rem;
+   min-height: calc(100vh - 80px);
+   padding-bottom: 2rem;
    font-family:
       'Inter',
       -apple-system,
@@ -19,7 +19,7 @@
 .container {
    max-width: 1200px;
    margin: 0 auto;
-   padding: 1.5rem 1rem;
+   padding: 1rem;
 }
 
 /* --- Breadcrumb Navigation --- */
@@ -28,7 +28,7 @@
    align-items: center;
    flex-wrap: wrap;
    gap: 0.5rem;
-   margin-bottom: 2rem;
+   margin-bottom: 1.5rem;
    font-size: 0.8rem;
    color: var(--text-muted);
 }
@@ -143,9 +143,11 @@
    background: var(--bg-card);
    border: 1px solid var(--bg-border);
    border-radius: 6px;
-   padding: 2.2rem;
+   padding: 1.5rem;
    max-width: 800px;
    width: 100%;
+   align-self: start;
+   min-height: fit-content;
 }
 
 .formTitle {
@@ -154,14 +156,14 @@
    color: rgb(221, 180, 107);
    border-bottom: 1px solid var(--bg-border);
    padding-bottom: 0.8rem;
-   margin: 0 0 1.8rem 0;
+   margin: 0 0 1.2rem 0;
    letter-spacing: 0.05em;
 }
 
 .form {
    display: flex;
    flex-direction: column;
-   gap: 1.5rem;
+   gap: 1rem;
 }
 
 /* --- Avatar Section --- */
@@ -258,6 +260,35 @@
 
 .input:focus {
    border-color: rgb(221, 180, 107);
+}
+
+.passwordWrapper {
+   position: relative;
+   display: flex;
+   align-items: center;
+}
+
+.passwordWrapper .input {
+   width: 100%;
+   padding-right: 2.5rem;
+}
+
+.eyeBtn {
+   position: absolute;
+   right: 0.8rem;
+   background: transparent;
+   border: none;
+   color: var(--text-muted);
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0;
+   transition: color 0.2s ease;
+}
+
+.eyeBtn:hover {
+   color: rgb(221, 180, 107);
 }
 
 .inputDisabled {
