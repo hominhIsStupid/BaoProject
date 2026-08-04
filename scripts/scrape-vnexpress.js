@@ -30,7 +30,12 @@ const CATEGORIES = [
 // Helper to scrape full article content from VnExpress
 async function scrapeFullContent(url) {
    try {
-      const res = await fetch(url);
+      const res = await fetch(url, {
+         headers: {
+            'User-Agent':
+               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+         },
+      });
       if (!res.ok) return '';
       const html = await res.text();
       const $ = cheerio.load(html);
@@ -43,7 +48,7 @@ async function scrapeFullContent(url) {
 
       // Fallback if .Normal isn't found
       if (paragraphs.length === 0) {
-         $('article.fck_detail p').each((i, el) => {
+         $('.fck_detail p, article.fck_detail p').each((i, el) => {
             paragraphs.push($(el).text().trim());
          });
       }

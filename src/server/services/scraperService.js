@@ -28,7 +28,12 @@ const CATEGORIES = [
 
 async function scrapeFullContent(url) {
    try {
-      const res = await fetch(url);
+      const res = await fetch(url, {
+         headers: {
+            'User-Agent':
+               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+         },
+      });
       if (!res.ok) return '';
       const html = await res.text();
       const $ = cheerio.load(html);
@@ -40,7 +45,7 @@ async function scrapeFullContent(url) {
          .children()
          .each((i, el) => {
             const tag = $(el).prop('tagName').toLowerCase();
-            if (tag === 'p' && $(el).hasClass('Normal')) {
+            if (tag === 'p') {
                contentHtml += `<p>${$(el).html()}</p>\n`;
             } else if (tag === 'figure') {
                const imgMeta = $(el).find('meta[itemprop="url"]').attr('content');
@@ -62,8 +67,8 @@ async function scrapeFullContent(url) {
 
       if (!contentHtml) {
          // Fallback
-         $('article.fck_detail p').each((i, el) => {
-            contentHtml += `<p>${$(el).text().trim()}</p>\n`;
+         $('.fck_detail p, article.fck_detail p').each((i, el) => {
+            contentHtml += `<p>${$(el).html()}</p>\n`;
          });
       }
 
