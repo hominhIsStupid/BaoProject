@@ -340,16 +340,16 @@ function Header() {
                         Mới nhất
                      </Link>
                      <span className={styles.divider}>|</span>
-                     <Link to="/category/thoi-su" className={styles.quickLink}>
+                     <Link to="/category/thoisu" className={styles.quickLink}>
                         Thời sự
                      </Link>
                      <span className={styles.divider}>|</span>
-                     <Link to="/category/kinh-doanh" className={styles.quickLink}>
+                     <Link to="/category/business" className={styles.quickLink}>
                         Kinh doanh
                      </Link>
                      <span className={styles.divider}>|</span>
-                     <Link to="/category/the-gioi" className={styles.quickLink}>
-                        Quốc tế
+                     <Link to="/category/thegioi" className={styles.quickLink}>
+                        Thế giới
                      </Link>
                   </div>
                   <div className={styles.infoRight} ref={cityPickerRef}>
