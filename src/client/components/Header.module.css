@@ -763,12 +763,10 @@
    left: 0;
    width: 100%;
    min-width: 360px;
-   background: var(--glass-bg);
+   background: var(--bg-card);
    border: 1px solid var(--glass-border);
    border-radius: 12px;
    box-shadow: var(--shadow-xl);
-   backdrop-filter: var(--glass-blur);
-   -webkit-backdrop-filter: var(--glass-blur);
    padding: 1rem;
    z-index: 100;
    display: flex;

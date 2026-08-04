@@ -286,6 +286,11 @@ function Header() {
             const res = await fetch(`/api/articles/search/suggestions/${encodeURIComponent(searchQuery.trim())}`);
             if (res.ok) {
                const data = await res.json();
+               if (data.articles) {
+                  data.articles = data.articles.filter(
+                     (item, index, self) => index === self.findIndex((t) => t.title === item.title)
+                  );
+               }
                setSuggestions(data);
             }
          } catch (err) {
