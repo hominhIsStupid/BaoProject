@@ -30,6 +30,14 @@ function ArticleDetailPage() {
       handleToggleLike,
    } = useArticleData(id);
 
+   const EMOJI_LIST = ['😀', '😂', '😍', '😭', '🥺', '😡', '👍', '🙏', '❤️', '🔥', '🤔', '🙌', '👏', '🎉', '😢', '💯'];
+
+   const [newCommentText, setNewCommentText] = useState('');
+   const [copied, setCopied] = useState(false);
+   const [fontSizeMultiplier, setFontSizeMultiplier] = useState(1);
+   const [activeTab, setActiveTab] = useState('newest');
+   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
    const handleCommentSubmit = async (e) => {
       e.preventDefault();
       if (!newCommentText.trim() || !loggedInUser) return;
@@ -45,30 +53,41 @@ function ArticleDetailPage() {
       }
    };
 
-   const handleLikeComment = (commentId, replyId = null) => {
-      // Mock like feature for now
+   const handleLikeComment = async (commentId) => {
+      if (!loggedInUser) {
+         alert('Vui lòng đăng nhập để thích bình luận!');
+         return;
+      }
+
+      // Optimistic update
       setComments((prevComments) =>
          prevComments.map((c) => {
-            if (replyId) {
-               if (c.id === commentId) {
-                  return {
-                     ...c,
-                     replies: c.replies?.map((r) => {
-                        if (r.id === replyId) {
-                           return { ...r, likes: (r.likes || 0) + (r.liked ? -1 : 1), liked: !r.liked };
-                        }
-                        return r;
-                     }),
-                  };
-               }
-            } else {
-               if (c.id === commentId) {
-                  return { ...c, likes: (c.likes || 0) + (c.liked ? -1 : 1), liked: !c.liked };
-               }
+            if (c.id === commentId) {
+               return { ...c, likes: (c.likes || 0) + (c.liked ? -1 : 1), liked: !c.liked };
             }
             return c;
          })
       );
+
+      try {
+         const comment = comments.find((c) => c.id === commentId);
+         if (comment.liked) {
+            await commentsAPI.unlike(commentId);
+         } else {
+            await commentsAPI.like(commentId);
+         }
+      } catch (err) {
+         // Revert on error
+         setComments((prevComments) =>
+            prevComments.map((c) => {
+               if (c.id === commentId) {
+                  return { ...c, likes: (c.likes || 0) + (c.liked ? -1 : 1), liked: !c.liked };
+               }
+               return c;
+            })
+         );
+         console.error('Lỗi khi thích bình luận:', err);
+      }
    };
 
    const toggleReplies = (commentId) => {
@@ -107,8 +126,11 @@ function ArticleDetailPage() {
       );
    }
 
-   // Default tags if article doesn't have custom ones
-   const tags = article.tags || ['Kinh tế Việt Nam', 'GDP', 'Tăng trưởng', 'Chính sách', 'Doanh nghiệp'];
+   // Default tags if article doesn't have custom ones or if tags is an empty array
+   const tags =
+      article.tags?.length > 0
+         ? article.tags
+         : ['Kinh tế Việt Nam', 'GDP', 'Tăng trưởng', 'Chính sách', 'Doanh nghiệp'];
 
    const categoryInfo = CATEGORY_MAP[article.category] || { name: 'Tin tức', slug: 'news', color: '#D4AF37' };
 
@@ -252,25 +274,11 @@ function ArticleDetailPage() {
                   <div className={styles.toolbar}>
                      <div className={styles.shareActions}>
                         <span className={styles.toolbarLabel}>Chia sẻ:</span>
-                        <button className={`${styles.toolBtn} ${styles.shareFb}`} aria-label="Chia sẻ Facebook">
-                           <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                           </svg>
-                        </button>
-                        <button className={`${styles.toolBtn} ${styles.shareMessenger}`} aria-label="Chia sẻ Messenger">
-                           <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.253a12.923 12.923 0 003.443.464c6.627 0 12-4.974 12-11.111C24 4.973 18.627 0 12 0zm1.293 14.193l-3.093-3.3-6.025 3.3 6.625-7.031 3.163 3.3 5.955-3.3-6.625 7.031z" />
-                           </svg>
-                        </button>
-                        <button className={`${styles.toolBtn} ${styles.shareTwitter}`} aria-label="Chia sẻ Twitter">
-                           <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                           </svg>
-                        </button>
                         <button
                            className={`${styles.toolBtn} ${styles.shareCopy}`}
                            onClick={handleCopyLink}
                            aria-label="Copy liên kết bài viết"
+                           style={{ position: 'relative' }}
                         >
                            <svg
                               width="16"
@@ -283,26 +291,7 @@ function ArticleDetailPage() {
                               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                            </svg>
-                        </button>
-                        {/* Like button */}
-                        <button
-                           className={`${styles.toolBtn} ${isLiked ? styles.liked : ''}`}
-                           onClick={handleToggleLike}
-                           disabled={likeLoading}
-                           aria-label={isLiked ? 'Bỏ thích' : 'Thích bài viết'}
-                           title={isLiked ? 'Bỏ thích' : 'Thích bài viết'}
-                        >
-                           <svg
-                              width="16"
-                              height="16"
-                              fill={isLiked ? 'currentColor' : 'none'}
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              viewBox="0 0 24 24"
-                           >
-                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                           </svg>
-                           {likeCount > 0 && <span className={styles.likeCount}>{likeCount}</span>}
+                           {copied && <span className={styles.copyToast}>Đã sao chép đường dẫn</span>}
                         </button>
                         {/* Bookmark button */}
                         {loggedInUser && (
@@ -325,6 +314,25 @@ function ArticleDetailPage() {
                               </svg>
                            </button>
                         )}
+                        <button
+                           className={`${styles.toolBtnWithCount} ${isLiked ? styles.liked : ''}`}
+                           onClick={handleToggleLike}
+                           disabled={likeLoading}
+                           aria-label={isLiked ? 'Bỏ thích' : 'Thích bài viết'}
+                           title={isLiked ? 'Bỏ thích' : 'Thích bài viết'}
+                        >
+                           <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill={isLiked ? 'currentColor' : 'none'}
+                              stroke="currentColor"
+                              strokeWidth="2"
+                           >
+                              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                           </svg>
+                           {likeCount > 0 && <span className={styles.likeCountInline}>{likeCount}</span>}
+                        </button>
                      </div>
 
                      <div className={styles.textAdjust}>
@@ -421,9 +429,17 @@ function ArticleDetailPage() {
                      <div className={styles.commentInputBox}>
                         <div className={styles.commentAvatar}>
                            {loggedInUser ? (
-                              <div className={styles.avatarEmpty}>
-                                 {loggedInUser.fullName ? loggedInUser.fullName.charAt(0) : 'U'}
-                              </div>
+                              loggedInUser.avatar ? (
+                                 <img
+                                    src={loggedInUser.avatar}
+                                    alt={loggedInUser.fullName || 'User'}
+                                    className={styles.avatarImg}
+                                 />
+                              ) : (
+                                 <div className={styles.avatarEmpty}>
+                                    {(loggedInUser.fullName || 'U').charAt(0).toUpperCase()}
+                                 </div>
+                              )
                            ) : (
                               <div className={styles.avatarEmpty}>?</div>
                            )}
@@ -440,13 +456,32 @@ function ArticleDetailPage() {
                               disabled={!loggedInUser}
                            />
                            <div className={styles.commentFormBottom}>
-                              <div className={styles.commentFormTools}>
-                                 <button type="button" className={styles.toolIconBtn} aria-label="Thêm emoji">
+                              <div className={styles.commentFormTools} style={{ position: 'relative' }}>
+                                 <button
+                                    type="button"
+                                    className={styles.toolIconBtn}
+                                    aria-label="Thêm emoji"
+                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                 >
                                     😊
                                  </button>
-                                 <button type="button" className={styles.toolIconBtn} aria-label="Đính kèm ảnh">
-                                    📷
-                                 </button>
+                                 {showEmojiPicker && (
+                                    <div className={styles.emojiPicker}>
+                                       {EMOJI_LIST.map((emoji) => (
+                                          <button
+                                             key={emoji}
+                                             type="button"
+                                             className={styles.emojiBtn}
+                                             onClick={() => {
+                                                setNewCommentText((prev) => prev + emoji);
+                                                setShowEmojiPicker(false);
+                                             }}
+                                          >
+                                             {emoji}
+                                          </button>
+                                       ))}
+                                    </div>
+                                 )}
                               </div>
                               <div className={styles.commentFormSubmitRow}>
                                  <span className={styles.charCounter}>{newCommentText.length}/1000</span>
@@ -488,27 +523,24 @@ function ArticleDetailPage() {
                                  <div className={styles.commentMain}>
                                     <div className={styles.commentHeader}>
                                        <div className={styles.commentUserAvatar}>
-                                          {comment.avatar ? (
+                                          {comment.avatar || comment.userAvatar ? (
                                              <img
-                                                src={comment.avatar}
-                                                alt={comment.user_name || 'User'}
+                                                src={comment.avatar || comment.userAvatar}
+                                                alt={comment.user_name || comment.userName || 'User'}
                                                 className={styles.avatarImg}
                                              />
                                           ) : (
                                              <div className={styles.avatarEmpty}>
-                                                {(comment.user_name || 'U').charAt(0)}
+                                                {(comment.user_name || comment.userName || 'U').charAt(0).toUpperCase()}
                                              </div>
                                           )}
                                        </div>
                                        <div className={styles.commentMeta}>
                                           <span className={styles.commentAuthorName}>
-                                             {comment.user_name || 'Người dùng'}
+                                             {comment.user_name || comment.userName || 'Người dùng'}
                                           </span>
                                           <span className={styles.commentTime}>{getTimeAgo(comment.createdAt)}</span>
                                        </div>
-                                       <button className={styles.commentOptionsBtn} aria-label="Tùy chọn bình luận">
-                                          •••
-                                       </button>
                                     </div>
                                     <p className={styles.commentTextContent}>{comment.content}</p>
                                     <div className={styles.commentActions}>
@@ -530,7 +562,9 @@ function ArticleDetailPage() {
                                        </button>
                                        <button
                                           className={styles.actionTextBtn}
-                                          onClick={() => setNewCommentText(`@${comment.user_name || 'User'} `)}
+                                          onClick={() =>
+                                             setNewCommentText(`@${comment.user_name || comment.userName || 'User'} `)
+                                          }
                                        >
                                           Trả lời
                                        </button>

@@ -24,7 +24,7 @@ export function useArticleData(id) {
 
    useEffect(() => {
       const fetchData = async () => {
-         if (!cachedArticle) setLoading(true);
+         if (!apiCache.has(`GET:/articles/${id}`)) setLoading(true);
          setError(null);
          try {
             // Fetch main article
@@ -80,7 +80,7 @@ export function useArticleData(id) {
 
       fetchData();
       window.scrollTo(0, 0);
-   }, [id, cachedArticle, loggedInUser]);
+   }, [id, loggedInUser?.id]);
 
    const handleToggleBookmark = async () => {
       if (!loggedInUser) {

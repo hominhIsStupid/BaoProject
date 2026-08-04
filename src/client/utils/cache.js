@@ -52,6 +52,10 @@ export class LRUCache {
    clear() {
       this.cache.clear();
    }
+
+   delete(key) {
+      this.cache.delete(key);
+   }
 }
 
 // Global API cache instance (limit to 100 API responses)

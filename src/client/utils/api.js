@@ -423,18 +423,16 @@ const apiCall = async (method, endpoint, data = null) => {
       const responseData = await response.json();
 
       if (!response.ok) {
-         const err = new Error(responseData.message || 'API error');
+         if (response.status === 401) {
+            tokenStorage.clearToken();
+            tokenStorage.clearUser();
+            if (window.location.pathname !== '/login') {
+               window.location.href = '/login';
+            }
+         }
+         const err = new Error(responseData.message || (typeof responseData === 'string' ? responseData : 'API error'));
          err.status = response.status;
          throw err;
-      }
-
-      if (response.status === 401) {
-         tokenStorage.clearToken();
-         tokenStorage.clearUser();
-         if (window.location.pathname !== '/login') {
-            window.location.href = '/login';
-         }
-         throw new Error(responseData);
       }
 
       // Save to cache for GET requests
@@ -572,13 +570,34 @@ const adminAPI = {
 
 // COMMENTS API
 const commentsAPI = {
-   create: (articleId, content) => apiCall('POST', `/comments/${articleId}`, { content }),
+   create: async (articleId, content) => {
+      const res = await apiCall('POST', `/comments/${articleId}`, { content });
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete(`GET:/comments/${articleId}`);
+      apiCache.delete('GET:/comments/my-comments');
+      return res;
+   },
 
    getByArticle: (articleId) => apiCall('GET', `/comments/${articleId}`),
 
-   delete: (commentId) => apiCall('DELETE', `/comments/${commentId}`),
+   like: (commentId) => apiCall('POST', `/comments/${commentId}/like`),
 
-   updateStatus: (commentId, status) => apiCall('PUT', `/comments/${commentId}/status`, { status }),
+   unlike: (commentId) => apiCall('DELETE', `/comments/${commentId}/like`),
+
+   delete: async (commentId) => {
+      const res = await apiCall('DELETE', `/comments/${commentId}`);
+      const { apiCache } = await import('./cache.js');
+      // We don't have articleId here easily, so we might just want to let it be,
+      // or we clear the whole cache if needed. We'll just clear the global my-comments.
+      apiCache.delete('GET:/comments/my-comments');
+      return res;
+   },
+
+   updateStatus: async (commentId, status) => {
+      const res = await apiCall('PUT', `/comments/${commentId}/status`, { status });
+      // Same here
+      return res;
+   },
 
    getMyComments: () => apiCall('GET', '/comments/my-comments'),
 
@@ -587,29 +606,59 @@ const commentsAPI = {
 
 // BOOKMARKS API
 const bookmarksAPI = {
-   add: (articleId) => apiCall('POST', `/bookmarks/${articleId}`),
+   add: async (articleId) => {
+      const res = await apiCall('POST', `/bookmarks/${articleId}`);
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete('GET:/bookmarks');
+      return res;
+   },
 
    getAll: () => apiCall('GET', '/bookmarks'),
 
-   delete: (articleId) => apiCall('DELETE', `/bookmarks/${articleId}`),
+   delete: async (articleId) => {
+      const res = await apiCall('DELETE', `/bookmarks/${articleId}`);
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete('GET:/bookmarks');
+      return res;
+   },
 };
 
 // NOTIFICATIONS API
 const notificationsAPI = {
    getAll: () => apiCall('GET', '/notifications'),
 
-   readAll: () => apiCall('PUT', '/notifications/read-all'),
+   readAll: async () => {
+      const res = await apiCall('PUT', '/notifications/read-all');
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete('GET:/notifications');
+      return res;
+   },
 
-   markAsRead: (id) => apiCall('PUT', `/notifications/${id}/read`),
+   markAsRead: async (id) => {
+      const res = await apiCall('PUT', `/notifications/${id}/read`);
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete('GET:/notifications');
+      return res;
+   },
 };
 
 // RECOMMENDATION API
 const recommendationAPI = {
    trackRead: (articleId, category) => apiCall('POST', '/recommendations/track-read', { articleId, category }),
 
-   like: (articleId, category) => apiCall('POST', `/recommendations/${articleId}/like`, { category }),
+   like: async (articleId, category) => {
+      const res = await apiCall('POST', `/recommendations/${articleId}/like`, { category });
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete(`GET:/recommendations/${articleId}/like-status`);
+      return res;
+   },
 
-   unlike: (articleId) => apiCall('DELETE', `/recommendations/${articleId}/like`),
+   unlike: async (articleId) => {
+      const res = await apiCall('DELETE', `/recommendations/${articleId}/like`);
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete(`GET:/recommendations/${articleId}/like-status`);
+      return res;
+   },
 
    getLikeStatus: (articleId) => apiCall('GET', `/recommendations/${articleId}/like-status`),
 

@@ -72,13 +72,34 @@ router.get('/my-comments', authMiddleware, async (req, res) => {
 });
 
 // Retrieve approved comments for an article (public)
-router.get('/:articleId', async (req, res) => {
+router.get('/:articleId', optionalAuth, async (req, res) => {
    try {
       const { articleId } = req.params;
-      const comments = await commentRepository.findByArticle(articleId);
+      const userId = req.user ? req.user.id : null;
+      const comments = await commentRepository.findByArticle(articleId, userId);
       res.json(comments);
    } catch (error) {
       res.status(500).json({ message: 'Failed to fetch comments', error: error.message });
+   }
+});
+
+// Like a comment (authenticated)
+router.post('/:commentId/like', authMiddleware, async (req, res) => {
+   try {
+      await commentRepository.likeComment(req.user.id, req.params.commentId);
+      res.json({ message: 'Comment liked' });
+   } catch (error) {
+      res.status(500).json({ message: 'Failed to like comment', error: error.message });
+   }
+});
+
+// Unlike a comment (authenticated)
+router.delete('/:commentId/like', authMiddleware, async (req, res) => {
+   try {
+      await commentRepository.unlikeComment(req.user.id, req.params.commentId);
+      res.json({ message: 'Comment unliked' });
+   } catch (error) {
+      res.status(500).json({ message: 'Failed to unlike comment', error: error.message });
    }
 });
 

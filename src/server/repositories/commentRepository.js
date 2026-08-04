@@ -23,16 +23,38 @@ class CommentRepository {
       return result.rows;
    }
 
-   async findByArticle(articleId) {
+   async findByArticle(articleId, userId = null) {
       const result = await pool.query(
          `SELECT c.*, u."fullName" as "userName", u.avatar as "userAvatar"
+          ${userId ? ', (cl.user_id IS NOT NULL) as liked' : ', false as liked'}
        FROM comments c
        JOIN users u ON c.user_id = u.id
+       ${userId ? `LEFT JOIN comment_likes cl ON c.id = cl.comment_id AND cl.user_id = $2` : ''}
        WHERE c.article_id = $1 AND c.status = 'approved'
        ORDER BY c."createdAt" DESC`,
-         [articleId]
+         userId ? [articleId, userId] : [articleId]
       );
       return result.rows;
+   }
+
+   async likeComment(userId, commentId) {
+      await pool.query(
+         `INSERT INTO comment_likes (user_id, comment_id)
+          VALUES ($1, $2)
+          ON CONFLICT (user_id, comment_id) DO NOTHING`,
+         [userId, commentId]
+      );
+      await pool.query(`UPDATE comments SET likes = COALESCE(likes, 0) + 1 WHERE id = $1`, [commentId]);
+   }
+
+   async unlikeComment(userId, commentId) {
+      const result = await pool.query(
+         `DELETE FROM comment_likes WHERE user_id = $1 AND comment_id = $2 RETURNING user_id`,
+         [userId, commentId]
+      );
+      if (result.rows.length > 0) {
+         await pool.query(`UPDATE comments SET likes = GREATEST(COALESCE(likes, 0) - 1, 0) WHERE id = $1`, [commentId]);
+      }
    }
 
    async findById(id) {
