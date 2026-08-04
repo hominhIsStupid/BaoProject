@@ -1,4 +1,4 @@
-import { LRUCache } from '../../src/utils/cache';
+import { LRUCache } from '../../src/client/utils/cache';
 
 describe('LRUCache', () => {
    beforeEach(() => {

@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import { renderHook, waitFor } from '@testing-library/react';
-import { useWeather } from '../../src/hooks/useWeather';
+import { useWeather } from '../../src/client/hooks/useWeather';
 
 describe('useWeather hook', () => {
    beforeEach(() => {

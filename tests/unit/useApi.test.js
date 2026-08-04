@@ -1,10 +1,10 @@
 /** @jest-environment jsdom */
 import { renderHook, act } from '@testing-library/react';
-import { useAuth } from '../../src/hooks/useApi';
-import { tokenStorage, authAPI } from '../../src/utils/api';
+import { useAuth } from '../../src/client/hooks/useApi';
+import { tokenStorage, authAPI } from '../../src/client/utils/api';
 
 // Mock the API and token storage
-jest.mock('../../src/utils/api', () => ({
+jest.mock('../../src/client/utils/api', () => ({
    tokenStorage: {
       getUser: jest.fn(),
       setToken: jest.fn(),
