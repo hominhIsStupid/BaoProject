@@ -25,9 +25,12 @@ export function LazyCategorySection({ title, icon, slug, accentColor }) {
    useEffect(() => {
       if (isVisible && articles === null) {
          articlesAPI
-            .getByCategory(slug, 4, 0)
+            .getByCategory(slug, 15, 0)
             .then((data) => {
-               setArticles(data || []);
+               const uniqueData = (data || []).filter(
+                  (item, index, self) => index === self.findIndex((t) => t.title === item.title)
+               );
+               setArticles(uniqueData.slice(0, 4));
             })
             .catch((err) => {
                console.error(err);
@@ -85,9 +88,12 @@ export function LazyHorizontalSection({ title, icon, slug, accentColor }) {
    useEffect(() => {
       if (isVisible && articles === null) {
          articlesAPI
-            .getByCategory(slug, 4, 0)
+            .getByCategory(slug, 15, 0)
             .then((data) => {
-               setArticles(data || []);
+               const uniqueData = (data || []).filter(
+                  (item, index, self) => index === self.findIndex((t) => t.title === item.title)
+               );
+               setArticles(uniqueData.slice(0, 4));
             })
             .catch((err) => {
                console.error(err);

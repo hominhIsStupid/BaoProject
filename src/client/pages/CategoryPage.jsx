@@ -9,7 +9,10 @@ import styles from './CategoryPage.module.css';
 function CategoryPage() {
    const { category } = useParams();
 
-   const cacheKey = `GET:/articles/category/${category}?limit=15&offset=0`;
+   const isTinMoi = category === 'tin-moi';
+   const cacheKey = isTinMoi
+      ? `GET:/articles?limit=15&offset=0`
+      : `GET:/articles/category/${category}?limit=15&offset=0`;
    const cachedData = apiCache.has(cacheKey) ? apiCache.get(cacheKey) : null;
 
    const [articles, setArticles] = useState(cachedData ? (Array.isArray(cachedData) ? cachedData : []) : []);
@@ -22,7 +25,7 @@ function CategoryPage() {
          setError(null);
          try {
             // Pass the category slug directly to the API
-            const data = await articlesAPI.getByCategory(category, 15, 0);
+            const data = isTinMoi ? await articlesAPI.getAll(15, 0) : await articlesAPI.getByCategory(category, 15, 0);
             const uniqueData = (Array.isArray(data) ? data : []).filter(
                (item, index, self) => index === self.findIndex((t) => t.title === item.title)
             );
@@ -40,7 +43,10 @@ function CategoryPage() {
    }, [category]);
 
    // find the display name from CATEGORY_MAP or CATEGORIES
-   const displayCategory = CATEGORY_MAP[category] || CATEGORIES.find((c) => c.slug === category) || { name: category };
+   let displayCategory = CATEGORY_MAP[category] || CATEGORIES.find((c) => c.slug === category);
+   if (!displayCategory) {
+      displayCategory = { name: isTinMoi ? 'Tin Mới Nhất' : category };
+   }
    const title = displayCategory.name;
 
    const featuredArticles = articles.slice(0, 2);
