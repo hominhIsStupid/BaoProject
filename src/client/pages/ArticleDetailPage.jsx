@@ -90,6 +90,22 @@ function ArticleDetailPage() {
       }
    };
 
+   const handleReportComment = async (commentId) => {
+      if (!loggedInUser) {
+         alert('Vui lòng đăng nhập để báo cáo bình luận!');
+         return;
+      }
+      if (!window.confirm('Bạn có chắc chắn muốn báo cáo bình luận này?')) return;
+
+      try {
+         await commentsAPI.report(commentId);
+         alert('Đã báo cáo bình luận thành công. Cảm ơn bạn!');
+      } catch (err) {
+         console.error('Lỗi khi báo cáo:', err);
+         alert('Báo cáo thất bại: ' + err.message);
+      }
+   };
+
    const toggleReplies = (commentId) => {
       setComments((prevComments) =>
          prevComments.map((c) => {
@@ -568,7 +584,10 @@ function ArticleDetailPage() {
                                        >
                                           Trả lời
                                        </button>
-                                       <button className={`${styles.actionTextBtn} ${styles.btnReportComment}`}>
+                                       <button
+                                          className={`${styles.actionTextBtn} ${styles.btnReportComment}`}
+                                          onClick={() => handleReportComment(comment.id)}
+                                       >
                                           <svg
                                              width="12"
                                              height="12"

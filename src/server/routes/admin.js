@@ -50,6 +50,30 @@ router.post('/articles/:id/publish', authMiddleware, roleMiddleware(['admin']), 
    }
 });
 
+// Update article (admin can update any article)
+router.put('/articles/:id', authMiddleware, roleMiddleware(['admin']), async (req, res) => {
+   try {
+      const article = await articleRepository.findById(req.params.id);
+
+      if (!article) {
+         return res.status(404).json({ message: 'Article not found' });
+      }
+
+      const updatedArticle = await articleRepository.update(req.params.id, req.body);
+
+      // Log action
+      await pool.query(
+         `INSERT INTO system_logs (action, user_id, description)
+       VALUES ($1, $2, $3)`,
+         ['ARTICLE_UPDATED', req.user.id, `Updated article: ${updatedArticle.title}`]
+      );
+
+      res.json({ message: 'Article updated', article: updatedArticle });
+   } catch (error) {
+      res.status(500).json({ message: 'Update failed', error: error.message });
+   }
+});
+
 // Delete article
 router.delete('/articles/:id', authMiddleware, roleMiddleware(['admin']), async (req, res) => {
    try {

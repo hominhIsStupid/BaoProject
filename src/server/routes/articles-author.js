@@ -77,8 +77,8 @@ router.put('/:id', authMiddleware, roleMiddleware(['author']), async (req, res) 
          return res.status(403).json({ message: 'Access denied' });
       }
 
-      if (article.status !== 'draft') {
-         return res.status(400).json({ message: 'Can only edit draft articles' });
+      if (article.status !== 'draft' && article.status !== 'rejected') {
+         return res.status(400).json({ message: 'Can only edit draft or rejected articles' });
       }
 
       const updatedArticle = await articleRepository.update(req.params.id, req.body);
@@ -101,8 +101,8 @@ router.post('/:id/submit', authMiddleware, roleMiddleware(['author']), async (re
          return res.status(403).json({ message: 'Access denied' });
       }
 
-      if (article.status !== 'draft') {
-         return res.status(400).json({ message: 'Can only submit draft articles' });
+      if (article.status !== 'draft' && article.status !== 'rejected') {
+         return res.status(400).json({ message: 'Can only submit draft or rejected articles' });
       }
 
       await articleRepository.updateStatus(req.params.id, 'pending');

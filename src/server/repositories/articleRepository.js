@@ -25,7 +25,7 @@ class ArticleRepository {
 
    async findByAuthor(author_id, limit = 50, offset = 0) {
       const result = await pool.query(
-         `SELECT id, title, excerpt, category, image, "readTime", status, views, likes, tags, "isFeatured", "createdAt", "publishedAt"
+         `SELECT id, title, excerpt, category, image, "readTime", status, views, likes, tags, "isFeatured", "createdAt", "publishedAt", "rejectionReason"
        FROM articles WHERE author_id = $1
        ORDER BY "createdAt" DESC LIMIT $2 OFFSET $3`,
          [author_id, limit, offset]

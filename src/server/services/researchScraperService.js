@@ -31,53 +31,67 @@ async function scrapeFullResearchContent(url) {
 
       // VnExpress
       if (url.includes('vnexpress.net')) {
-         $('.fck_detail')
-            .children()
-            .each((i, el) => {
-               const tag = $(el).prop('tagName').toLowerCase();
-               if (tag === 'p' && $(el).hasClass('Normal')) {
-                  contentHtml += `<p>${$(el).html()}</p>\n`;
-               } else if (tag === 'figure') {
-                  const imgMeta = $(el).find('meta[itemprop="url"]').attr('content');
-                  let caption = $(el).find('figcaption').text().trim() || $(el).find('.Image').text().trim();
+         const $detail = $('.fck_detail, article.fck_detail').first();
 
-                  if (imgMeta) {
-                     contentHtml += `
-              <figure style="margin: 1.5rem 0; text-align: center;">
-                <img src="${imgMeta}" alt="${caption}" style="max-width: 100%; border-radius: 8px;" />
-                ${caption ? `<figcaption style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">${caption}</figcaption>` : ''}
-              </figure>\n`;
-                  }
-               } else if (tag === 'ul' || tag === 'ol') {
-                  contentHtml += `<${tag}>${$(el).html()}</${tag}>\n`;
+         if ($detail.length > 0) {
+            // clean up garbage
+            $detail
+               .find(
+                  'script, style, iframe, .box-related, .related-news, .banner, .video, .Social-Share, meta, .inner-article'
+               )
+               .remove();
+
+            // Fix images
+            $detail.find('figure, .fig-picture, picture').each((i, el) => {
+               const imgEl = $(el).find('img').first();
+               let imgSrc =
+                  imgEl.attr('data-src') || imgEl.attr('src') || $(el).find('meta[itemprop="url"]').attr('content');
+               let caption =
+                  $(el).find('figcaption').text().trim() ||
+                  $(el).find('.Image, .desc_cation').text().trim() ||
+                  imgEl.attr('alt') ||
+                  '';
+
+               if (imgSrc && !imgSrc.startsWith('data:image')) {
+                  const newFigure = `
+               <figure style="margin: 1.5rem 0; text-align: center;">
+                 <img src="${imgSrc}" alt="${caption}" style="max-width: 100%; border-radius: 8px;" />
+                 ${caption ? `<figcaption style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">${caption}</figcaption>` : ''}
+               </figure>\n`;
+                  $(el).replaceWith(newFigure);
                }
             });
-         if (!contentHtml) {
-            $('article.fck_detail p').each((i, el) => {
-               contentHtml += `<p>${$(el).text().trim()}</p>\n`;
-            });
+
+            // get inner HTML
+            contentHtml = $detail.html().trim();
          }
       }
       // TuoiTre
       else if (url.includes('tuoitre.vn')) {
-         $('.detail-content')
-            .children()
-            .each((i, el) => {
-               const tag = $(el).prop('tagName').toLowerCase();
-               if (tag === 'p') {
-                  contentHtml += `<p>${$(el).html()}</p>\n`;
-               } else if (tag === 'figure' || tag === 'div') {
-                  const img = $(el).find('img').attr('src');
-                  const caption = $(el).find('figcaption, .PhotoCMS_Caption').text().trim();
-                  if (img) {
-                     contentHtml += `
+         const $detail = $('.detail-content').first();
+         if ($detail.length > 0) {
+            $detail
+               .find(
+                  'script, style, iframe, .box-related, .related-news, .banner, .video, .Social-Share, meta, .inner-article'
+               )
+               .remove();
+
+            $detail.find('figure, .VCSortableInPreviewMode, div[type="Photo"]').each((i, el) => {
+               const imgEl = $(el).find('img').first();
+               let imgSrc = imgEl.attr('src') || imgEl.attr('data-src');
+               let caption = $(el).find('figcaption, .PhotoCMS_Caption').text().trim() || imgEl.attr('alt') || '';
+
+               if (imgSrc && !imgSrc.startsWith('data:image')) {
+                  const newFigure = `
               <figure style="margin: 1.5rem 0; text-align: center;">
-                <img src="${img}" alt="${caption}" style="max-width: 100%; border-radius: 8px;" />
+                <img src="${imgSrc}" alt="${caption}" style="max-width: 100%; border-radius: 8px;" />
                 ${caption ? `<figcaption style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">${caption}</figcaption>` : ''}
               </figure>\n`;
-                  }
+                  $(el).replaceWith(newFigure);
                }
             });
+            contentHtml = $detail.html().trim();
+         }
       }
 
       return contentHtml;
@@ -101,6 +115,18 @@ async function runResearchScraper() {
       let totalAdded = 0;
       for (const cat of RESEARCH_CATEGORIES) {
          try {
+            // Đảm bảo chuyên mục tồn tại trong database
+            try {
+               await pool.query(
+                  `INSERT INTO categories (name, slug, color) 
+                   VALUES ($1, $2, $3) 
+                   ON CONFLICT (slug) DO NOTHING`,
+                  [cat.name, cat.slug, '#3498db']
+               );
+            } catch (insertErr) {
+               // Bỏ qua lỗi duplicate key value violates unique constraint "categories_name_key"
+            }
+
             const feed = await parser.parseURL(cat.url);
             const items = feed.items.slice(0, 5); // Lấy 5 bài mới nhất mỗi lần quét để giảm tải
 

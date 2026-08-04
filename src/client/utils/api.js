@@ -317,6 +317,12 @@ const getMockFallback = (method, endpoint, data) => {
    }
 
    if (method === 'POST') {
+      // Report comment
+      const reportCommentMatch = path.match(/^\/comments\/([a-zA-Z0-9-]+)\/report$/);
+      if (reportCommentMatch) {
+         return { message: 'Comment reported successfully' };
+      }
+
       // Submit comment: /comments/:articleId
       const submitCommentMatch = path.match(/^\/comments\/([a-zA-Z0-9-]+)$/);
       if (submitCommentMatch) {
@@ -453,10 +459,13 @@ const apiCall = async (method, endpoint, data = null) => {
          throw err;
       }
 
-      // Save to cache for GET requests
+      // Save to cache for GET requests, or clear cache for mutations
       if (method === 'GET') {
          const { apiCache } = await import('./cache.js');
          apiCache.set(cacheKey, responseData);
+      } else {
+         const { apiCache } = await import('./cache.js');
+         apiCache.clear();
       }
 
       return responseData;
@@ -558,6 +567,8 @@ const adminAPI = {
 
    deleteArticle: (id) => apiCall('DELETE', `/admin/articles/${id}`),
 
+   updateArticle: (id, data) => apiCall('PUT', `/admin/articles/${id}`, data),
+
    // Category management
    createCategory: (data) => apiCall('POST', '/admin/categories', data),
 
@@ -613,7 +624,11 @@ const commentsAPI = {
 
    updateStatus: async (commentId, status) => {
       const res = await apiCall('PUT', `/comments/${commentId}/status`, { status });
-      // Same here
+      return res;
+   },
+
+   report: async (commentId) => {
+      const res = await apiCall('POST', `/comments/${commentId}/report`);
       return res;
    },
 

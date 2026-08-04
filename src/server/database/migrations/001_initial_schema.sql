@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS comments (
   "parentId"  UUID REFERENCES comments(id) ON DELETE CASCADE,
   content     TEXT NOT NULL,
   likes       INTEGER DEFAULT 0,
-  status      TEXT CHECK(status IN ('pending', 'approved', 'rejected')) DEFAULT 'approved',
+  status      TEXT CHECK(status IN ('pending', 'approved', 'rejected', 'reported')) DEFAULT 'approved',
   "createdAt" TIMESTAMPTZ DEFAULT NOW(),
   "updatedAt" TIMESTAMPTZ DEFAULT NOW()
 );

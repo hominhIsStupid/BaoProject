@@ -5,6 +5,23 @@ const articleRepository = require('../repositories/articleRepository');
 const notificationRepository = require('../repositories/notificationRepository');
 const { authMiddleware, roleMiddleware, optionalAuth } = require('../middleware/auth');
 
+// Report a comment (any authenticated user)
+router.post('/:commentId/report', authMiddleware, async (req, res) => {
+   try {
+      const { commentId } = req.params;
+
+      const comment = await commentRepository.findById(commentId);
+      if (!comment) {
+         return res.status(404).json({ message: 'Comment not found' });
+      }
+
+      const updatedComment = await commentRepository.updateStatus(commentId, 'reported');
+      res.json({ message: 'Comment reported successfully', comment: updatedComment });
+   } catch (error) {
+      res.status(500).json({ message: 'Failed to report comment', error: error.message });
+   }
+});
+
 // Retrieve all comments (editors & admins only)
 router.get('/', authMiddleware, roleMiddleware(['editor', 'admin']), async (req, res) => {
    try {
@@ -109,7 +126,7 @@ router.put('/:commentId/status', authMiddleware, roleMiddleware(['editor', 'admi
       const { status } = req.body;
       const { commentId } = req.params;
 
-      if (!['approved', 'rejected', 'pending'].includes(status)) {
+      if (!['approved', 'rejected', 'pending', 'reported'].includes(status)) {
          return res.status(400).json({ message: 'Invalid status' });
       }
 

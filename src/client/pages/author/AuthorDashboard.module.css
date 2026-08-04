@@ -40,9 +40,10 @@
    border-right: var(--border);
    padding: 1.5rem 0;
    position: sticky;
-   height: calc(100vh - 143px);
+   height: 100vh;
    overflow-y: auto;
-   top: 143px;
+   top: 0;
+   align-self: flex-start;
 }
 
 .sidebarHeader {
@@ -353,6 +354,150 @@
    background: rgba(228, 178, 74, 0.05);
 }
 
+.earningsTotalRow {
+   font-weight: 700;
+   color: var(--gold);
+   background: rgba(228, 178, 74, 0.05);
+}
+
+.earningsTotalRow td {
+   padding: 1rem 0.6rem;
+}
+
+/* ========== CHARTS SECTION ========== */
+.chartsSection {
+   display: grid;
+   grid-template-columns: 2fr 1fr;
+   gap: 1.5rem;
+   margin-top: 2rem;
+}
+
+.chartBox {
+   background: #1a1a1a;
+   border: 1px solid #333;
+   border-radius: 10px;
+   padding: 1.5rem;
+   display: flex;
+   flex-direction: column;
+}
+
+.chartHeader {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 1.5rem;
+}
+
+.chartHeader h2 {
+   font-size: 1.1rem;
+   margin: 0;
+   color: #fff;
+   font-weight: 600;
+}
+
+.chartHeader span {
+   font-size: 0.8rem;
+   color: #999;
+}
+
+.chartPlaceholder {
+   background: transparent;
+   flex: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   position: relative;
+   min-height: 200px;
+}
+
+.legendGrid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 0.8rem;
+   margin-top: auto;
+}
+
+.legendItem {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   font-size: 0.75rem;
+   color: #999;
+}
+
+.legendColor {
+   width: 24px;
+   height: 8px;
+   border-radius: 2px;
+}
+
+/* ========== RECENT TABLE SECTION ========== */
+.recentSection {
+   background: #1a1a1a;
+   border: 1px solid #333;
+   border-radius: 10px;
+   margin-top: 2rem;
+   overflow: hidden;
+}
+
+.recentHeader {
+   padding: 1.5rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.recentHeader h2 {
+   font-size: 1.1rem;
+   margin: 0;
+   color: #fff;
+   font-weight: 600;
+}
+
+.btnViewAll {
+   background: transparent;
+   border: 1px solid #444;
+   color: #ccc;
+   padding: 0.4rem 0.8rem;
+   border-radius: 4px;
+   font-size: 0.8rem;
+   cursor: pointer;
+   transition: all 0.2s;
+}
+
+.btnViewAll:hover {
+   background: #333;
+   color: #fff;
+}
+
+.recentTable {
+   width: 100%;
+   border-collapse: collapse;
+}
+
+.recentTable th {
+   background: #222;
+   color: #999;
+   text-align: left;
+   padding: 0.8rem 1.5rem;
+   font-size: 0.75rem;
+   font-weight: 600;
+}
+
+.recentTable td {
+   padding: 1rem 1.5rem;
+   border-bottom: 1px solid #333;
+   color: #ccc;
+   font-size: 0.85rem;
+}
+
+.recentEmpty {
+   text-align: center;
+   padding: 2rem;
+   color: #999;
+   font-size: 0.9rem;
+}
+
 .richEditor {
    background: var(--bg-panel);
    border: var(--border);
@@ -402,6 +547,8 @@
    font-size: 0.95rem;
    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
    resize: vertical;
+   white-space: pre-wrap;
+   word-break: break-word;
 }
 
 .editorInput:focus {

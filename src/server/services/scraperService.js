@@ -9,21 +9,21 @@ const parser = new Parser({
 });
 
 const CATEGORIES = [
-   { slug: 'thoisu', url: 'https://vnexpress.net/rss/thoi-su.rss' },
-   { slug: 'thegioi', url: 'https://vnexpress.net/rss/the-gioi.rss' },
-   { slug: 'business', url: 'https://vnexpress.net/rss/kinh-doanh.rss' },
-   { slug: 'technology', url: 'https://vnexpress.net/rss/so-hoa.rss' },
-   { slug: 'sports', url: 'https://vnexpress.net/rss/the-thao.rss' },
-   { slug: 'entertainment', url: 'https://vnexpress.net/rss/giai-tri.rss' },
-   { slug: 'health', url: 'https://vnexpress.net/rss/suc-khoe.rss' },
-   { slug: 'education', url: 'https://vnexpress.net/rss/giao-duc.rss' },
-   { slug: 'travel', url: 'https://vnexpress.net/rss/du-lich.rss' },
-   { slug: 'khoahoc', url: 'https://vnexpress.net/rss/khoa-hoc.rss' },
-   { slug: 'phapluat', url: 'https://vnexpress.net/rss/phap-luat.rss' },
-   { slug: 'xe', url: 'https://vnexpress.net/rss/oto-xe-may.rss' },
-   { slug: 'doisong', url: 'https://vnexpress.net/rss/gia-dinh.rss' },
-   { slug: 'tamsu', url: 'https://vnexpress.net/rss/tam-su.rss' },
-   { slug: 'ykien', url: 'https://vnexpress.net/rss/y-kien.rss' },
+   { slug: 'thoisu', name: 'Thời sự', color: '#D4AF37', url: 'https://vnexpress.net/rss/thoi-su.rss' },
+   { slug: 'thegioi', name: 'Thế giới', color: '#3b82f6', url: 'https://vnexpress.net/rss/the-gioi.rss' },
+   { slug: 'business', name: 'Kinh doanh', color: '#10b981', url: 'https://vnexpress.net/rss/kinh-doanh.rss' },
+   { slug: 'technology', name: 'Số hóa', color: '#6366f1', url: 'https://vnexpress.net/rss/so-hoa.rss' },
+   { slug: 'sports', name: 'Thể thao', color: '#ef4444', url: 'https://vnexpress.net/rss/the-thao.rss' },
+   { slug: 'entertainment', name: 'Giải trí', color: '#ec4899', url: 'https://vnexpress.net/rss/giai-tri.rss' },
+   { slug: 'health', name: 'Sức khỏe', color: '#14b8a6', url: 'https://vnexpress.net/rss/suc-khoe.rss' },
+   { slug: 'education', name: 'Giáo dục', color: '#8b5cf6', url: 'https://vnexpress.net/rss/giao-duc.rss' },
+   { slug: 'travel', name: 'Du lịch', color: '#f59e0b', url: 'https://vnexpress.net/rss/du-lich.rss' },
+   { slug: 'khoahoc', name: 'Khoa học', color: '#06b6d4', url: 'https://vnexpress.net/rss/khoa-hoc.rss' },
+   { slug: 'phapluat', name: 'Pháp luật', color: '#737373', url: 'https://vnexpress.net/rss/phap-luat.rss' },
+   { slug: 'xe', name: 'Xe', color: '#64748b', url: 'https://vnexpress.net/rss/oto-xe-may.rss' },
+   { slug: 'doisong', name: 'Đời sống', color: '#f43f5e', url: 'https://vnexpress.net/rss/gia-dinh.rss' },
+   { slug: 'tamsu', name: 'Tâm sự', color: '#a855f7', url: 'https://vnexpress.net/rss/tam-su.rss' },
+   { slug: 'ykien', name: 'Ý kiến', color: '#84cc16', url: 'https://vnexpress.net/rss/y-kien.rss' },
 ];
 
 async function scrapeFullContent(url) {
@@ -39,37 +39,39 @@ async function scrapeFullContent(url) {
       const $ = cheerio.load(html);
 
       let contentHtml = '';
+      const $detail = $('.fck_detail, article.fck_detail').first();
 
-      // We want paragraphs and figures
-      $('.fck_detail')
-         .children()
-         .each((i, el) => {
-            const tag = $(el).prop('tagName').toLowerCase();
-            if (tag === 'p') {
-               contentHtml += `<p>${$(el).html()}</p>\n`;
-            } else if (tag === 'figure') {
-               const imgMeta = $(el).find('meta[itemprop="url"]').attr('content');
-               let caption = $(el).find('figcaption').text().trim();
-               // Fallback for caption if not in figcaption
-               if (!caption) caption = $(el).find('.Image').text().trim();
+      if ($detail.length > 0) {
+         // clean up garbage
+         $detail
+            .find(
+               'script, style, iframe, .box-related, .related-news, .banner, .video, .Social-Share, meta, .inner-article'
+            )
+            .remove();
 
-               if (imgMeta) {
-                  contentHtml += `
+         // Fix images
+         $detail.find('figure, .fig-picture, picture').each((i, el) => {
+            const imgEl = $(el).find('img').first();
+            let imgSrc =
+               imgEl.attr('data-src') || imgEl.attr('src') || $(el).find('meta[itemprop="url"]').attr('content');
+            let caption =
+               $(el).find('figcaption').text().trim() ||
+               $(el).find('.Image, .desc_cation').text().trim() ||
+               imgEl.attr('alt') ||
+               '';
+
+            if (imgSrc && !imgSrc.startsWith('data:image')) {
+               const newFigure = `
             <figure style="margin: 1.5rem 0; text-align: center;">
-              <img src="${imgMeta}" alt="${caption}" style="max-width: 100%; border-radius: 8px;" />
+              <img src="${imgSrc}" alt="${caption}" style="max-width: 100%; border-radius: 8px;" />
               ${caption ? `<figcaption style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">${caption}</figcaption>` : ''}
             </figure>\n`;
-               }
-            } else if (tag === 'ul' || tag === 'ol') {
-               contentHtml += `<${tag}>${$(el).html()}</${tag}>\n`;
+               $(el).replaceWith(newFigure);
             }
          });
 
-      if (!contentHtml) {
-         // Fallback
-         $('.fck_detail p, article.fck_detail p').each((i, el) => {
-            contentHtml += `<p>${$(el).html()}</p>\n`;
-         });
+         // get inner HTML
+         contentHtml = $detail.html().trim();
       }
 
       return contentHtml;
@@ -93,6 +95,14 @@ async function runScraper() {
       let totalAdded = 0;
       for (const cat of CATEGORIES) {
          try {
+            // Đảm bảo chuyên mục tồn tại trong database
+            await pool.query(
+               `INSERT INTO categories (name, slug, color) 
+                VALUES ($1, $2, $3) 
+                ON CONFLICT (slug) DO UPDATE SET name = EXCLUDED.name`,
+               [cat.name, cat.slug, cat.color || '#D4AF37']
+            );
+
             const feed = await parser.parseURL(cat.url);
             const items = feed.items.slice(0, 10); // Lấy 10 bài mới nhất mỗi lần quét
 
