@@ -2,46 +2,25 @@
    "name": "baoproject",
    "version": "0.1.0",
    "private": true,
-   "dependencies": {
-      "@testing-library/dom": "^10.4.1",
-      "@testing-library/jest-dom": "^6.9.1",
-      "@testing-library/react": "^16.3.2",
-      "@testing-library/user-event": "^13.5.0",
-      "bcryptjs": "^3.0.3",
-      "body-parser": "^2.2.2",
-      "cheerio": "^1.2.0",
-      "cors": "^2.8.6",
-      "dotenv": "^17.4.2",
-      "express": "^5.2.1",
-      "framer-motion": "^12.40.0",
-      "image-size": "^2.0.2",
-      "jsonwebtoken": "^9.0.3",
-      "morgan": "^1.11.0",
-      "pg": "^8.21.0",
-      "react": "^19.2.6",
-      "react-dom": "^19.2.6",
-      "react-router-dom": "^7.16.0",
-      "react-scripts": "5.0.1",
-      "rss-parser": "^3.13.0",
-      "uuid": "^14.0.0",
-      "web-vitals": "^2.1.4"
-   },
+   "workspaces": [
+      "src/client",
+      "src/server"
+   ],
    "scripts": {
       "dev": "concurrently 'npm run dev:server' 'npm run dev:client'",
-      "dev:client": "vite --host",
-      "dev:server": "node --watch src/server/app.js",
-      "build": "vite build",
+      "dev:client": "npm run dev --workspace=src/client",
+      "dev:server": "npm run dev --workspace=src/server",
+      "build": "npm run build --workspace=src/client",
       "test": "npm run test:unit && npm run test:integration && npm run test:regression && npm run test:performance",
       "test:integration": "jest --testPathPattern=tests/integration --runInBand --forceExit --testTimeout=30000",
       "test:performance": "jest --testPathPattern=tests/performance --runInBand --forceExit --testTimeout=120000",
       "test:regression": "jest --testPathPattern=tests/regression --runInBand --forceExit --testTimeout=30000",
       "test:unit": "jest --testPathPattern=tests/unit --runInBand --forceExit --testTimeout=10000",
-      "eject": "react-scripts eject",
-      "db:migrate": "node src/backend/database/migrate.js",
-      "db:seed": "node src/backend/config/seed.js",
-      "db:reset": "node src/backend/database/reset.js --confirm",
-      "db:setup": "node src/backend/database/setup.js",
-      "db:reset-full": "npm run db:reset && npm run db:setup",
+      "db:migrate": "npm run db:migrate --workspace=src/server",
+      "db:seed": "npm run db:seed --workspace=src/server",
+      "db:reset": "npm run db:reset --workspace=src/server",
+      "db:setup": "npm run db:setup --workspace=src/server",
+      "db:reset-full": "npm run db:reset-full --workspace=src/server",
       "scraper": "node scripts/scrape-vnexpress.js"
    },
    "jest": {
@@ -54,38 +33,14 @@
       ],
       "verbose": true
    },
-   "eslintConfig": {
-      "extends": [
-         "react-app",
-         "react-app/jest"
-      ]
-   },
-   "browserslist": {
-      "production": [
-         ">0.2%",
-         "not dead",
-         "not op_mini all"
-      ],
-      "development": [
-         "last 1 chrome version",
-         "last 1 firefox version",
-         "last 1 safari version"
-      ]
-   },
    "devDependencies": {
-      "@types/matter-js": "^0.20.2",
-      "@types/react": "^19.2.17",
-      "@types/react-dom": "^19.2.3",
-      "@vitejs/plugin-react": "^6.0.2",
       "autocannon": "^8.0.0",
       "concurrently": "^10.0.0",
       "husky": "^9.1.7",
       "jest": "^27.5.1",
       "lint-staged": "^17.0.7",
       "prettier": "^3.8.3",
-      "supertest": "^7.2.2",
-      "typescript": "^4.9.5",
-      "vite": "^8.0.14"
+      "supertest": "^7.2.2"
    },
    "lint-staged": {
       "*.{js,jsx,json,md,css,html}": "prettier --write"

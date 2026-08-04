@@ -1,21 +1,21 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 
-const { initDatabase } = require('../backend/config/database');
+const { initDatabase } = require('./config/database');
 
 // Import routes
-const authRoutes = require('../backend/routes/auth');
-const articlesPublicRoutes = require('../backend/routes/articles-public');
-const articlesAuthorRoutes = require('../backend/routes/articles-author');
-const articlesEditorRoutes = require('../backend/routes/articles-editor');
-const adminRoutes = require('../backend/routes/admin');
-const commentsRoutes = require('../backend/routes/comments');
-const bookmarksRoutes = require('../backend/routes/bookmarks');
-const notificationsRoutes = require('../backend/routes/notifications');
-const recommendationRoutes = require('../backend/routes/recommendations');
-const researchRoutes = require('../backend/routes/research');
+const authRoutes = require('./routes/auth');
+const articlesPublicRoutes = require('./routes/articles-public');
+const articlesAuthorRoutes = require('./routes/articles-author');
+const articlesEditorRoutes = require('./routes/articles-editor');
+const adminRoutes = require('./routes/admin');
+const commentsRoutes = require('./routes/comments');
+const bookmarksRoutes = require('./routes/bookmarks');
+const notificationsRoutes = require('./routes/notifications');
+const recommendationRoutes = require('./routes/recommendations');
+const researchRoutes = require('./routes/research');
 
 // Create Express app
 const app = express();
@@ -26,8 +26,8 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-const { startScraperService } = require('../backend/services/scraperService');
-const { startResearchScraperService } = require('../backend/services/researchScraperService');
+const { startScraperService } = require('./services/scraperService');
+const { startResearchScraperService } = require('./services/researchScraperService');
 
 // Initialize database (run pending migrations)
 initDatabase()

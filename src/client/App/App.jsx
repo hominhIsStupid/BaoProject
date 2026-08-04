@@ -13,7 +13,7 @@ import ProfileEditPage from '../pages/ProfileEditPage';
 import AuthorDashboard from '../pages/author/AuthorDashboard';
 import EditorDashboard from '../pages/editor/EditorDashboard';
 import AdminDashboard from '../pages/admin/AdminDashboard';
-import { tokenStorage } from '../../utils/api';
+import { tokenStorage } from '../utils/api';
 import './App.css';
 
 // Auth routes that should NOT show the header
@@ -29,10 +29,34 @@ function ProtectedRoute({ children, allowedRoles }) {
 
    if (allowedRoles && !allowedRoles.includes(user.role)) {
       return (
-         <div style={{ maxWidth: '1280px', margin: '6rem auto', padding: '3rem 2rem', color: 'var(--text-primary)', textAlign: 'center', background: 'var(--bg-card)', border: '1px solid var(--bg-border)', borderRadius: '8px' }}>
+         <div
+            style={{
+               maxWidth: '1280px',
+               margin: '6rem auto',
+               padding: '3rem 2rem',
+               color: 'var(--text-primary)',
+               textAlign: 'center',
+               background: 'var(--bg-card)',
+               border: '1px solid var(--bg-border)',
+               borderRadius: '8px',
+            }}
+         >
             <h1 style={{ color: '#ff4757', marginBottom: '1rem' }}>🚫 Quyền truy cập bị từ chối</h1>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Tài khoản của bạn không có quyền xem trang này.</p>
-            <a href="/" style={{ display: 'inline-block', padding: '0.6rem 1.5rem', background: 'var(--gold-primary)', color: 'var(--text-white)', textDecoration: 'none', fontWeight: 'bold', borderRadius: '4px' }}>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+               Tài khoản của bạn không có quyền xem trang này.
+            </p>
+            <a
+               href="/"
+               style={{
+                  display: 'inline-block',
+                  padding: '0.6rem 1.5rem',
+                  background: 'var(--gold-primary)',
+                  color: 'var(--text-white)',
+                  textDecoration: 'none',
+                  fontWeight: 'bold',
+                  borderRadius: '4px',
+               }}
+            >
                Quay lại Trang chủ
             </a>
          </div>
@@ -97,7 +121,14 @@ function AppLayout() {
                   <Route
                      path="*"
                      element={
-                        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem', color: 'var(--text-primary)' }}>
+                        <div
+                           style={{
+                              maxWidth: '1280px',
+                              margin: '0 auto',
+                              padding: '2rem',
+                              color: 'var(--text-primary)',
+                           }}
+                        >
                            <h1>404 - Không tìm thấy trang</h1>
                         </div>
                      }

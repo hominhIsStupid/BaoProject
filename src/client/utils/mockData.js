@@ -41,22 +41,22 @@ Trong đó, khu vực nông, lâm nghiệp và thủy sản tăng 3,28%; khu v�
       contentBlocks: [
          {
             type: 'paragraph',
-            text: 'Theo số liệu của Tổng cục Thống kê, tổng sản phẩm trong nước (GDP) 6 tháng đầu năm 2024 tăng 6,42% so với cùng kỳ năm trước, cao hơn mức tăng 3,72% của cùng kỳ năm 2023. Đây là mức tăng trưởng cao nhất trong giai đoạn 2019-2024.'
+            text: 'Theo số liệu của Tổng cục Thống kê, tổng sản phẩm trong nước (GDP) 6 tháng đầu năm 2024 tăng 6,42% so với cùng kỳ năm trước, cao hơn mức tăng 3,72% của cùng kỳ năm 2023. Đây là mức tăng trưởng cao nhất trong giai đoạn 2019-2024.',
          },
          {
             type: 'heading',
-            text: 'Các ngành kinh tế chủ lực tăng trưởng tích cực'
+            text: 'Các ngành kinh tế chủ lực tăng trưởng tích cực',
          },
          {
             type: 'paragraph',
-            text: 'Trong đó, khu vực nông, lâm nghiệp và thủy sản tăng 3,28%; khu vực công nghiệp và xây dựng tăng 7,51%; khu vực dịch vụ tăng 6,64%. Nhiều ngành công nghiệp chế biến, chế tạo ghi nhận mức tăng trưởng cao, đóng góp lớn vào tăng trưởng chung của nền kinh tế.'
+            text: 'Trong đó, khu vực nông, lâm nghiệp và thủy sản tăng 3,28%; khu vực công nghiệp và xây dựng tăng 7,51%; khu vực dịch vụ tăng 6,64%. Nhiều ngành công nghiệp chế biến, chế tạo ghi nhận mức tăng trưởng cao, đóng góp lớn vào tăng trưởng chung của nền kinh tế.',
          },
          {
             type: 'quote',
             text: 'Kết quả này cho thấy sự phục hồi mạnh mẽ và bền vững của nền kinh tế, nhờ vào các chính sách điều hành linh hoạt, kịp thời của Chính phủ, cùng với sự nỗ lực của cộng đồng doanh nghiệp và người dân.',
-            author: 'TS. Nguyễn Đức Kiên, Tổ trưởng Tổ tư vấn kinh tế của Thủ tướng'
-         }
-      ]
+            author: 'TS. Nguyễn Đức Kiên, Tổ trưởng Tổ tư vấn kinh tế của Thủ tướng',
+         },
+      ],
    },
    {
       id: 2,
@@ -99,7 +99,8 @@ Trong đó, khu vực nông, lâm nghiệp và thủy sản tăng 3,28%; khu v�
    {
       id: 5,
       title: 'Taylor Swift xác nhận lưu diễn tại châu Á năm 2025',
-      excerpt: 'Siêu sao âm nhạc Taylor Swift công bố sẽ có các chặng dừng tại nhiều quốc gia châu Á trong tour diễn năm 2025.',
+      excerpt:
+         'Siêu sao âm nhạc Taylor Swift công bố sẽ có các chặng dừng tại nhiều quốc gia châu Á trong tour diễn năm 2025.',
       category: 'entertainment',
       author: 'Nguyễn Thảo My',
       date: new Date(Date.now() - 7 * 60 * 60 * 1000),
@@ -163,7 +164,8 @@ Trong đó, khu vực nông, lâm nghiệp và thủy sản tăng 3,28%; khu v�
    {
       id: 10,
       title: 'iPhone 16 Pro Max lộ diện: Nhiều nâng cấp đáng giá về camera và hiệu năng',
-      excerpt: 'Các thông tin rò rỉ mới nhất cho thấy iPhone 16 Pro Max sẽ có nhiều cải tiến vượt trội so với thế hệ tiền nhiệm.',
+      excerpt:
+         'Các thông tin rò rỉ mới nhất cho thấy iPhone 16 Pro Max sẽ có nhiều cải tiến vượt trội so với thế hệ tiền nhiệm.',
       category: 'technology',
       author: 'Nguyễn Anh Khoa',
       date: new Date(Date.now() - 1 * 60 * 60 * 1000),
@@ -241,11 +243,12 @@ Trong đó, khu vực nông, lâm nghiệp và thủy sản tăng 3,28%; khu v�
       category: 'thegioi',
       author: 'Trần B',
       date: new Date('2026-05-18'),
-      content: 'Tại hội nghị, các quốc gia đã đạt được thỏa thuận lịch sử về việc giảm dần sử dụng nhiên liệu hóa thạch.',
+      content:
+         'Tại hội nghị, các quốc gia đã đạt được thỏa thuận lịch sử về việc giảm dần sử dụng nhiên liệu hóa thạch.',
       featured: false,
       image: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9cce?w=800',
       readTime: 5,
-   }
+   },
 ];
 
 export const getArticleById = (id) => {

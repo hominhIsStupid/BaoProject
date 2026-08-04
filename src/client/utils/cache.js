@@ -11,9 +11,9 @@ export class LRUCache {
 
    get(key) {
       if (!this.cache.has(key)) return null;
-      
+
       const value = this.cache.get(key);
-      
+
       // Check TTL (Time To Live)
       if (Date.now() - value.timestamp > value.ttl) {
          this.cache.delete(key);
@@ -23,11 +23,12 @@ export class LRUCache {
       // Mark as recently used by moving it to the end
       this.cache.delete(key);
       this.cache.set(key, value);
-      
+
       return value.data;
    }
 
-   set(key, data, ttl = 5 * 60 * 1000) { // Default TTL: 5 minutes
+   set(key, data, ttl = 5 * 60 * 1000) {
+      // Default TTL: 5 minutes
       if (this.cache.has(key)) {
          this.cache.delete(key);
       } else if (this.cache.size >= this.limit) {

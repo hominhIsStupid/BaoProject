@@ -1,0 +1,27 @@
+{
+   "name": "server",
+   "version": "1.0.0",
+   "private": true,
+   "dependencies": {
+      "bcryptjs": "^3.0.3",
+      "body-parser": "^2.2.2",
+      "cheerio": "^1.2.0",
+      "cors": "^2.8.6",
+      "dotenv": "^17.4.2",
+      "express": "^5.2.1",
+      "image-size": "^2.0.2",
+      "jsonwebtoken": "^9.0.3",
+      "morgan": "^1.11.0",
+      "pg": "^8.21.0",
+      "rss-parser": "^3.13.0",
+      "uuid": "^14.0.0"
+   },
+   "scripts": {
+      "dev": "node --watch app.js",
+      "db:migrate": "node database/migrate.js",
+      "db:seed": "node config/seed.js",
+      "db:reset": "node database/reset.js",
+      "db:setup": "node database/setup.js",
+      "db:reset-full": "npm run db:reset && npm run db:setup"
+   }
+}

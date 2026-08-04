@@ -2,8 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import styles from './Header.module.css';
 import ThemeToggle from './ThemeToggle/ThemeToggle';
-import { CATEGORIES } from '../../constant/global';
-import { useWeather } from '../../hooks/useWeather';
+import { CATEGORIES } from '../constant/global';
+import { useWeather } from '../hooks/useWeather';
 
 const NAV_ITEMS = [
    { label: 'Trang Chủ', path: '/', id: 'home' },
@@ -461,7 +461,7 @@ function Header() {
                   {/* Logo */}
                   <Link to="/" className={styles.logo} aria-label="Rồng Vàng - Trang chủ">
                      <div className={styles.logoIcon}>
-                        <img alt="icon" src="../../../logo512.png"></img>
+                        <img alt="icon" src="/logo512.png"></img>
                      </div>
                      <div className={styles.logoText}>
                         <span className={styles.logoTitle}>RỒNG VÀNG</span>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authAPI, commentsAPI, bookmarksAPI, notificationsAPI, tokenStorage } from '../../utils/api';
+import { authAPI, commentsAPI, bookmarksAPI, notificationsAPI, tokenStorage } from '../utils/api';
 import styles from './ProfileEditPage.module.css';
 
 function ProfileEditPage() {
@@ -10,29 +10,29 @@ function ProfileEditPage() {
    const [loading, setLoading] = useState(true);
    const fileInputRef = useRef(null);
 
-    // Form States
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [bio, setBio] = useState('');
-    const [avatar, setAvatar] = useState('');
+   // Form States
+   const [name, setName] = useState('');
+   const [email, setEmail] = useState('');
+   const [phone, setPhone] = useState('');
+   const [bio, setBio] = useState('');
+   const [avatar, setAvatar] = useState('');
 
-    // Password Tab States
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+   // Password Tab States
+   const [currentPassword, setCurrentPassword] = useState('');
+   const [newPassword, setNewPassword] = useState('');
+   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-    // Comments Tab States
-    const [userComments, setUserComments] = useState([]);
-    const [loadingComments, setLoadingComments] = useState(false);
+   // Comments Tab States
+   const [userComments, setUserComments] = useState([]);
+   const [loadingComments, setLoadingComments] = useState(false);
 
-    // Bookmarks Tab States
-    const [savedArticles, setSavedArticles] = useState([]);
-    const [loadingSaved, setLoadingSaved] = useState(false);
+   // Bookmarks Tab States
+   const [savedArticles, setSavedArticles] = useState([]);
+   const [loadingSaved, setLoadingSaved] = useState(false);
 
-    // Notifications Tab States
-    const [notifications, setNotifications] = useState([]);
-    const [loadingNotifications, setLoadingNotifications] = useState(false);
+   // Notifications Tab States
+   const [notifications, setNotifications] = useState([]);
+   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
    useEffect(() => {
       window.scrollTo(0, 0);
@@ -134,7 +134,7 @@ function ProfileEditPage() {
       if (!window.confirm('Bạn có chắc muốn xóa bình luận này?')) return;
       try {
          await commentsAPI.delete(commentId);
-         setUserComments(prev => prev.filter(c => c.id !== commentId));
+         setUserComments((prev) => prev.filter((c) => c.id !== commentId));
          showToast('Đã xóa bình luận.');
       } catch (err) {
          showToast('Lỗi khi xóa bình luận.');
@@ -144,7 +144,7 @@ function ProfileEditPage() {
    const handleRemoveBookmark = async (articleId) => {
       try {
          await bookmarksAPI.delete(articleId);
-         setSavedArticles(prev => prev.filter(a => a.id !== articleId));
+         setSavedArticles((prev) => prev.filter((a) => a.id !== articleId));
          showToast('Đã bỏ lưu bài viết.');
       } catch (err) {
          showToast('Lỗi khi bỏ lưu.');
@@ -154,9 +154,7 @@ function ProfileEditPage() {
    const handleMarkAsRead = async (notifId) => {
       try {
          await notificationsAPI.markAsRead(notifId);
-         setNotifications(prev =>
-            prev.map(n => n.id === notifId ? { ...n, isRead: true } : n)
-         );
+         setNotifications((prev) => prev.map((n) => (n.id === notifId ? { ...n, isRead: true } : n)));
       } catch (err) {
          console.error(err);
       }
@@ -165,7 +163,7 @@ function ProfileEditPage() {
    const handleMarkAllRead = async () => {
       try {
          await notificationsAPI.readAll();
-         setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
          showToast('Đã đánh dấu đọc tất cả.');
       } catch (err) {
          showToast('Lỗi thao tác.');
@@ -219,16 +217,16 @@ function ProfileEditPage() {
             fullName: name,
             phone,
             bio,
-            avatar
+            avatar,
          });
-         
+
          // Update token storage for immediate UI reflection if user obj matches
          const cachedUser = tokenStorage.getUser();
          if (cachedUser) {
             tokenStorage.setUser({ ...cachedUser, fullName: name, avatar });
             window.dispatchEvent(new Event('auth-change'));
          }
-         
+
          showToast('Lưu thay đổi hồ sơ thành công!');
       } catch (err) {
          console.error(err);
@@ -254,7 +252,14 @@ function ProfileEditPage() {
    const PLAN_INFO = {
       v1: { name: 'Premium V1', icon: '🥈', color: '#A1A1AA', dailyLimit: 2, monthlyLimit: 30, price: '99.000 ₫' },
       v2: { name: 'Premium V2', icon: '🥇', color: '#1E90FF', dailyLimit: 4, monthlyLimit: 60, price: '149.000 ₫' },
-      pro: { name: 'Premium Pro', icon: '👑', color: '#D4AF37', dailyLimit: Infinity, monthlyLimit: Infinity, price: '299.000 ₫' },
+      pro: {
+         name: 'Premium Pro',
+         icon: '👑',
+         color: '#D4AF37',
+         dailyLimit: Infinity,
+         monthlyLimit: Infinity,
+         price: '299.000 ₫',
+      },
    };
 
    const activePlan = currentPlan ? PLAN_INFO[currentPlan] : null;
@@ -265,12 +270,15 @@ function ProfileEditPage() {
       { id: 'password', label: 'Đổi mật khẩu', icon: '🔒' },
       { id: 'comments', label: 'Quản lý bình luận', icon: '💬' },
       { id: 'saved', label: 'Bài viết đã lưu', icon: '🔖' },
-      { id: 'notifications', label: 'Thông báo', icon: '🔔' }
+      { id: 'notifications', label: 'Thông báo', icon: '🔔' },
    ];
 
    if (loading) {
       return (
-         <div className={styles.profilePage} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+         <div
+            className={styles.profilePage}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}
+         >
             <div className="loading-spinner" style={{ fontSize: '1.5rem', color: 'var(--gold-primary)' }}>
                Đang tải hồ sơ...
             </div>
@@ -320,24 +328,21 @@ function ProfileEditPage() {
                      <>
                         <h2 className={styles.formTitle}>CHỈNH SỬA HỒ SƠ</h2>
                         <form onSubmit={handleSave} className={styles.form}>
-                           
                            {/* Avatar Selection */}
                            <div className={styles.avatarSection}>
                               <span className={styles.inputLabel}>Ảnh đại diện</span>
-                              <input 
-                                 type="file" 
-                                 accept="image/jpeg, image/png, image/webp" 
-                                 ref={fileInputRef} 
-                                 onChange={handleFileChange} 
-                                 style={{ display: 'none' }} 
+                              <input
+                                 type="file"
+                                 accept="image/jpeg, image/png, image/webp"
+                                 ref={fileInputRef}
+                                 onChange={handleFileChange}
+                                 style={{ display: 'none' }}
                               />
                               <div className={styles.avatarWrapper} onClick={handleAvatarClick}>
                                  {avatar ? (
                                     <img src={avatar} className={styles.avatarImg} alt="Avatar" />
                                  ) : (
-                                    <div className={styles.avatarEmpty}>
-                                       {name ? name.charAt(0) : 'U'}
-                                    </div>
+                                    <div className={styles.avatarEmpty}>{name ? name.charAt(0) : 'U'}</div>
                                  )}
                                  <div className={styles.cameraOverlay} title="Đổi ảnh đại diện">
                                     📷
@@ -348,7 +353,9 @@ function ProfileEditPage() {
 
                            {/* Họ và tên */}
                            <div className={styles.formGroup}>
-                              <label htmlFor="fullname" className={styles.inputLabel}>Họ và tên</label>
+                              <label htmlFor="fullname" className={styles.inputLabel}>
+                                 Họ và tên
+                              </label>
                               <input
                                  type="text"
                                  id="fullname"
@@ -360,7 +367,9 @@ function ProfileEditPage() {
 
                            {/* Email */}
                            <div className={styles.formGroup}>
-                              <label htmlFor="email" className={styles.inputLabel}>Email đăng nhập</label>
+                              <label htmlFor="email" className={styles.inputLabel}>
+                                 Email đăng nhập
+                              </label>
                               <input
                                  type="email"
                                  id="email"
@@ -373,7 +382,9 @@ function ProfileEditPage() {
 
                            {/* Số điện thoại */}
                            <div className={styles.formGroup}>
-                              <label htmlFor="phone" className={styles.inputLabel}>Số điện thoại</label>
+                              <label htmlFor="phone" className={styles.inputLabel}>
+                                 Số điện thoại
+                              </label>
                               <input
                                  type="tel"
                                  id="phone"
@@ -385,7 +396,9 @@ function ProfileEditPage() {
 
                            {/* Giới thiệu bản thân */}
                            <div className={styles.formGroup}>
-                              <label htmlFor="bio" className={styles.inputLabel}>Giới thiệu bản thân</label>
+                              <label htmlFor="bio" className={styles.inputLabel}>
+                                 Giới thiệu bản thân
+                              </label>
                               <textarea
                                  id="bio"
                                  className={styles.textarea}
@@ -404,7 +417,6 @@ function ProfileEditPage() {
                                  Lưu thay đổi
                               </button>
                            </div>
-
                         </form>
                      </>
                   ) : activeMenu === 'wallet' ? (
@@ -419,16 +431,16 @@ function ProfileEditPage() {
                                  <span className={styles.walletBalance}>
                                     {new Intl.NumberFormat('vi-VN').format(walletBalance)} ₫
                                  </span>
-                                 <span className={styles.walletHint}>
-                                    Dùng để mua bài báo khoa học đơn lẻ
-                                 </span>
+                                 <span className={styles.walletHint}>Dùng để mua bài báo khoa học đơn lẻ</span>
                               </div>
                               <div className={styles.walletActions}>
                                  <button
                                     className={styles.walletTopupBtn}
                                     onClick={() => {
                                        // Dispatch custom event to open PremiumButton modal on topup tab
-                                       window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { tab: 'topup' } }));
+                                       window.dispatchEvent(
+                                          new CustomEvent('open-premium-modal', { detail: { tab: 'topup' } })
+                                       );
                                     }}
                                  >
                                     💳 Nạp tiền
@@ -442,10 +454,7 @@ function ProfileEditPage() {
                            <h3 className={styles.premiumSectionTitle}>Gói Premium hiện tại</h3>
 
                            {activePlan ? (
-                              <div
-                                 className={styles.planStatusCard}
-                                 style={{ borderColor: activePlan.color + '40' }}
-                              >
+                              <div className={styles.planStatusCard} style={{ borderColor: activePlan.color + '40' }}>
                                  <div className={styles.planStatusHeader}>
                                     <div className={styles.planStatusNameWrap}>
                                        <span className={styles.planStatusIcon}>{activePlan.icon}</span>
@@ -455,7 +464,11 @@ function ProfileEditPage() {
                                     </div>
                                     <span
                                        className={styles.planStatusBadge}
-                                       style={{ background: activePlan.color + '20', color: activePlan.color, borderColor: activePlan.color + '40' }}
+                                       style={{
+                                          background: activePlan.color + '20',
+                                          color: activePlan.color,
+                                          borderColor: activePlan.color + '40',
+                                       }}
                                     >
                                        Đang hoạt động
                                     </span>
@@ -467,7 +480,9 @@ function ProfileEditPage() {
                                        <div className={styles.usageRow}>
                                           <div className={styles.usageLabel}>
                                              <span>Hôm nay</span>
-                                             <span className={styles.usageCount}>{dailyUsed} / {activePlan.dailyLimit} bài</span>
+                                             <span className={styles.usageCount}>
+                                                {dailyUsed} / {activePlan.dailyLimit} bài
+                                             </span>
                                           </div>
                                           <div className={styles.usageBarTrack}>
                                              <div
@@ -482,7 +497,9 @@ function ProfileEditPage() {
                                        <div className={styles.usageRow}>
                                           <div className={styles.usageLabel}>
                                              <span>Tháng này</span>
-                                             <span className={styles.usageCount}>{monthlyUsed} / {activePlan.monthlyLimit} bài</span>
+                                             <span className={styles.usageCount}>
+                                                {monthlyUsed} / {activePlan.monthlyLimit} bài
+                                             </span>
                                           </div>
                                           <div className={styles.usageBarTrack}>
                                              <div
@@ -514,7 +531,9 @@ function ProfileEditPage() {
                                     <button
                                        className={styles.planUpgradeBtn}
                                        onClick={() => {
-                                          window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { tab: 'plans' } }));
+                                          window.dispatchEvent(
+                                             new CustomEvent('open-premium-modal', { detail: { tab: 'plans' } })
+                                          );
                                        }}
                                     >
                                        ⬆️ Nâng cấp gói
@@ -526,8 +545,8 @@ function ProfileEditPage() {
                                  <span className={styles.noPlanIcon}>🔓</span>
                                  <h4 className={styles.noPlanTitle}>Chưa đăng ký Premium</h4>
                                  <p className={styles.noPlanDesc}>
-                                    Đăng ký gói Premium để mở khóa và đọc các bài báo khoa học chuyên sâu
-                                    với giá ưu đãi.
+                                    Đăng ký gói Premium để mở khóa và đọc các bài báo khoa học chuyên sâu với giá ưu
+                                    đãi.
                                  </p>
                                  <div className={styles.noPlanFeatures}>
                                     <div className={styles.noPlanFeature}>
@@ -555,7 +574,9 @@ function ProfileEditPage() {
                                  <button
                                     className={styles.noPlanBtn}
                                     onClick={() => {
-                                       window.dispatchEvent(new CustomEvent('open-premium-modal', { detail: { tab: 'plans' } }));
+                                       window.dispatchEvent(
+                                          new CustomEvent('open-premium-modal', { detail: { tab: 'plans' } })
+                                       );
                                     }}
                                  >
                                     👑 Đăng ký Premium ngay
@@ -578,7 +599,9 @@ function ProfileEditPage() {
                         <h2 className={styles.formTitle}>ĐỔI MẬT KHẨU</h2>
                         <form onSubmit={handleChangePassword} className={styles.form}>
                            <div className={styles.formGroup}>
-                              <label htmlFor="current-pass" className={styles.inputLabel}>Mật khẩu hiện tại</label>
+                              <label htmlFor="current-pass" className={styles.inputLabel}>
+                                 Mật khẩu hiện tại
+                              </label>
                               <input
                                  type="password"
                                  id="current-pass"
@@ -589,7 +612,9 @@ function ProfileEditPage() {
                               />
                            </div>
                            <div className={styles.formGroup}>
-                              <label htmlFor="new-pass" className={styles.inputLabel}>Mật khẩu mới</label>
+                              <label htmlFor="new-pass" className={styles.inputLabel}>
+                                 Mật khẩu mới
+                              </label>
                               <input
                                  type="password"
                                  id="new-pass"
@@ -600,7 +625,9 @@ function ProfileEditPage() {
                               />
                            </div>
                            <div className={styles.formGroup}>
-                              <label htmlFor="confirm-new-pass" className={styles.inputLabel}>Xác nhận mật khẩu mới</label>
+                              <label htmlFor="confirm-new-pass" className={styles.inputLabel}>
+                                 Xác nhận mật khẩu mới
+                              </label>
                               <input
                                  type="password"
                                  id="confirm-new-pass"
@@ -621,7 +648,10 @@ function ProfileEditPage() {
                      <>
                         <h2 className={styles.formTitle}>BÌNH LUẬN CỦA TÔI</h2>
                         {loadingComments ? (
-                           <div className="loading-spinner" style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}>
+                           <div
+                              className="loading-spinner"
+                              style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}
+                           >
                               Đang tải bình luận...
                            </div>
                         ) : userComments.length === 0 ? (
@@ -631,20 +661,23 @@ function ProfileEditPage() {
                            </div>
                         ) : (
                            <div className={styles.list}>
-                              {userComments.map(comment => (
+                              {userComments.map((comment) => (
                                  <div key={comment.id} className={styles.item}>
                                     <div className={styles.itemHeader}>
                                        <Link to={`/article/${comment.article_id}`} className={styles.itemTitle}>
                                           {comment.articleTitle || 'Bài viết'}
                                        </Link>
                                        <span className={styles.itemMeta}>
-                                          {new Date(comment.createdAt).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' })}
+                                          {new Date(comment.createdAt).toLocaleString('vi-VN', {
+                                             dateStyle: 'short',
+                                             timeStyle: 'short',
+                                          })}
                                        </span>
                                     </div>
                                     <p className={styles.itemContent}>"{comment.content}"</p>
                                     <div className={styles.itemActions}>
-                                       <button 
-                                          className={`${styles.btnActionLink} ${styles.btnActionRed}`} 
+                                       <button
+                                          className={`${styles.btnActionLink} ${styles.btnActionRed}`}
                                           onClick={() => handleDeleteComment(comment.id)}
                                           type="button"
                                        >
@@ -660,7 +693,10 @@ function ProfileEditPage() {
                      <>
                         <h2 className={styles.formTitle}>BÀI VIẾT ĐÃ LƯU</h2>
                         {loadingSaved ? (
-                           <div className="loading-spinner" style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}>
+                           <div
+                              className="loading-spinner"
+                              style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}
+                           >
                               Đang tải danh sách bài viết...
                            </div>
                         ) : savedArticles.length === 0 ? (
@@ -670,7 +706,7 @@ function ProfileEditPage() {
                            </div>
                         ) : (
                            <div className={styles.list}>
-                              {savedArticles.map(article => (
+                              {savedArticles.map((article) => (
                                  <div key={article.id} className={styles.item}>
                                     <div className={styles.itemHeader}>
                                        <Link to={`/article/${article.id}`} className={styles.itemTitle}>
@@ -684,8 +720,8 @@ function ProfileEditPage() {
                                        <span>Lượt xem: {article.views}</span>
                                     </div>
                                     <div className={styles.itemActions}>
-                                       <button 
-                                          className={`${styles.btnActionLink} ${styles.btnActionRed}`} 
+                                       <button
+                                          className={`${styles.btnActionLink} ${styles.btnActionRed}`}
                                           onClick={() => handleRemoveBookmark(article.id)}
                                           type="button"
                                        >
@@ -708,7 +744,10 @@ function ProfileEditPage() {
                            )}
                         </div>
                         {loadingNotifications ? (
-                           <div className="loading-spinner" style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}>
+                           <div
+                              className="loading-spinner"
+                              style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}
+                           >
                               Đang tải thông báo...
                            </div>
                         ) : notifications.length === 0 ? (
@@ -718,14 +757,17 @@ function ProfileEditPage() {
                            </div>
                         ) : (
                            <div className={styles.list}>
-                              {notifications.map(notif => (
-                                 <div 
-                                    key={notif.id} 
+                              {notifications.map((notif) => (
+                                 <div
+                                    key={notif.id}
                                     className={`${styles.item} ${!notif.isRead ? styles.notifUnread : ''}`}
                                     onClick={() => !notif.isRead && handleMarkAsRead(notif.id)}
                                  >
                                     <div className={styles.itemHeader}>
-                                       <h4 className={styles.itemTitle} style={{ color: notif.isRead ? '#999' : '#FFF' }}>
+                                       <h4
+                                          className={styles.itemTitle}
+                                          style={{ color: notif.isRead ? '#999' : '#FFF' }}
+                                       >
                                           {notif.title}
                                        </h4>
                                        {!notif.isRead && <span className={styles.badgeUnread}>Mới</span>}
@@ -738,8 +780,8 @@ function ProfileEditPage() {
                                        {notif.relatedId && (
                                           <>
                                              <span>•</span>
-                                             <Link 
-                                                to={`/article/${notif.relatedId}`} 
+                                             <Link
+                                                to={`/article/${notif.relatedId}`}
                                                 className={`${styles.btnActionLink} ${styles.btnActionGold}`}
                                              >
                                                 Xem bài viết ➔

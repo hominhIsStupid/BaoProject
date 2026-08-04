@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './AdminDashboard.module.css';
-import { adminAPI, commentsAPI, tokenStorage } from '../../../utils/api';
+import { adminAPI, commentsAPI, tokenStorage } from '../../utils/api';
 
 function SidebarNav({ activeTab, onTabChange, pendingCount = 0, approvedCount = 0 }) {
    const menu = [
@@ -112,7 +112,9 @@ function ArticlesPendingTable({ articles, onPublish }) {
                      <span>{article.authorName || article.author || 'Tác giả'}</span>
                      <span>{new Date(article.createdAt).toLocaleDateString('vi-VN')}</span>
                      <span className={styles.actions}>
-                        <button className={styles.btnSmallApprove} onClick={() => onPublish(article.id)}>✅ Duyệt & Xuất bản</button>
+                        <button className={styles.btnSmallApprove} onClick={() => onPublish(article.id)}>
+                           ✅ Duyệt & Xuất bản
+                        </button>
                      </span>
                   </div>
                ))
@@ -135,7 +137,9 @@ function ArticlesApprovedTable({ articles, onPublish }) {
                <span>Hành động</span>
             </div>
             {articles.length === 0 ? (
-               <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Không có bài viết chờ xuất bản.</div>
+               <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                  Không có bài viết chờ xuất bản.
+               </div>
             ) : (
                articles.map((article) => (
                   <div key={article.id} className={styles.tableRow}>
@@ -144,7 +148,9 @@ function ArticlesApprovedTable({ articles, onPublish }) {
                      <span>{article.authorName || article.author || 'Tác giả'}</span>
                      <span>{new Date(article.updatedAt || article.createdAt).toLocaleDateString('vi-VN')}</span>
                      <span className={styles.actions}>
-                        <button className={styles.btnSmallApprove} onClick={() => onPublish(article.id)}>📰 Xuất bản ngay</button>
+                        <button className={styles.btnSmallApprove} onClick={() => onPublish(article.id)}>
+                           📰 Xuất bản ngay
+                        </button>
                      </span>
                   </div>
                ))
@@ -168,10 +174,10 @@ function ArticlesManagementTable({ articles, onDelete }) {
       <section className={styles.managementSection}>
          <h1>Quản Lý Toàn Bộ Bài Viết</h1>
          <div className={styles.tableControls}>
-            <input 
-               type="text" 
-               placeholder="Tìm kiếm bài viết..." 
-               className={styles.searchInput} 
+            <input
+               type="text"
+               placeholder="Tìm kiếm bài viết..."
+               className={styles.searchInput}
                value={search}
                onChange={(e) => setSearch(e.target.value)}
             />
@@ -202,13 +208,17 @@ function ArticlesManagementTable({ articles, onDelete }) {
                      <span className={styles.title}>{article.title}</span>
                      <span>{article.category}</span>
                      <span>
-                        <span className={`${styles.statusBadge} ${article.status === 'published' ? styles.statusApproved : ''}`}>
+                        <span
+                           className={`${styles.statusBadge} ${article.status === 'published' ? styles.statusApproved : ''}`}
+                        >
                            {article.status.toUpperCase()}
                         </span>
                      </span>
                      <span>👁️ {article.views || 0}</span>
                      <span className={styles.actions}>
-                        <button className={styles.btnSmallDanger} onClick={() => onDelete(article.id)}>🗑️ Xóa</button>
+                        <button className={styles.btnSmallDanger} onClick={() => onDelete(article.id)}>
+                           🗑️ Xóa
+                        </button>
                      </span>
                   </div>
                ))
@@ -234,11 +244,46 @@ function CategoriesManagement({ categories, onCreate, onDelete }) {
    return (
       <section className={styles.managementSection}>
          <h1>Quản Lý Chuyên Mục</h1>
-         <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '1rem', background: '#141414', padding: '1rem', borderRadius: '4px', marginBottom: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <input type="text" placeholder="Tên chuyên mục..." value={name} onChange={(e) => setName(e.target.value)} required className={styles.settingInput} style={{ flex: 1, minWidth: '150px' }} />
-            <input type="text" placeholder="Slug (ví dụ: thoisu)..." value={slug} onChange={(e) => setSlug(e.target.value)} required className={styles.settingInput} style={{ flex: 1, minWidth: '150px' }} />
-            <input type="color" value={color} onChange={(e) => setColor(e.target.value)} style={{ width: '40px', height: '40px', border: 'none', background: 'transparent', cursor: 'pointer' }} />
-            <button type="submit" className={styles.btnPrimary} style={{ height: '40px' }}>➕ Thêm</button>
+         <form
+            onSubmit={handleSubmit}
+            style={{
+               display: 'flex',
+               gap: '1rem',
+               background: '#141414',
+               padding: '1rem',
+               borderRadius: '4px',
+               marginBottom: '2rem',
+               alignItems: 'center',
+               flexWrap: 'wrap',
+            }}
+         >
+            <input
+               type="text"
+               placeholder="Tên chuyên mục..."
+               value={name}
+               onChange={(e) => setName(e.target.value)}
+               required
+               className={styles.settingInput}
+               style={{ flex: 1, minWidth: '150px' }}
+            />
+            <input
+               type="text"
+               placeholder="Slug (ví dụ: thoisu)..."
+               value={slug}
+               onChange={(e) => setSlug(e.target.value)}
+               required
+               className={styles.settingInput}
+               style={{ flex: 1, minWidth: '150px' }}
+            />
+            <input
+               type="color"
+               value={color}
+               onChange={(e) => setColor(e.target.value)}
+               style={{ width: '40px', height: '40px', border: 'none', background: 'transparent', cursor: 'pointer' }}
+            />
+            <button type="submit" className={styles.btnPrimary} style={{ height: '40px' }}>
+               ➕ Thêm
+            </button>
          </form>
 
          <div className={styles.categoriesGrid}>
@@ -246,9 +291,13 @@ function CategoriesManagement({ categories, onCreate, onDelete }) {
                <div key={cat.id} className={styles.categoryCard}>
                   <div className={styles.categoryColor} style={{ backgroundColor: cat.color || '#D4AF37' }} />
                   <h3>{cat.name}</h3>
-                  <p>Slug: <code>{cat.slug}</code></p>
+                  <p>
+                     Slug: <code>{cat.slug}</code>
+                  </p>
                   <div className={styles.categoryActions}>
-                     <button className={styles.btnSmallDanger} onClick={() => onDelete(cat.id)}>Xóa</button>
+                     <button className={styles.btnSmallDanger} onClick={() => onDelete(cat.id)}>
+                        Xóa
+                     </button>
                   </div>
                </div>
             ))}
@@ -260,20 +309,21 @@ function CategoriesManagement({ categories, onCreate, onDelete }) {
 function CommentsManagement({ comments, onDelete }) {
    const [search, setSearch] = useState('');
 
-   const filtered = comments.filter((c) =>
-      c.content.toLowerCase().includes(search.toLowerCase()) ||
-      (c.userName && c.userName.toLowerCase().includes(search.toLowerCase())) ||
-      (c.articleTitle && c.articleTitle.toLowerCase().includes(search.toLowerCase()))
+   const filtered = comments.filter(
+      (c) =>
+         c.content.toLowerCase().includes(search.toLowerCase()) ||
+         (c.userName && c.userName.toLowerCase().includes(search.toLowerCase())) ||
+         (c.articleTitle && c.articleTitle.toLowerCase().includes(search.toLowerCase()))
    );
 
    return (
       <section className={styles.managementSection}>
          <h1>Quản Lý Bình Luận Độc Giả</h1>
          <div className={styles.tableControls}>
-            <input 
-               type="text" 
-               placeholder="Tìm theo nội dung, người gửi hoặc bài viết..." 
-               className={styles.searchInput} 
+            <input
+               type="text"
+               placeholder="Tìm theo nội dung, người gửi hoặc bài viết..."
+               className={styles.searchInput}
                value={search}
                onChange={(e) => setSearch(e.target.value)}
             />
@@ -294,16 +344,26 @@ function CommentsManagement({ comments, onDelete }) {
                   <div key={comment.id} className={styles.tableRow}>
                      <span className={styles.title}>
                         {comment.userName || 'Ẩn danh'}
-                        <br/>
+                        <br />
                         <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{comment.userEmail}</span>
                      </span>
                      <span>{comment.articleTitle || 'Bài viết'}</span>
-                     <span style={{ fontStyle: 'italic', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '300px' }}>
+                     <span
+                        style={{
+                           fontStyle: 'italic',
+                           textOverflow: 'ellipsis',
+                           overflow: 'hidden',
+                           whiteSpace: 'nowrap',
+                           maxWidth: '300px',
+                        }}
+                     >
                         "{comment.content}"
                      </span>
                      <span>{new Date(comment.createdAt).toLocaleDateString('vi-VN')}</span>
                      <span className={styles.actions}>
-                        <button className={styles.btnSmallDanger} onClick={() => onDelete(comment.id)}>🗑️ Xóa</button>
+                        <button className={styles.btnSmallDanger} onClick={() => onDelete(comment.id)}>
+                           🗑️ Xóa
+                        </button>
                      </span>
                   </div>
                ))
@@ -318,9 +378,10 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateW
    const [walletModalUserId, setWalletModalUserId] = useState(null);
    const [walletForm, setWalletForm] = useState({ balanceAdd: '', newPlan: 'none' });
 
-   const filtered = users.filter((u) => 
-      u.email.toLowerCase().includes(search.toLowerCase()) || 
-      (u.fullName && u.fullName.toLowerCase().includes(search.toLowerCase()))
+   const filtered = users.filter(
+      (u) =>
+         u.email.toLowerCase().includes(search.toLowerCase()) ||
+         (u.fullName && u.fullName.toLowerCase().includes(search.toLowerCase()))
    );
 
    const formatMoney = (amount) => {
@@ -342,10 +403,10 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateW
       <section className={styles.managementSection}>
          <h1>Quản Lý Tài Khoản Thành Viên</h1>
          <div className={styles.tableControls}>
-            <input 
-               type="text" 
-               placeholder="Tìm kiếm theo tên hoặc email..." 
-               className={styles.searchInput} 
+            <input
+               type="text"
+               placeholder="Tìm kiếm theo tên hoặc email..."
+               className={styles.searchInput}
                value={search}
                onChange={(e) => setSearch(e.target.value)}
             />
@@ -361,14 +422,25 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateW
                <span>Hành động</span>
             </div>
             {filtered.map((user) => (
-               <div key={user.id} className={styles.tableRow} style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 1.2fr 1fr 1.5fr', alignItems: 'center' }}>
+               <div
+                  key={user.id}
+                  className={styles.tableRow}
+                  style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 1.2fr 1fr 1.5fr', alignItems: 'center' }}
+               >
                   <span className={styles.title}>{user.fullName || 'Chưa đặt tên'}</span>
                   <span>{user.email}</span>
                   <span>
-                     <select 
-                        value={user.role} 
+                     <select
+                        value={user.role}
                         onChange={(e) => onUpdateRole(user.id, e.target.value)}
-                        style={{ background: '#1c1c1c', border: '1px solid rgba(255,255,255,0.1)', color: '#FFF', padding: '0.2rem 0.5rem', borderRadius: '3px', outline: 'none' }}
+                        style={{
+                           background: '#1c1c1c',
+                           border: '1px solid rgba(255,255,255,0.1)',
+                           color: '#FFF',
+                           padding: '0.2rem 0.5rem',
+                           borderRadius: '3px',
+                           outline: 'none',
+                        }}
                      >
                         <option value="guest">Guest</option>
                         <option value="author">Author</option>
@@ -378,7 +450,12 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateW
                   </span>
                   <span style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
                      <div style={{ color: 'var(--gold-primary)', fontWeight: 'bold' }}>{formatMoney(user.balance)}</div>
-                     <div style={{ color: 'var(--text-muted)' }}>Gói: <strong style={{color: 'var(--text-primary)', textTransform: 'uppercase'}}>{user.plan || 'Không'}</strong></div>
+                     <div style={{ color: 'var(--text-muted)' }}>
+                        Gói:{' '}
+                        <strong style={{ color: 'var(--text-primary)', textTransform: 'uppercase' }}>
+                           {user.plan || 'Không'}
+                        </strong>
+                     </div>
                   </span>
                   <span>
                      <span style={{ color: user.status === 'suspended' ? '#ff4757' : '#2ed573' }}>
@@ -386,11 +463,17 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateW
                      </span>
                   </span>
                   <span className={styles.actions} style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                     <button className={styles.btnSmall} onClick={() => openWalletModal(user)}>💳 Ví & Gói</button>
+                     <button className={styles.btnSmall} onClick={() => openWalletModal(user)}>
+                        💳 Ví & Gói
+                     </button>
                      {user.status === 'suspended' ? (
-                        <button className={styles.btnSmall} onClick={() => onActivate(user.id)}>🔓</button>
+                        <button className={styles.btnSmall} onClick={() => onActivate(user.id)}>
+                           🔓
+                        </button>
                      ) : (
-                        <button className={styles.btnSmallDanger} onClick={() => onSuspend(user.id)}>🚫</button>
+                        <button className={styles.btnSmallDanger} onClick={() => onSuspend(user.id)}>
+                           🚫
+                        </button>
                      )}
                   </span>
                </div>
@@ -399,26 +482,80 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateW
 
          {/* WALLET MODAL */}
          {walletModalUserId && (
-            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-               <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '400px', border: '1px solid var(--gold-primary)' }}>
+            <div
+               style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'rgba(0,0,0,0.7)',
+                  zIndex: 1000,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+               }}
+            >
+               <div
+                  style={{
+                     background: 'var(--bg-card)',
+                     padding: '2rem',
+                     borderRadius: '12px',
+                     width: '90%',
+                     maxWidth: '400px',
+                     border: '1px solid var(--gold-primary)',
+                  }}
+               >
                   <h3 style={{ marginTop: 0, color: 'var(--gold-primary)' }}>Cập nhật Ví & Gói Premium</h3>
                   <form onSubmit={handleWalletSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                      <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Cộng/trừ số dư (VNĐ):</label>
-                        <input 
-                           type="number" 
+                        <label
+                           style={{
+                              display: 'block',
+                              marginBottom: '5px',
+                              fontSize: '0.9rem',
+                              color: 'var(--text-secondary)',
+                           }}
+                        >
+                           Cộng/trừ số dư (VNĐ):
+                        </label>
+                        <input
+                           type="number"
                            value={walletForm.balanceAdd}
-                           onChange={(e) => setWalletForm({...walletForm, balanceAdd: e.target.value})}
+                           onChange={(e) => setWalletForm({ ...walletForm, balanceAdd: e.target.value })}
                            placeholder="Ví dụ: 100000 hoặc -50000"
-                           style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--bg-border)', background: 'var(--bg-secondary)', color: '#fff' }}
+                           style={{
+                              width: '100%',
+                              padding: '10px',
+                              borderRadius: '8px',
+                              border: '1px solid var(--bg-border)',
+                              background: 'var(--bg-secondary)',
+                              color: '#fff',
+                           }}
                         />
                      </div>
                      <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Nâng cấp / Thay đổi gói:</label>
-                        <select 
+                        <label
+                           style={{
+                              display: 'block',
+                              marginBottom: '5px',
+                              fontSize: '0.9rem',
+                              color: 'var(--text-secondary)',
+                           }}
+                        >
+                           Nâng cấp / Thay đổi gói:
+                        </label>
+                        <select
                            value={walletForm.newPlan}
-                           onChange={(e) => setWalletForm({...walletForm, newPlan: e.target.value})}
-                           style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--bg-border)', background: 'var(--bg-secondary)', color: '#fff' }}
+                           onChange={(e) => setWalletForm({ ...walletForm, newPlan: e.target.value })}
+                           style={{
+                              width: '100%',
+                              padding: '10px',
+                              borderRadius: '8px',
+                              border: '1px solid var(--bg-border)',
+                              background: 'var(--bg-secondary)',
+                              color: '#fff',
+                           }}
                         >
                            <option value="none">Hủy gói / Không có gói</option>
                            <option value="v1">Gói V1 (2 bài/ngày, 30 bài/tháng)</option>
@@ -427,8 +564,36 @@ function UsersManagement({ users, onUpdateRole, onSuspend, onActivate, onUpdateW
                         </select>
                      </div>
                      <div style={{ display: 'flex', gap: '10px', marginTop: '1rem' }}>
-                        <button type="button" onClick={() => setWalletModalUserId(null)} style={{ flex: 1, padding: '10px', background: 'transparent', border: '1px solid var(--bg-border)', color: 'var(--text-primary)', borderRadius: '8px', cursor: 'pointer' }}>Hủy</button>
-                        <button type="submit" style={{ flex: 1, padding: '10px', background: 'var(--gold-primary)', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Lưu thay đổi</button>
+                        <button
+                           type="button"
+                           onClick={() => setWalletModalUserId(null)}
+                           style={{
+                              flex: 1,
+                              padding: '10px',
+                              background: 'transparent',
+                              border: '1px solid var(--bg-border)',
+                              color: 'var(--text-primary)',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                           }}
+                        >
+                           Hủy
+                        </button>
+                        <button
+                           type="submit"
+                           style={{
+                              flex: 1,
+                              padding: '10px',
+                              background: 'var(--gold-primary)',
+                              color: '#000',
+                              border: 'none',
+                              borderRadius: '8px',
+                              fontWeight: 'bold',
+                              cursor: 'pointer',
+                           }}
+                        >
+                           Lưu thay đổi
+                        </button>
                      </div>
                   </form>
                </div>
@@ -477,10 +642,17 @@ function SystemSettings() {
             </div>
             <div className={styles.settingRow}>
                <label>Khẩu hiệu:</label>
-               <input type="text" defaultValue="Thông tin trung thực - Kịp thời - Khách quan" className={styles.settingInput} readOnly />
+               <input
+                  type="text"
+                  defaultValue="Thông tin trung thực - Kịp thời - Khách quan"
+                  className={styles.settingInput}
+                  readOnly
+               />
             </div>
          </div>
-         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', fontStyle: 'italic' }}>Các thông số cấu hình hệ thống đang được quản trị tự động qua biến môi trường (.env).</p>
+         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', fontStyle: 'italic' }}>
+            Các thông số cấu hình hệ thống đang được quản trị tự động qua biến môi trường (.env).
+         </p>
       </section>
    );
 }
@@ -504,7 +676,7 @@ export default function AdminDashboard() {
             adminAPI.getUsers(200, 0),
             adminAPI.getLogs(50, 0),
             adminAPI.getStats(),
-            commentsAPI.getAll()
+            commentsAPI.getAll(),
          ]);
          setArticles(allArticles || []);
          setCategories(allCategories || []);
@@ -622,27 +794,51 @@ export default function AdminDashboard() {
 
    return (
       <div className={styles.adminDashboard}>
-         <SidebarNav 
-            activeTab={activeTab} 
-            onTabChange={setActiveTab} 
+         <SidebarNav
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
             pendingCount={pendingArticles.length}
             approvedCount={approvedArticles.length}
          />
 
          <main className={styles.mainContent}>
             {loading ? (
-               <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem', color: 'var(--gold-primary)' }}>
+               <div
+                  style={{ display: 'flex', justifyContent: 'center', padding: '3rem', color: 'var(--gold-primary)' }}
+               >
                   Đang tải dữ liệu hệ thống quản trị...
                </div>
             ) : (
                <>
                   {activeTab === 'dashboard' && <DashboardOverview stats={stats} />}
-                  {activeTab === 'articles-pending' && <ArticlesPendingTable articles={pendingArticles} onPublish={handlePublish} />}
-                  {activeTab === 'articles-approved' && <ArticlesApprovedTable articles={approvedArticles} onPublish={handlePublish} />}
-                  {activeTab === 'articles-manage' && <ArticlesManagementTable articles={articles} onDelete={handleDeleteArticle} />}
-                  {activeTab === 'categories-manage' && <CategoriesManagement categories={categories} onCreate={handleCreateCategory} onDelete={handleDeleteCategory} />}
-                  {activeTab === 'comments-manage' && <CommentsManagement comments={comments} onDelete={handleDeleteComment} />}
-                  {activeTab === 'users-manage' && <UsersManagement users={users} onUpdateRole={handleUpdateUserRole} onSuspend={handleSuspendUser} onActivate={handleActivateUser} onUpdateWallet={handleUpdateWallet} />}
+                  {activeTab === 'articles-pending' && (
+                     <ArticlesPendingTable articles={pendingArticles} onPublish={handlePublish} />
+                  )}
+                  {activeTab === 'articles-approved' && (
+                     <ArticlesApprovedTable articles={approvedArticles} onPublish={handlePublish} />
+                  )}
+                  {activeTab === 'articles-manage' && (
+                     <ArticlesManagementTable articles={articles} onDelete={handleDeleteArticle} />
+                  )}
+                  {activeTab === 'categories-manage' && (
+                     <CategoriesManagement
+                        categories={categories}
+                        onCreate={handleCreateCategory}
+                        onDelete={handleDeleteCategory}
+                     />
+                  )}
+                  {activeTab === 'comments-manage' && (
+                     <CommentsManagement comments={comments} onDelete={handleDeleteComment} />
+                  )}
+                  {activeTab === 'users-manage' && (
+                     <UsersManagement
+                        users={users}
+                        onUpdateRole={handleUpdateUserRole}
+                        onSuspend={handleSuspendUser}
+                        onActivate={handleActivateUser}
+                        onUpdateWallet={handleUpdateWallet}
+                     />
+                  )}
                   {activeTab === 'research-manage' && <ResearchManagement />}
                   {activeTab === 'logs' && <SystemLogs logs={logs} />}
                   {activeTab === 'settings' && <SystemSettings />}
@@ -658,7 +854,17 @@ function ResearchManagement() {
    const [articles, setArticles] = useState([]);
    const [loading, setLoading] = useState(true);
    const [showForm, setShowForm] = useState(false);
-   const [formData, setFormData] = useState({ id: null, title: '', summary: '', content: '', author: '', category: 'AI', thumbnail: '', readingTime: 5, price: 50000 });
+   const [formData, setFormData] = useState({
+      id: null,
+      title: '',
+      summary: '',
+      content: '',
+      author: '',
+      category: 'AI',
+      thumbnail: '',
+      readingTime: 5,
+      price: 50000,
+   });
 
    useEffect(() => {
       fetchArticles();
@@ -682,7 +888,7 @@ function ResearchManagement() {
          const token = tokenStorage.get();
          // Pass mockRole=admin so the backend returns the full content regardless of purchase status
          const res = await fetch(`/api/research/${article.id}?mockRole=admin`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
          });
          if (res.ok) {
             const fullArticle = await res.json();
@@ -702,13 +908,13 @@ function ResearchManagement() {
          const method = formData.id ? 'PUT' : 'POST';
          const url = formData.id ? `/api/research/${formData.id}` : '/api/research';
          const token = tokenStorage.get();
-         
+
          const res = await fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(formData)
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(formData),
          });
-         
+
          if (res.ok) {
             alert('Lưu thành công!');
             setShowForm(false);
@@ -728,7 +934,7 @@ function ResearchManagement() {
          const token = tokenStorage.get();
          const res = await fetch(`/api/research/${id}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
          });
          if (res.ok) {
             alert('Xóa thành công!');
@@ -745,34 +951,184 @@ function ResearchManagement() {
       <section className={styles.managementSection}>
          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h1>Quản lý Nghiên cứu Khoa học</h1>
-            <button 
-               className={styles.actionBtn} 
+            <button
+               className={styles.actionBtn}
                style={{ background: 'var(--gold-primary)', color: '#000' }}
-               onClick={() => { setFormData({ id: null, title: '', summary: '', content: '', author: '', category: 'AI', thumbnail: '', readingTime: 5, price: 50000 }); setShowForm(true); }}
+               onClick={() => {
+                  setFormData({
+                     id: null,
+                     title: '',
+                     summary: '',
+                     content: '',
+                     author: '',
+                     category: 'AI',
+                     thumbnail: '',
+                     readingTime: 5,
+                     price: 50000,
+                  });
+                  setShowForm(true);
+               }}
             >
                + Thêm bài mới
             </button>
          </div>
 
          {showForm && (
-            <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
-               <h3 style={{ marginBottom: '1rem', color: 'var(--gold-primary)' }}>{formData.id ? 'Sửa bài' : 'Thêm bài mới'}</h3>
+            <div
+               style={{
+                  background: 'var(--bg-secondary)',
+                  padding: '1.5rem',
+                  borderRadius: '8px',
+                  marginBottom: '2rem',
+               }}
+            >
+               <h3 style={{ marginBottom: '1rem', color: 'var(--gold-primary)' }}>
+                  {formData.id ? 'Sửa bài' : 'Thêm bài mới'}
+               </h3>
                <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <input required placeholder="Tiêu đề" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
-                  <input placeholder="Tác giả" value={formData.author} onChange={e => setFormData({...formData, author: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
-                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }}>
-                     {['AI', 'Công nghệ', 'Y học', 'Kinh tế', 'Giáo dục', 'Môi trường', 'Vật lý', 'Toán học'].map(c => <option key={c} value={c}>{c}</option>)}
+                  <input
+                     required
+                     placeholder="Tiêu đề"
+                     value={formData.title}
+                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                     style={{
+                        padding: '0.8rem',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '4px',
+                     }}
+                  />
+                  <input
+                     placeholder="Tác giả"
+                     value={formData.author}
+                     onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                     style={{
+                        padding: '0.8rem',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '4px',
+                     }}
+                  />
+                  <select
+                     value={formData.category}
+                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                     style={{
+                        padding: '0.8rem',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '4px',
+                     }}
+                  >
+                     {['AI', 'Công nghệ', 'Y học', 'Kinh tế', 'Giáo dục', 'Môi trường', 'Vật lý', 'Toán học'].map(
+                        (c) => (
+                           <option key={c} value={c}>
+                              {c}
+                           </option>
+                        )
+                     )}
                   </select>
-                  <input placeholder="URL Thumbnail (Upload ảnh qua form ngoài hoặc dán URL)" value={formData.thumbnail} onChange={e => setFormData({...formData, thumbnail: e.target.value})} style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  <input
+                     placeholder="URL Thumbnail (Upload ảnh qua form ngoài hoặc dán URL)"
+                     value={formData.thumbnail}
+                     onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                     style={{
+                        padding: '0.8rem',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '4px',
+                     }}
+                  />
                   <div style={{ display: 'flex', gap: '1rem' }}>
-                     <input type="number" placeholder="Thời gian đọc (phút)" value={formData.readingTime} onChange={e => setFormData({...formData, readingTime: e.target.value})} style={{ flex: 1, padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
-                     <input type="number" placeholder="Giá (VNĐ)" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} style={{ flex: 1, padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                     <input
+                        type="number"
+                        placeholder="Thời gian đọc (phút)"
+                        value={formData.readingTime}
+                        onChange={(e) => setFormData({ ...formData, readingTime: e.target.value })}
+                        style={{
+                           flex: 1,
+                           padding: '0.8rem',
+                           background: 'var(--bg-primary)',
+                           color: 'var(--text-primary)',
+                           border: '1px solid var(--glass-border)',
+                           borderRadius: '4px',
+                        }}
+                     />
+                     <input
+                        type="number"
+                        placeholder="Giá (VNĐ)"
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                        style={{
+                           flex: 1,
+                           padding: '0.8rem',
+                           background: 'var(--bg-primary)',
+                           color: 'var(--text-primary)',
+                           border: '1px solid var(--glass-border)',
+                           borderRadius: '4px',
+                        }}
+                     />
                   </div>
-                  <textarea required placeholder="Tóm tắt" value={formData.summary} onChange={e => setFormData({...formData, summary: e.target.value})} rows="3" style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
-                  <textarea required placeholder="Nội dung chi tiết (HTML hỗ trợ)" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} rows="10" style={{ padding: '0.8rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px' }} />
+                  <textarea
+                     required
+                     placeholder="Tóm tắt"
+                     value={formData.summary}
+                     onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                     rows="3"
+                     style={{
+                        padding: '0.8rem',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '4px',
+                     }}
+                  />
+                  <textarea
+                     required
+                     placeholder="Nội dung chi tiết (HTML hỗ trợ)"
+                     value={formData.content}
+                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                     rows="10"
+                     style={{
+                        padding: '0.8rem',
+                        background: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '4px',
+                     }}
+                  />
                   <div style={{ display: 'flex', gap: '1rem' }}>
-                     <button type="submit" style={{ padding: '0.8rem 2rem', background: 'var(--gold-primary)', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Lưu</button>
-                     <button type="button" onClick={() => setShowForm(false)} style={{ padding: '0.8rem 2rem', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '4px', cursor: 'pointer' }}>Hủy</button>
+                     <button
+                        type="submit"
+                        style={{
+                           padding: '0.8rem 2rem',
+                           background: 'var(--gold-primary)',
+                           color: '#000',
+                           fontWeight: 'bold',
+                           border: 'none',
+                           borderRadius: '4px',
+                           cursor: 'pointer',
+                        }}
+                     >
+                        Lưu
+                     </button>
+                     <button
+                        type="button"
+                        onClick={() => setShowForm(false)}
+                        style={{
+                           padding: '0.8rem 2rem',
+                           background: 'transparent',
+                           color: 'var(--text-primary)',
+                           border: '1px solid var(--glass-border)',
+                           borderRadius: '4px',
+                           cursor: 'pointer',
+                        }}
+                     >
+                        Hủy
+                     </button>
                   </div>
                </form>
             </div>
@@ -788,18 +1144,49 @@ function ResearchManagement() {
                </tr>
             </thead>
             <tbody>
-               {articles.map(article => (
+               {articles.map((article) => (
                   <tr key={article.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                      <td style={{ padding: '1rem' }}>{article.title}</td>
                      <td style={{ padding: '1rem' }}>{article.category}</td>
                      <td style={{ padding: '1rem' }}>{article.author}</td>
                      <td style={{ padding: '1rem' }}>
-                        <button onClick={() => handleEditClick(article)} style={{ background: 'transparent', border: '1px solid var(--gold-primary)', color: 'var(--gold-primary)', padding: '0.3rem 0.8rem', borderRadius: '4px', marginRight: '0.5rem', cursor: 'pointer' }}>Sửa</button>
-                        <button onClick={() => handleDelete(article.id)} style={{ background: 'transparent', border: '1px solid #ff4757', color: '#ff4757', padding: '0.3rem 0.8rem', borderRadius: '4px', cursor: 'pointer' }}>Xóa</button>
+                        <button
+                           onClick={() => handleEditClick(article)}
+                           style={{
+                              background: 'transparent',
+                              border: '1px solid var(--gold-primary)',
+                              color: 'var(--gold-primary)',
+                              padding: '0.3rem 0.8rem',
+                              borderRadius: '4px',
+                              marginRight: '0.5rem',
+                              cursor: 'pointer',
+                           }}
+                        >
+                           Sửa
+                        </button>
+                        <button
+                           onClick={() => handleDelete(article.id)}
+                           style={{
+                              background: 'transparent',
+                              border: '1px solid #ff4757',
+                              color: '#ff4757',
+                              padding: '0.3rem 0.8rem',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                           }}
+                        >
+                           Xóa
+                        </button>
                      </td>
                   </tr>
                ))}
-               {articles.length === 0 && <tr><td colSpan="4" style={{ padding: '1rem', textAlign: 'center' }}>Chưa có bài nghiên cứu nào</td></tr>}
+               {articles.length === 0 && (
+                  <tr>
+                     <td colSpan="4" style={{ padding: '1rem', textAlign: 'center' }}>
+                        Chưa có bài nghiên cứu nào
+                     </td>
+                  </tr>
+               )}
             </tbody>
          </table>
       </section>

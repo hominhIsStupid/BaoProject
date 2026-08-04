@@ -1,303 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { articlesAPI, recommendationAPI, tokenStorage } from '../../utils/api';
-import { apiCache } from '../../utils/cache';
-import { CATEGORY_MAP } from '../../constant/global';
+import { articlesAPI, recommendationAPI, tokenStorage } from '../utils/api';
+import { apiCache } from '../utils/cache';
+import { CATEGORY_MAP } from '../constant/global';
+import { getTimeAgo } from '../utils/formatTime';
 import styles from './HomePage.module.css';
 
-// Category badge
-function CatBadge({ categoryId, small = false }) {
-   const cat = CATEGORY_MAP[categoryId] || { name: categoryId, color: '#888' };
-   return (
-      <span
-         className={`${styles.catBadge} ${small ? styles.catBadgeSmall : ''}`}
-         style={{ background: cat.color }}
-      >
-         {cat.name}
-      </span>
-   );
-}
-
-// Time helper function for fetched dates
-const getTimeAgo = (dateStr) => {
-   const date = new Date(dateStr);
-   const now = new Date();
-   const diffMs = now - date;
-   if (diffMs < 60000) return 'Vừa xong';
-   const diffMins = Math.floor(diffMs / 60000);
-   const diffHours = Math.floor(diffMins / 60);
-   if (diffMins < 60) return `${diffMins} phút trước`;
-   if (diffHours < 24) return `${diffHours} giờ trước`;
-   return `${Math.floor(diffHours / 24)} ngày trước`;
-};
-
-// Time display
-function TimeAgo({ date }) {
-   return (
-      <span className={styles.timeAgo}>
-         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 6v6l4 2" />
-         </svg>
-         {getTimeAgo(date)}
-      </span>
-   );
-}
-
-// ---- Reusable Category Section with Featured + List layout ----
-function CategorySection({ title, icon, slug, articles, accentColor }) {
-   if (!articles || articles.length === 0) return null;
-   const featured = articles[0];
-   const list = articles.slice(1, 4);
-
-   return (
-      <div className={styles.categorySection} style={{ '--section-accent': accentColor }}>
-         <div className={styles.sectionHead}>
-            <div className={styles.sectionHeadLeft}>
-               <span className={styles.sectionIcon}>{icon}</span>
-               <h2 className={styles.sectionName}>{title}</h2>
-            </div>
-            <Link to={`/category/${slug}`} className={styles.viewAll} id={`btn-view-all-${slug}`}>
-               Xem tất cả →
-            </Link>
-         </div>
-         <div className={styles.catSectionBody}>
-            {/* Featured big card */}
-            <Link to={`/article/${featured.id}`} className={styles.catFeatured} id={`${slug}-featured`}>
-               <img
-                  src={featured.image || 'https://via.placeholder.com/600x400?text=No+Image'}
-                  alt={featured.title}
-                  className={styles.catFeaturedImg}
-                  loading="lazy"
-               />
-               <div className={styles.catFeaturedOverlay}>
-                  <h3 className={styles.catFeaturedTitle}>{featured.title}</h3>
-                  <p className={styles.catFeaturedExcerpt}>{featured.excerpt}</p>
-                  <TimeAgo date={featured.publishedAt || featured.createdAt} />
-               </div>
-            </Link>
-            {/* List of small articles */}
-            {list.length > 0 && (
-               <div className={styles.catList}>
-                  {list.map((article) => (
-                     <Link key={article.id} to={`/article/${article.id}`} className={styles.catListItem}>
-                        <img
-                           src={article.image || 'https://via.placeholder.com/150x100?text=No+Image'}
-                           alt={article.title}
-                           className={styles.catListImg}
-                           loading="lazy"
-                        />
-                        <div className={styles.catListContent}>
-                           <h4 className={styles.catListTitle}>{article.title}</h4>
-                           <TimeAgo date={article.publishedAt || article.createdAt} />
-                        </div>
-                     </Link>
-                  ))}
-               </div>
-            )}
-         </div>
-      </div>
-   );
-}
-
-// ---- Horizontal article strip for a category ----
-function HorizontalSection({ title, icon, slug, articles, accentColor }) {
-   if (!articles || articles.length === 0) return null;
-
-   return (
-      <div className={styles.horizSection}>
-         <div className={styles.sectionHead}>
-            <div className={styles.sectionHeadLeft}>
-               <span className={styles.sectionIcon}>{icon}</span>
-               <h2 className={styles.sectionName}>{title}</h2>
-            </div>
-            <Link to={`/category/${slug}`} className={styles.viewAll} id={`btn-view-all-${slug}`}>
-               Xem tất cả →
-            </Link>
-         </div>
-         <div className={styles.horizGrid}>
-            {articles.slice(0, 4).map((article) => (
-               <Link key={article.id} to={`/article/${article.id}`} className={styles.horizCard}>
-                  <div className={styles.horizImgWrap}>
-                     <img
-                        src={article.image || 'https://via.placeholder.com/400x250?text=No+Image'}
-                        alt={article.title}
-                        className={styles.horizImg}
-                        loading="lazy"
-                     />
-                     <CatBadge categoryId={article.category} small />
-                  </div>
-                  <div className={styles.horizContent}>
-                     <h3 className={styles.horizTitle}>{article.title}</h3>
-                     <p className={styles.horizExcerpt}>{article.excerpt}</p>
-                     <TimeAgo date={article.publishedAt || article.createdAt} />
-                  </div>
-               </Link>
-            ))}
-         </div>
-      </div>
-   );
-}
-
-// ---- Lazy-loaded Category Section ----
-function LazyCategorySection({ title, icon, slug, accentColor }) {
-   const [articles, setArticles] = useState(null);
-   const [isVisible, setIsVisible] = useState(false);
-   const sectionRef = React.useRef(null);
-
-   useEffect(() => {
-      const observer = new IntersectionObserver(
-         ([entry]) => {
-            if (entry.isIntersecting) {
-               setIsVisible(true);
-               observer.disconnect();
-            }
-         },
-         { rootMargin: '200px' }
-      );
-      if (sectionRef.current) observer.observe(sectionRef.current);
-      return () => observer.disconnect();
-   }, []);
-
-   useEffect(() => {
-      if (isVisible && articles === null) {
-         articlesAPI.getByCategory(slug, 4, 0).then(data => {
-            setArticles(data || []);
-         }).catch(err => {
-            console.error(err);
-            setArticles([]);
-         });
-      }
-   }, [isVisible, slug, articles]);
-
-   return (
-      <div ref={sectionRef} style={{ minHeight: '300px' }}>
-         {articles === null ? (
-             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: '300px' }}>
-                 <div className="loading-spinner" style={{ color: accentColor }}>Đang tải {title}...</div>
-             </div>
-         ) : articles.length > 0 ? (
-             <CategorySection title={title} icon={icon} slug={slug} articles={articles} accentColor={accentColor} />
-         ) : null}
-      </div>
-   );
-}
-
-// ---- Lazy-loaded Horizontal Section ----
-function LazyHorizontalSection({ title, icon, slug, accentColor }) {
-   const [articles, setArticles] = useState(null);
-   const [isVisible, setIsVisible] = useState(false);
-   const sectionRef = React.useRef(null);
-
-   useEffect(() => {
-      const observer = new IntersectionObserver(
-         ([entry]) => {
-            if (entry.isIntersecting) {
-               setIsVisible(true);
-               observer.disconnect();
-            }
-         },
-         { rootMargin: '200px' }
-      );
-      if (sectionRef.current) observer.observe(sectionRef.current);
-      return () => observer.disconnect();
-   }, []);
-
-   useEffect(() => {
-      if (isVisible && articles === null) {
-         articlesAPI.getByCategory(slug, 4, 0).then(data => {
-            setArticles(data || []);
-         }).catch(err => {
-            console.error(err);
-            setArticles([]);
-         });
-      }
-   }, [isVisible, slug, articles]);
-
-   return (
-      <div ref={sectionRef} style={{ minHeight: '300px' }}>
-         {articles === null ? (
-             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: '300px' }}>
-                 <div className="loading-spinner" style={{ color: accentColor }}>Đang tải {title}...</div>
-             </div>
-         ) : articles.length > 0 ? (
-             <HorizontalSection title={title} icon={icon} slug={slug} articles={articles} accentColor={accentColor} />
-         ) : null}
-      </div>
-   );
-}
+import { CatBadge } from '../components/CatBadge';
+import { TimeAgo } from '../components/TimeAgo';
+import { HorizontalSection } from '../components/HorizontalSection';
+import { LazyCategorySection, LazyHorizontalSection } from '../components/HomePageSections';
+import { useHomePageData } from '../hooks/useHomePageData';
 
 function HomePage() {
-   const cacheKey = `GET:/articles?limit=15&offset=0`;
-   const cachedData = apiCache.has(cacheKey) ? apiCache.get(cacheKey) : null;
-   const initialArticles = cachedData ? cachedData.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title)) : [];
-
-   const [articles, setArticles] = useState(initialArticles);
-   const [recommendations, setRecommendations] = useState([]);
-   const [dailyHighlights, setDailyHighlights] = useState([]);
-   const [researchArticles, setResearchArticles] = useState([]);
-   const [loading, setLoading] = useState(!cachedData);
-   const [error, setError] = useState(null);
+   const { articles, recommendations, dailyHighlights, researchArticles, loading, error } = useHomePageData();
    const loggedInUser = tokenStorage.getUser();
-
-   useEffect(() => {
-      const fetchArticles = async () => {
-         try {
-            const data = await articlesAPI.getAll(15, 0);
-            const uniqueData = data.filter((item, index, self) => 
-               index === self.findIndex((t) => t.title === item.title)
-            );
-            setArticles(uniqueData);
-
-            // Fetch personalized recommendations or popular
-            try {
-               if (loggedInUser) {
-                  const recs = await recommendationAPI.getRecommendations(8);
-                  const uniqueRecs = recs.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title));
-                  setRecommendations(uniqueRecs);
-               } else {
-                  const popular = await recommendationAPI.getPopular(8);
-                  const uniquePop = popular.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title));
-                  setRecommendations(uniquePop);
-               }
-            } catch (recErr) {
-               console.error('Recommendations error:', recErr);
-            }
-
-            // Fetch daily highlights
-            try {
-               const daily = await recommendationAPI.getDaily(8);
-               const uniqueDaily = daily.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title));
-               setDailyHighlights(uniqueDaily);
-            } catch (dailyErr) {
-               console.error('Daily highlights error:', dailyErr);
-            }
-
-            // Fetch Research Articles
-            try {
-               const researchRes = await fetch('/api/research?limit=4');
-               if (researchRes.ok) {
-                  const researchData = await researchRes.json();
-                  setResearchArticles(researchData.articles || []);
-               }
-            } catch (rErr) {
-               console.error('Failed to fetch research articles:', rErr);
-            }
-
-            setLoading(false);
-         } catch (err) {
-            console.error('Error fetching articles:', err);
-            setError('Không thể tải bài viết. Vui lòng thử lại sau.');
-            setLoading(false);
-         }
-      };
-
-      fetchArticles();
-   }, []);
 
    if (loading) {
       return (
-         <div className={styles.homePage} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+         <div
+            className={styles.homePage}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}
+         >
             <div className="loading-spinner" style={{ fontSize: '1.5rem', color: 'var(--gold-primary)' }}>
                Đang tải bài viết...
             </div>
@@ -307,7 +31,10 @@ function HomePage() {
 
    if (error) {
       return (
-         <div className={styles.homePage} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: 'red' }}>
+         <div
+            className={styles.homePage}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: 'red' }}
+         >
             {error}
          </div>
       );
@@ -315,7 +42,10 @@ function HomePage() {
 
    if (!articles || articles.length === 0) {
       return (
-         <div className={styles.homePage} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+         <div
+            className={styles.homePage}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}
+         >
             Chưa có bài viết nào được xuất bản.
          </div>
       );
@@ -430,7 +160,7 @@ function HomePage() {
                   </Link>
                </div>
                <div className={styles.recGrid}>
-                  {researchArticles.map(article => (
+                  {researchArticles.map((article) => (
                      <Link key={article.id} to={`/research/${article.id}`} className={styles.recCard}>
                         <div className={styles.recImgWrap}>
                            <img
@@ -439,15 +169,24 @@ function HomePage() {
                               className={styles.recImg}
                               loading="lazy"
                            />
-                           <span className={styles.catBadge} style={{ background: '#2c3e50' }}>{article.category}</span>
+                           <span className={styles.catBadge} style={{ background: '#2c3e50' }}>
+                              {article.category}
+                           </span>
                         </div>
                         <div className={styles.recContent}>
                            <h3 className={styles.recTitle}>{article.title}</h3>
                            <div className={styles.recMeta}>
-                              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>👤 {article.author}</span>
-                              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>⏱ {article.readingTime} phút đọc</span>
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                                 👤 {article.author}
+                              </span>
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                                 ⏱ {article.readingTime} phút đọc
+                              </span>
                               <span style={{ color: 'var(--gold-primary)', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                                 🔒 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(article.price || 50000)}
+                                 🔒{' '}
+                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                                    article.price || 50000
+                                 )}
                               </span>
                            </div>
                         </div>
@@ -471,9 +210,7 @@ function HomePage() {
                            <h2 className={styles.sectionName}>
                               {loggedInUser ? 'ĐỀ XUẤT CHO BẠN' : 'ĐANG THỊNH HÀNH'}
                            </h2>
-                           {loggedInUser && (
-                              <span className={styles.aiBadge}>AI</span>
-                           )}
+                           {loggedInUser && <span className={styles.aiBadge}>AI</span>}
                         </div>
                      </div>
                      <div className={styles.recGrid}>
@@ -493,9 +230,7 @@ function HomePage() {
                                  <p className={styles.recExcerpt}>{article.excerpt}</p>
                                  <div className={styles.recMeta}>
                                     <TimeAgo date={article.publishedAt || article.createdAt} />
-                                    {article.views > 0 && (
-                                       <span className={styles.recViews}>👁 {article.views}</span>
-                                    )}
+                                    {article.views > 0 && <span className={styles.recViews}>👁 {article.views}</span>}
                                  </div>
                               </div>
                            </Link>
@@ -512,14 +247,8 @@ function HomePage() {
          <section className={styles.mainSections} aria-label="Tin tức theo chuyên mục">
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
-                  <LazyCategorySection
-                     title="THỜI SỰ" icon="📰" slug="thoisu"
-                     accentColor="#E53E3E"
-                  />
-                  <LazyCategorySection
-                     title="CÔNG NGHỆ" icon="💻" slug="technology"
-                     accentColor="#4299E1"
-                  />
+                  <LazyCategorySection title="THỜI SỰ" icon="📰" slug="thoisu" accentColor="#E53E3E" />
+                  <LazyCategorySection title="CÔNG NGHỆ" icon="💻" slug="technology" accentColor="#4299E1" />
                </div>
             </div>
          </section>
@@ -529,10 +258,7 @@ function HomePage() {
          {/* ========== ROW 2: KINH DOANH (full width horizontal) ========== */}
          <section className={styles.mainSections}>
             <div className={styles.container}>
-               <LazyHorizontalSection
-                  title="KINH DOANH" icon="💰" slug="business"
-                  accentColor="#D4AF37"
-               />
+               <LazyHorizontalSection title="KINH DOANH" icon="💰" slug="business" accentColor="#D4AF37" />
             </div>
          </section>
 
@@ -542,14 +268,8 @@ function HomePage() {
          <section className={styles.mainSections}>
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
-                  <LazyCategorySection
-                     title="THỂ THAO" icon="⚽" slug="sports"
-                     accentColor="#38A169"
-                  />
-                  <LazyCategorySection
-                     title="GIẢI TRÍ" icon="🎬" slug="entertainment"
-                     accentColor="#805AD5"
-                  />
+                  <LazyCategorySection title="THỂ THAO" icon="⚽" slug="sports" accentColor="#38A169" />
+                  <LazyCategorySection title="GIẢI TRÍ" icon="🎬" slug="entertainment" accentColor="#805AD5" />
                </div>
             </div>
          </section>
@@ -559,10 +279,7 @@ function HomePage() {
          {/* ========== ROW 4: THẾ GIỚI (full width horizontal) ========== */}
          <section className={styles.mainSections}>
             <div className={styles.container}>
-               <LazyHorizontalSection
-                  title="THẾ GIỚI" icon="🌍" slug="thegioi"
-                  accentColor="#E53E3E"
-               />
+               <LazyHorizontalSection title="THẾ GIỚI" icon="🌍" slug="thegioi" accentColor="#E53E3E" />
             </div>
          </section>
 
@@ -572,14 +289,8 @@ function HomePage() {
          <section className={styles.mainSections}>
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
-                  <LazyCategorySection
-                     title="SỨC KHỎE" icon="🏥" slug="health"
-                     accentColor="#DD6B20"
-                  />
-                  <LazyCategorySection
-                     title="GIÁO DỤC" icon="📚" slug="education"
-                     accentColor="#B7791F"
-                  />
+                  <LazyCategorySection title="SỨC KHỎE" icon="🏥" slug="health" accentColor="#DD6B20" />
+                  <LazyCategorySection title="GIÁO DỤC" icon="📚" slug="education" accentColor="#B7791F" />
                </div>
             </div>
          </section>
@@ -589,10 +300,7 @@ function HomePage() {
          {/* ========== ROW 6: DU LỊCH (full width horizontal) ========== */}
          <section className={styles.mainSections}>
             <div className={styles.container}>
-               <LazyHorizontalSection
-                  title="DU LỊCH" icon="✈️" slug="travel"
-                  accentColor="#3182CE"
-               />
+               <LazyHorizontalSection title="DU LỊCH" icon="✈️" slug="travel" accentColor="#3182CE" />
             </div>
          </section>
 
@@ -602,14 +310,8 @@ function HomePage() {
          <section className={styles.mainSections}>
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
-                  <LazyCategorySection
-                     title="KHOA HỌC" icon="🔬" slug="khoahoc"
-                     accentColor="#6B46C1"
-                  />
-                  <LazyCategorySection
-                     title="XE" icon="🚗" slug="xe"
-                     accentColor="#718096"
-                  />
+                  <LazyCategorySection title="KHOA HỌC" icon="🔬" slug="khoahoc" accentColor="#6B46C1" />
+                  <LazyCategorySection title="XE" icon="🚗" slug="xe" accentColor="#718096" />
                </div>
             </div>
          </section>
@@ -620,14 +322,8 @@ function HomePage() {
          <section className={styles.mainSections}>
             <div className={styles.container}>
                <div className={styles.sectionsGrid}>
-                  <LazyCategorySection
-                     title="ĐỜI SỐNG" icon="☕" slug="doisong"
-                     accentColor="#F6AD55"
-                  />
-                  <LazyCategorySection
-                     title="TÂM SỰ" icon="💌" slug="tamsu"
-                     accentColor="#F687B3"
-                  />
+                  <LazyCategorySection title="ĐỜI SỐNG" icon="☕" slug="doisong" accentColor="#F6AD55" />
+                  <LazyCategorySection title="TÂM SỰ" icon="💌" slug="tamsu" accentColor="#F687B3" />
                </div>
             </div>
          </section>
@@ -637,10 +333,7 @@ function HomePage() {
          {/* ========== ROW 9: PHÁP LUẬT (full width horizontal) ========== */}
          <section className={styles.mainSections}>
             <div className={styles.container}>
-               <LazyHorizontalSection
-                  title="PHÁP LUẬT" icon="⚖️" slug="phapluat"
-                  accentColor="#E53E3E"
-               />
+               <LazyHorizontalSection title="PHÁP LUẬT" icon="⚖️" slug="phapluat" accentColor="#E53E3E" />
             </div>
          </section>
 

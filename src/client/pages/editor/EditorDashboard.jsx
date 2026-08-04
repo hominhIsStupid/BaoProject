@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './EditorDashboard.module.css';
-import { editorAPI, tokenStorage } from '../../../utils/api';
+import { editorAPI, tokenStorage } from '../../utils/api';
 
 function SidebarNav({ activeTab, onTabChange, pendingCount = 0, approvedCount = 0, rejectedCount = 0 }) {
    const menu = [
@@ -44,7 +44,9 @@ function ArticleReviewCard({ article, onApprove, onReject, onSuggest }) {
                <span className={styles.authorAvatar}>{authorName.charAt(0)}</span>
                <div>
                   <div className={styles.authorName}>{authorName}</div>
-                  <div className={styles.submitDate}>Ngày gửi: {new Date(article.createdAt || article.date).toLocaleDateString('vi-VN')}</div>
+                  <div className={styles.submitDate}>
+                     Ngày gửi: {new Date(article.createdAt || article.date).toLocaleDateString('vi-VN')}
+                  </div>
                </div>
             </div>
             <span className={styles.categoryBadge}>{article.category}</span>
@@ -56,12 +58,32 @@ function ArticleReviewCard({ article, onApprove, onReject, onSuggest }) {
          <div className={styles.reviewMeta}>
             <span>📖 {article.readTime || 5} phút đọc</span>
             <span>•</span>
-            <span>Trạng thái: <strong style={{ color: 'var(--gold-primary)' }}>{article.status.toUpperCase()}</strong></span>
+            <span>
+               Trạng thái: <strong style={{ color: 'var(--gold-primary)' }}>{article.status.toUpperCase()}</strong>
+            </span>
          </div>
 
          <div className={styles.reviewContent} style={{ margin: '1rem 0' }}>
-            {article.image && <img src={imageUrl} alt={article.title} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '4px' }} />}
-            <div style={{ background: '#1c1c1c', padding: '1rem', borderRadius: '4px', fontSize: '0.9rem', color: '#ccc', maxHeight: '150px', overflowY: 'auto', marginTop: '1rem', whiteSpace: 'pre-wrap' }}>
+            {article.image && (
+               <img
+                  src={imageUrl}
+                  alt={article.title}
+                  style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '4px' }}
+               />
+            )}
+            <div
+               style={{
+                  background: '#1c1c1c',
+                  padding: '1rem',
+                  borderRadius: '4px',
+                  fontSize: '0.9rem',
+                  color: '#ccc',
+                  maxHeight: '150px',
+                  overflowY: 'auto',
+                  marginTop: '1rem',
+                  whiteSpace: 'pre-wrap',
+               }}
+            >
                {article.content}
             </div>
          </div>
@@ -117,7 +139,17 @@ function ProfilePanel({ user, stats }) {
          <h2 className={styles.panelTitle}>Hồ Sơ Biên Tập Viên</h2>
          <div className={styles.profileContent}>
             <div className={styles.profileHeader}>
-               <div className={styles.profileAvatar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', background: '#333', color: '#FFF' }}>
+               <div
+                  className={styles.profileAvatar}
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     justifyContent: 'center',
+                     fontSize: '2rem',
+                     background: '#333',
+                     color: '#FFF',
+                  }}
+               >
                   {user.fullName ? user.fullName.charAt(0) : 'E'}
                </div>
                <div className={styles.profileInfo}>
@@ -133,11 +165,15 @@ function ProfilePanel({ user, stats }) {
                </div>
                <div className={styles.statItem}>
                   <span className={styles.statLabel}>Đã duyệt</span>
-                  <span className={styles.statNum} style={{ color: '#2ed573' }}>{stats?.articlesApproved || 0}</span>
+                  <span className={styles.statNum} style={{ color: '#2ed573' }}>
+                     {stats?.articlesApproved || 0}
+                  </span>
                </div>
                <div className={styles.statItem}>
                   <span className={styles.statLabel}>Từ chối</span>
-                  <span className={styles.statNum} style={{ color: '#ff4757' }}>{stats?.articlesRejected || 0}</span>
+                  <span className={styles.statNum} style={{ color: '#ff4757' }}>
+                     {stats?.articlesRejected || 0}
+                  </span>
                </div>
             </div>
 
@@ -156,7 +192,9 @@ function ProfilePanel({ user, stats }) {
                </div>
             </div>
 
-            <button className={styles.btnPrimaryFull} onClick={() => window.location.href = '/profile'}>✏️ Cài đặt tài khoản</button>
+            <button className={styles.btnPrimaryFull} onClick={() => (window.location.href = '/profile')}>
+               ✏️ Cài đặt tài khoản
+            </button>
          </div>
       </div>
    );
@@ -178,7 +216,7 @@ export default function EditorDashboard() {
             editorAPI.getPendingArticles(100, 0),
             editorAPI.getApprovedArticles(100, 0),
             editorAPI.getRejectedArticles(100, 0),
-            editorAPI.getStats()
+            editorAPI.getStats(),
          ]);
          setPendingArticles(pending || []);
          setApprovedArticles(approved || []);
@@ -232,9 +270,9 @@ export default function EditorDashboard() {
 
    return (
       <div className={styles.editorDashboard}>
-         <SidebarNav 
-            activeTab={activeTab} 
-            onTabChange={setActiveTab} 
+         <SidebarNav
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
             pendingCount={pendingArticles.length}
             approvedCount={approvedArticles.length}
             rejectedCount={rejectedArticles.length}
@@ -242,7 +280,9 @@ export default function EditorDashboard() {
 
          <main className={styles.mainContent}>
             {loading ? (
-               <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem', color: 'var(--gold-primary)' }}>
+               <div
+                  style={{ display: 'flex', justifyContent: 'center', padding: '3rem', color: 'var(--gold-primary)' }}
+               >
                   Đang tải dữ liệu biên tập...
                </div>
             ) : (
@@ -284,14 +324,16 @@ export default function EditorDashboard() {
                         <div className={styles.recentQueue}>
                            <h2>Bài viết chờ duyệt mới nhất</h2>
                            {pendingArticles.length === 0 ? (
-                              <p style={{ color: 'rgba(255,255,255,0.4)', padding: '1rem 0' }}>Không có bài viết nào đang chờ duyệt.</p>
+                              <p style={{ color: 'rgba(255,255,255,0.4)', padding: '1rem 0' }}>
+                                 Không có bài viết nào đang chờ duyệt.
+                              </p>
                            ) : (
                               <div className={styles.queueList}>
                                  {pendingArticles.slice(0, 3).map((article) => (
-                                    <ArticleReviewCard 
-                                       key={article.id} 
-                                       article={article} 
-                                       onApprove={handleApprove} 
+                                    <ArticleReviewCard
+                                       key={article.id}
+                                       article={article}
+                                       onApprove={handleApprove}
                                        onReject={handleReject}
                                        onSuggest={handleSuggestEdit}
                                     />
@@ -310,10 +352,10 @@ export default function EditorDashboard() {
                         ) : (
                            <div className={styles.queueList}>
                               {pendingArticles.map((article) => (
-                                 <ArticleReviewCard 
-                                    key={article.id} 
-                                    article={article} 
-                                    onApprove={handleApprove} 
+                                 <ArticleReviewCard
+                                    key={article.id}
+                                    article={article}
+                                    onApprove={handleApprove}
                                     onReject={handleReject}
                                     onSuggest={handleSuggestEdit}
                                  />
@@ -371,7 +413,9 @@ export default function EditorDashboard() {
                                     <div key={article.id} className={styles.tableRow}>
                                        <span className={styles.title}>{article.title}</span>
                                        <span>{authorName}</span>
-                                       <span style={{ color: '#ff4757', fontSize: '0.8rem' }}>{article.rejectionReason || 'Không phù hợp.'}</span>
+                                       <span style={{ color: '#ff4757', fontSize: '0.8rem' }}>
+                                          {article.rejectionReason || 'Không phù hợp.'}
+                                       </span>
                                        <span style={{ color: '#ff4757' }}>❌ Từ chối</span>
                                     </div>
                                  );

@@ -5,7 +5,7 @@
  * and status-conditional field rules.
  */
 
-const { generateMockArticle, generateMultipleMockArticles } = require('../../src/backend/utils/mockArticleGenerator');
+const { generateMockArticle, generateMultipleMockArticles } = require('../../src/server/utils/mockArticleGenerator');
 
 describe('generateMockArticle', () => {
    const authorId = 'author-uuid-123';

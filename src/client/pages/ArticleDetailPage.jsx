@@ -1,155 +1,34 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { articlesAPI, commentsAPI, bookmarksAPI, recommendationAPI, tokenStorage } from '../../utils/api';
-import { apiCache } from '../../utils/cache';
-import { CATEGORY_MAP } from '../../constant/global';
+import { articlesAPI, commentsAPI, bookmarksAPI, recommendationAPI, tokenStorage } from '../utils/api';
+import { apiCache } from '../utils/cache';
+import { CATEGORY_MAP } from '../constant/global';
 import styles from './ArticleDetailPage.module.css';
 
-// Time helper function for fetched dates
-const getTimeAgo = (dateStr) => {
-   const date = new Date(dateStr);
-   const now = new Date();
-   const diffMs = now - date;
-   if (diffMs < 60000) return 'Vừa xong';
-   const diffMins = Math.floor(diffMs / 60000);
-   const diffHours = Math.floor(diffMins / 60);
-   if (diffMins < 60) return `${diffMins} phút trước`;
-   if (diffHours < 24) return `${diffHours} giờ trước`;
-   return `${Math.floor(diffHours / 24)} ngày trước`;
-};
+import { getTimeAgo } from '../utils/formatTime';
+import { useArticleData } from '../hooks/useArticleData';
 
 function ArticleDetailPage() {
    const { id } = useParams();
-   
-   const cacheKey = `GET:/articles/${id}`;
-   const cachedArticle = apiCache.has(cacheKey) ? apiCache.get(cacheKey) : null;
 
-   const [article, setArticle] = useState(cachedArticle);
-   const [relatedArticles, setRelatedArticles] = useState([]);
-   const [mostReadArticles, setMostReadArticles] = useState([]);
-   const [loading, setLoading] = useState(!cachedArticle);
-   const [error, setError] = useState(null);
-   const [fontSizeMultiplier, setFontSizeMultiplier] = useState(1.0);
-   const [copied, setCopied] = useState(false);
-
-   // Comments Section States
-   const loggedInUser = tokenStorage.getUser();
-   const [comments, setComments] = useState([]);
-   const [newCommentText, setNewCommentText] = useState('');
-   const [activeTab, setActiveTab] = useState('newest'); // 'newest' | 'popular'
-   const [isBookmarked, setIsBookmarked] = useState(false);
-   const [bookmarkLoading, setBookmarkLoading] = useState(false);
-   const [isLiked, setIsLiked] = useState(false);
-   const [likeCount, setLikeCount] = useState(cachedArticle?.likes || 0);
-   const [likeLoading, setLikeLoading] = useState(false);
-   const [recommendations, setRecommendations] = useState([]);
-
-   useEffect(() => {
-      const fetchData = async () => {
-         if (!cachedArticle) setLoading(true);
-         setError(null);
-         try {
-            // Fetch main article
-            const articleData = await articlesAPI.getById(id);
-            setArticle(articleData);
-            setLikeCount(articleData.likes || 0);
-            
-            // Track reading + get recommendations (if logged in)
-            if (loggedInUser) {
-               try {
-                  await recommendationAPI.trackRead(id, articleData.category);
-                  const likeStatus = await recommendationAPI.getLikeStatus(id);
-                  setIsLiked(likeStatus.liked);
-                  const recs = await recommendationAPI.getRecommendations(8);
-                  setRecommendations(recs.filter(r => r.id !== id));
-               } catch (recErr) {
-                  console.error('Recommendation tracking error:', recErr);
-               }
-            }
-            
-            // Fetch related and most read
-            const allArticles = await articlesAPI.getAll(20, 0);
-            
-            // Related: same category, different ID
-            const related = allArticles
-               .filter(a => a.category === articleData.category && a.id !== articleData.id)
-               .slice(0, 4);
-            setRelatedArticles(related);
-            
-            // Most read: just taking some from the list
-            setMostReadArticles(allArticles.slice(0, 5));
-
-            // Fetch comments
-            const commentsData = await commentsAPI.getByArticle(id);
-            setComments(commentsData);
-
-            // Fetch bookmark status
-            if (loggedInUser) {
-               try {
-                  const bookmarks = await bookmarksAPI.getAll();
-                  setIsBookmarked(bookmarks.some(b => String(b.id) === String(id)));
-               } catch (bookmarkErr) {
-                  console.error('Failed to fetch bookmark status:', bookmarkErr);
-               }
-            }
-
-         } catch (err) {
-            console.error(err);
-            setError('Không thể tải bài viết. Bài viết có thể không tồn tại hoặc đã bị xóa.');
-         } finally {
-            setLoading(false);
-         }
-      };
-
-      fetchData();
-      window.scrollTo(0, 0);
-   }, [id]);
-
-   const handleToggleBookmark = async () => {
-      if (!loggedInUser) {
-         alert('Vui lòng đăng nhập để lưu bài viết!');
-         return;
-      }
-      setBookmarkLoading(true);
-      try {
-         if (isBookmarked) {
-            await bookmarksAPI.delete(id);
-            setIsBookmarked(false);
-         } else {
-            await bookmarksAPI.add(id);
-            setIsBookmarked(true);
-         }
-      } catch (err) {
-         console.error(err);
-         alert('Lỗi khi cập nhật trạng thái lưu bài viết: ' + err.message);
-      } finally {
-         setBookmarkLoading(false);
-      }
-   };
-
-   const handleToggleLike = async () => {
-      if (!loggedInUser) {
-         alert('Vui lòng đăng nhập để thích bài viết!');
-         return;
-      }
-      if (!article) return;
-      setLikeLoading(true);
-      try {
-         if (isLiked) {
-            await recommendationAPI.unlike(id);
-            setIsLiked(false);
-            setLikeCount(prev => Math.max(0, prev - 1));
-         } else {
-            await recommendationAPI.like(id, article.category);
-            setIsLiked(true);
-            setLikeCount(prev => prev + 1);
-         }
-      } catch (err) {
-         console.error(err);
-      } finally {
-         setLikeLoading(false);
-      }
-   };
+   const {
+      article,
+      relatedArticles,
+      mostReadArticles,
+      loading,
+      error,
+      recommendations,
+      comments,
+      setComments,
+      isBookmarked,
+      bookmarkLoading,
+      isLiked,
+      likeCount,
+      likeLoading,
+      loggedInUser,
+      handleToggleBookmark,
+      handleToggleLike,
+   } = useArticleData(id);
 
    const handleCommentSubmit = async (e) => {
       e.preventDefault();
@@ -168,18 +47,18 @@ function ArticleDetailPage() {
 
    const handleLikeComment = (commentId, replyId = null) => {
       // Mock like feature for now
-      setComments(prevComments =>
-         prevComments.map(c => {
+      setComments((prevComments) =>
+         prevComments.map((c) => {
             if (replyId) {
                if (c.id === commentId) {
                   return {
                      ...c,
-                     replies: c.replies?.map(r => {
+                     replies: c.replies?.map((r) => {
                         if (r.id === replyId) {
                            return { ...r, likes: (r.likes || 0) + (r.liked ? -1 : 1), liked: !r.liked };
                         }
                         return r;
-                     })
+                     }),
                   };
                }
             } else {
@@ -193,8 +72,8 @@ function ArticleDetailPage() {
    };
 
    const toggleReplies = (commentId) => {
-      setComments(prevComments =>
-         prevComments.map(c => {
+      setComments((prevComments) =>
+         prevComments.map((c) => {
             if (c.id === commentId) {
                return { ...c, showReplies: !c.showReplies };
             }
@@ -205,7 +84,10 @@ function ArticleDetailPage() {
 
    if (loading) {
       return (
-         <div className={styles.articlePage} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+         <div
+            className={styles.articlePage}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}
+         >
             <div className="loading-spinner" style={{ fontSize: '1.5rem', color: 'var(--gold-primary)' }}>
                Đang tải bài viết...
             </div>
@@ -238,13 +120,13 @@ function ArticleDetailPage() {
 
    const decreaseFontSize = () => {
       if (fontSizeMultiplier > 0.8) {
-         setFontSizeMultiplier(prev => Math.round((prev - 0.1) * 10) / 10);
+         setFontSizeMultiplier((prev) => Math.round((prev - 0.1) * 10) / 10);
       }
    };
 
    const increaseFontSize = () => {
       if (fontSizeMultiplier < 1.5) {
-         setFontSizeMultiplier(prev => Math.round((prev + 0.1) * 10) / 10);
+         setFontSizeMultiplier((prev) => Math.round((prev + 0.1) * 10) / 10);
       }
    };
 
@@ -257,7 +139,7 @@ function ArticleDetailPage() {
             const doc = parser.parseFromString(finalContent, 'text/html');
             const imgs = doc.querySelectorAll('img');
             const seen = new Set();
-            imgs.forEach(img => {
+            imgs.forEach((img) => {
                // Normalise src by removing query params for comparison to catch resized variants
                const rawSrc = img.src.split('?')[0];
                if (seen.has(rawSrc)) {
@@ -267,14 +149,9 @@ function ArticleDetailPage() {
                }
             });
             finalContent = doc.body.innerHTML;
-         } catch(e) {}
+         } catch (e) {}
       }
-      return (
-         <div 
-            className={styles.htmlContent}
-            dangerouslySetInnerHTML={{ __html: finalContent }} 
-         />
-      );
+      return <div className={styles.htmlContent} dangerouslySetInnerHTML={{ __html: finalContent }} />;
    };
 
    return (
@@ -316,23 +193,51 @@ function ArticleDetailPage() {
                   {/* Metadata & Author Details */}
                   <div className={styles.metaRow}>
                      <div className={styles.authorMeta}>
-                        <svg className={styles.metaIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                           className={styles.metaIcon}
+                           width="14"
+                           height="14"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           stroke="currentColor"
+                           strokeWidth="2"
+                        >
                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                            <circle cx="12" cy="7" r="4" />
                         </svg>
                         <span className={styles.authorName}>{article.author_name || article.author || 'Tác giả'}</span>
                      </div>
                      <div className={styles.dateMeta}>
-                        <svg className={styles.metaIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                           className={styles.metaIcon}
+                           width="14"
+                           height="14"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           stroke="currentColor"
+                           strokeWidth="2"
+                        >
                            <circle cx="12" cy="12" r="10" />
                            <polyline points="12 6 12 12 16 14" />
                         </svg>
                         <time dateTime={article.publishedAt || article.createdAt}>
-                           {new Date(article.publishedAt || article.createdAt).toLocaleDateString('vi-VN')} {new Date(article.publishedAt || article.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                           {new Date(article.publishedAt || article.createdAt).toLocaleDateString('vi-VN')}{' '}
+                           {new Date(article.publishedAt || article.createdAt).toLocaleTimeString('vi-VN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                           })}
                         </time>
                      </div>
                      <div className={styles.readMeta}>
-                        <svg className={styles.metaIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                           className={styles.metaIcon}
+                           width="14"
+                           height="14"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           stroke="currentColor"
+                           strokeWidth="2"
+                        >
                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                         </svg>
@@ -341,11 +246,7 @@ function ArticleDetailPage() {
                   </div>
 
                   {/* Sapo (Excerpt) */}
-                  {article.excerpt && (
-                     <div className={styles.sapo}>
-                        {article.excerpt}
-                     </div>
-                  )}
+                  {article.excerpt && <div className={styles.sapo}>{article.excerpt}</div>}
 
                   {/* Toolbar: Font Sizing & Share Actions */}
                   <div className={styles.toolbar}>
@@ -366,8 +267,19 @@ function ArticleDetailPage() {
                               <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                            </svg>
                         </button>
-                        <button className={`${styles.toolBtn} ${styles.shareCopy}`} onClick={handleCopyLink} aria-label="Copy liên kết bài viết">
-                           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <button
+                           className={`${styles.toolBtn} ${styles.shareCopy}`}
+                           onClick={handleCopyLink}
+                           aria-label="Copy liên kết bài viết"
+                        >
+                           <svg
+                              width="16"
+                              height="16"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                           >
                               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                            </svg>
@@ -380,7 +292,14 @@ function ArticleDetailPage() {
                            aria-label={isLiked ? 'Bỏ thích' : 'Thích bài viết'}
                            title={isLiked ? 'Bỏ thích' : 'Thích bài viết'}
                         >
-                           <svg width="16" height="16" fill={isLiked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                           <svg
+                              width="16"
+                              height="16"
+                              fill={isLiked ? 'currentColor' : 'none'}
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                           >
                               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                            </svg>
                            {likeCount > 0 && <span className={styles.likeCount}>{likeCount}</span>}
@@ -391,10 +310,17 @@ function ArticleDetailPage() {
                               className={`${styles.toolBtn} ${isBookmarked ? styles.bookmarked : ''}`}
                               onClick={handleToggleBookmark}
                               disabled={bookmarkLoading}
-                              aria-label={isBookmarked ? "Bỏ lưu bài viết" : "Lưu bài viết"}
-                              title={isBookmarked ? "Bỏ lưu bài viết" : "Lưu bài viết"}
+                              aria-label={isBookmarked ? 'Bỏ lưu bài viết' : 'Lưu bài viết'}
+                              title={isBookmarked ? 'Bỏ lưu bài viết' : 'Lưu bài viết'}
                            >
-                              <svg width="16" height="16" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <svg
+                                 width="16"
+                                 height="16"
+                                 fill={isBookmarked ? 'currentColor' : 'none'}
+                                 stroke="currentColor"
+                                 strokeWidth="2"
+                                 viewBox="0 0 24 24"
+                              >
                                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
                               </svg>
                            </button>
@@ -403,21 +329,52 @@ function ArticleDetailPage() {
 
                      <div className={styles.textAdjust}>
                         <span className={styles.aaLabel}>Aa</span>
-                        <button className={styles.adjustBtn} onClick={decreaseFontSize} disabled={fontSizeMultiplier <= 0.8} aria-label="Giảm cỡ chữ">
-                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <button
+                           className={styles.adjustBtn}
+                           onClick={decreaseFontSize}
+                           disabled={fontSizeMultiplier <= 0.8}
+                           aria-label="Giảm cỡ chữ"
+                        >
+                           <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                           >
                               <line x1="5" y1="12" x2="19" y2="12" />
                            </svg>
                         </button>
                         <span className={styles.fontSizePercent}>{Math.round(fontSizeMultiplier * 100)}%</span>
-                        <button className={styles.adjustBtn} onClick={increaseFontSize} disabled={fontSizeMultiplier >= 1.5} aria-label="Tăng cỡ chữ">
-                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <button
+                           className={styles.adjustBtn}
+                           onClick={increaseFontSize}
+                           disabled={fontSizeMultiplier >= 1.5}
+                           aria-label="Tăng cỡ chữ"
+                        >
+                           <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                           >
                               <line x1="12" y1="5" x2="12" y2="19" />
                               <line x1="5" y1="12" x2="19" y2="12" />
                            </svg>
                         </button>
                         <div className={styles.toolbarDivider}></div>
                         <button className={styles.toolBtn} onClick={() => window.print()} aria-label="In bài viết">
-                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                           <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                           >
                               <polyline points="6 9 6 2 18 2 18 9" />
                               <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                               <rect x="6" y="14" width="12" height="8" />
@@ -429,23 +386,32 @@ function ArticleDetailPage() {
                   {/* Hero Image */}
                   {!(article.content && /<img/i.test(article.content)) && (
                      <div className={styles.heroWrapper}>
-                        <img src={article.image || 'https://via.placeholder.com/800x600?text=No+Image'} alt={article.title} className={styles.heroImage} />
+                        <img
+                           src={article.image || 'https://via.placeholder.com/800x600?text=No+Image'}
+                           alt={article.title}
+                           className={styles.heroImage}
+                        />
                         {article.caption && <div className={styles.heroCaption}>{article.caption}</div>}
                      </div>
                   )}
 
                   {/* Article content (Adjustable text size) */}
-                  <div 
-                     className={styles.articleContent} 
-                     style={{ fontSize: `${fontSizeMultiplier * 1.05}rem` }}
-                  >
+                  <div className={styles.articleContent} style={{ fontSize: `${fontSizeMultiplier * 1.05}rem` }}>
                      {renderContent()}
                   </div>
 
                   {/* ========== COMMENT SECTION ========== */}
                   <section className={styles.commentsSection} id="comments-section">
                      <div className={styles.commentsHead}>
-                        <svg className={styles.commentIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                           className={styles.commentIcon}
+                           width="20"
+                           height="20"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           stroke="currentColor"
+                           strokeWidth="2"
+                        >
                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                         </svg>
                         <h3 className={styles.commentsTitle}>BÌNH LUẬN ({comments.length})</h3>
@@ -465,7 +431,9 @@ function ArticleDetailPage() {
                         <form onSubmit={handleCommentSubmit} className={styles.commentForm}>
                            <textarea
                               className={styles.commentTextarea}
-                              placeholder={loggedInUser ? "Viết bình luận của bạn..." : "Vui lòng đăng nhập để bình luận"}
+                              placeholder={
+                                 loggedInUser ? 'Viết bình luận của bạn...' : 'Vui lòng đăng nhập để bình luận'
+                              }
                               value={newCommentText}
                               onChange={(e) => setNewCommentText(e.target.value.slice(0, 1000))}
                               maxLength={1000}
@@ -521,13 +489,21 @@ function ArticleDetailPage() {
                                     <div className={styles.commentHeader}>
                                        <div className={styles.commentUserAvatar}>
                                           {comment.avatar ? (
-                                             <img src={comment.avatar} alt={comment.user_name || 'User'} className={styles.avatarImg} />
+                                             <img
+                                                src={comment.avatar}
+                                                alt={comment.user_name || 'User'}
+                                                className={styles.avatarImg}
+                                             />
                                           ) : (
-                                             <div className={styles.avatarEmpty}>{(comment.user_name || 'U').charAt(0)}</div>
+                                             <div className={styles.avatarEmpty}>
+                                                {(comment.user_name || 'U').charAt(0)}
+                                             </div>
                                           )}
                                        </div>
                                        <div className={styles.commentMeta}>
-                                          <span className={styles.commentAuthorName}>{comment.user_name || 'Người dùng'}</span>
+                                          <span className={styles.commentAuthorName}>
+                                             {comment.user_name || 'Người dùng'}
+                                          </span>
                                           <span className={styles.commentTime}>{getTimeAgo(comment.createdAt)}</span>
                                        </div>
                                        <button className={styles.commentOptionsBtn} aria-label="Tùy chọn bình luận">
@@ -540,19 +516,34 @@ function ArticleDetailPage() {
                                           className={`${styles.actionBtn} ${comment.liked ? styles.actionBtnLiked : ''}`}
                                           onClick={() => handleLikeComment(comment.id)}
                                        >
-                                          <svg width="12" height="12" viewBox="0 0 24 24" fill={comment.liked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                                          <svg
+                                             width="12"
+                                             height="12"
+                                             viewBox="0 0 24 24"
+                                             fill={comment.liked ? 'currentColor' : 'none'}
+                                             stroke="currentColor"
+                                             strokeWidth="2"
+                                          >
                                              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
                                           </svg>
                                           <span>{comment.likes || 0}</span>
                                        </button>
-                                       <button 
+                                       <button
                                           className={styles.actionTextBtn}
                                           onClick={() => setNewCommentText(`@${comment.user_name || 'User'} `)}
                                        >
                                           Trả lời
                                        </button>
                                        <button className={`${styles.actionTextBtn} ${styles.btnReportComment}`}>
-                                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{marginRight: '3px', verticalAlign: 'middle'}}>
+                                          <svg
+                                             width="12"
+                                             height="12"
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             strokeWidth="2"
+                                             style={{ marginRight: '3px', verticalAlign: 'middle' }}
+                                          >
                                              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
                                              <line x1="4" y1="22" x2="4" y2="15" />
                                           </svg>
@@ -568,7 +559,15 @@ function ArticleDetailPage() {
                      {comments.length > 0 && (
                         <button className={styles.btnLoadMoreComments}>
                            Xem thêm bình luận
-                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{marginLeft: '6px'}}>
+                           <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              style={{ marginLeft: '6px' }}
+                           >
                               <polyline points="6 9 12 15 18 9" />
                            </svg>
                         </button>
@@ -582,7 +581,13 @@ function ArticleDetailPage() {
                   {relatedArticles.length > 0 && (
                      <div className={styles.sidebarBlock}>
                         <div className={styles.sidebarHead}>
-                           <svg className={styles.goldIcon} width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-primary)">
+                           <svg
+                              className={styles.goldIcon}
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="var(--gold-primary)"
+                           >
                               <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2" />
                            </svg>
                            <h3 className={styles.sidebarTitle}>TIN LIÊN QUAN</h3>
@@ -591,12 +596,23 @@ function ArticleDetailPage() {
                            {relatedArticles.map((relArticle) => (
                               <Link key={relArticle.id} to={`/article/${relArticle.id}`} className={styles.relatedItem}>
                                  <div className={styles.relatedImgWrapper}>
-                                    <img src={relArticle.image || 'https://via.placeholder.com/150x150?text=No+Image'} alt={relArticle.title} className={styles.relatedImg} />
+                                    <img
+                                       src={relArticle.image || 'https://via.placeholder.com/150x150?text=No+Image'}
+                                       alt={relArticle.title}
+                                       className={styles.relatedImg}
+                                    />
                                  </div>
                                  <div className={styles.relatedText}>
                                     <h4 className={styles.relatedTitleText}>{relArticle.title}</h4>
                                     <span className={styles.relatedTime}>
-                                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                       <svg
+                                          width="10"
+                                          height="10"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2.5"
+                                       >
                                           <circle cx="12" cy="12" r="10" />
                                           <polyline points="12 6 12 12 16 14" />
                                        </svg>
@@ -612,7 +628,13 @@ function ArticleDetailPage() {
                   {/* Chủ đề nổi bật */}
                   <div className={styles.sidebarBlock}>
                      <div className={styles.sidebarHead}>
-                        <svg className={styles.goldIcon} width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-primary)">
+                        <svg
+                           className={styles.goldIcon}
+                           width="16"
+                           height="16"
+                           viewBox="0 0 24 24"
+                           fill="var(--gold-primary)"
+                        >
                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2" />
                         </svg>
                         <h3 className={styles.sidebarTitle}>CHỦ ĐỀ NỔI BẬT</h3>
@@ -630,7 +652,13 @@ function ArticleDetailPage() {
                   {mostReadArticles.length > 0 && (
                      <div className={styles.sidebarBlock}>
                         <div className={styles.sidebarHead}>
-                           <svg className={styles.goldIcon} width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-primary)">
+                           <svg
+                              className={styles.goldIcon}
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="var(--gold-primary)"
+                           >
                               <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2" />
                            </svg>
                            <h3 className={styles.sidebarTitle}>ĐỌC NHIỀU</h3>

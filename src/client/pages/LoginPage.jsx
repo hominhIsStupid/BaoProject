@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authAPI, tokenStorage } from '../../utils/api';
+import { authAPI, tokenStorage } from '../utils/api';
 import styles from './LoginPage.module.css';
 
 function LoginPage() {

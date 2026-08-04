@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CATEGORY_MAP } from '../../constant/global';
+import { CATEGORY_MAP } from '../constant/global';
 import styles from './ArticleCard.module.css';
 
 // Safe date formatting that handles Date objects, ISO strings, and invalid values
@@ -35,15 +35,19 @@ function ArticleCard({ article }) {
             <div className={styles.metadata}>
                <span
                   className={styles.badge}
-                  style={{ backgroundColor: category.color, color: '#fff', padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase' }}
+                  style={{
+                     backgroundColor: category.color,
+                     color: '#fff',
+                     padding: '2px 8px',
+                     borderRadius: '4px',
+                     fontSize: '0.7rem',
+                     fontWeight: '600',
+                     textTransform: 'uppercase',
+                  }}
                >
                   {category.name}
                </span>
-               {articleDate && (
-                  <time className={styles.date}>
-                     {formatDisplayDate(articleDate)}
-                  </time>
-               )}
+               {articleDate && <time className={styles.date}>{formatDisplayDate(articleDate)}</time>}
             </div>
 
             <Link to={`/article/${article.id}`} className={styles.titleLink}>
@@ -62,4 +66,3 @@ function ArticleCard({ article }) {
 }
 
 export default ArticleCard;
-

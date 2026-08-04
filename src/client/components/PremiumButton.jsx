@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from './PremiumButton.module.css';
-import { tokenStorage } from '../../utils/api';
+import { tokenStorage } from '../utils/api';
 
 // ─── Bank info ───
 const BANK = {
@@ -266,9 +266,7 @@ export default function PremiumButton() {
    };
 
    // ─── QR URL ───
-   const qrUrl = paymentView
-      ? buildVietQRUrl(paymentView.amount, paymentView.transferContent)
-      : '';
+   const qrUrl = paymentView ? buildVietQRUrl(paymentView.amount, paymentView.transferContent) : '';
 
    return (
       <>
@@ -294,18 +292,12 @@ export default function PremiumButton() {
                <div className={styles.modalHeader}>
                   <div className={styles.modalTitleWrap}>
                      {paymentView && (
-                        <button
-                           className={styles.backBtn}
-                           onClick={handleBackToSelection}
-                           aria-label="Quay lại"
-                        >
+                        <button className={styles.backBtn} onClick={handleBackToSelection} aria-label="Quay lại">
                            ←
                         </button>
                      )}
                      <span className={styles.modalLogo}>👑</span>
-                     <h2 className={styles.modalTitle}>
-                        {paymentView ? 'Thanh toán' : 'Nâng cấp Premium'}
-                     </h2>
+                     <h2 className={styles.modalTitle}>{paymentView ? 'Thanh toán' : 'Nâng cấp Premium'}</h2>
                   </div>
                   <button className={styles.closeBtn} onClick={handleClose} aria-label="Đóng">
                      ✕
@@ -345,9 +337,7 @@ export default function PremiumButton() {
                                  }}
                               />
                            </div>
-                           <p className={styles.paymentQRHint}>
-                              Mở app ngân hàng → Quét QR
-                           </p>
+                           <p className={styles.paymentQRHint}>Mở app ngân hàng → Quét QR</p>
                         </div>
 
                         {/* Right — Bank details */}
@@ -357,7 +347,9 @@ export default function PremiumButton() {
                            <div className={styles.paymentDetailRow}>
                               <span className={styles.paymentDetailLabel}>Ngân hàng</span>
                               <div className={styles.paymentDetailValue}>
-                                 <span>{BANK.name} — {BANK.fullName}</span>
+                                 <span>
+                                    {BANK.name} — {BANK.fullName}
+                                 </span>
                               </div>
                            </div>
 
@@ -413,8 +405,8 @@ export default function PremiumButton() {
                      <div className={styles.paymentWarning}>
                         <span className={styles.paymentWarningIcon}>⚠️</span>
                         <p>
-                           Vui lòng chuyển <strong>đúng số tiền</strong> và <strong>đúng nội dung chuyển khoản</strong> để hệ thống tự động xác nhận.
-                           Không thay đổi nội dung chuyển khoản.
+                           Vui lòng chuyển <strong>đúng số tiền</strong> và <strong>đúng nội dung chuyển khoản</strong>{' '}
+                           để hệ thống tự động xác nhận. Không thay đổi nội dung chuyển khoản.
                         </p>
                      </div>
 
@@ -472,11 +464,7 @@ export default function PremiumButton() {
                                  ))}
                               </div>
 
-                              <button
-                                 className={styles.topupSubmitBtn}
-                                 disabled={!selectedTopup}
-                                 onClick={handleTopup}
-                              >
+                              <button className={styles.topupSubmitBtn} disabled={!selectedTopup} onClick={handleTopup}>
                                  {selectedTopup
                                     ? `Nạp ${TOPUP_OPTIONS.find((o) => o.value === selectedTopup)?.label}`
                                     : 'Chọn mệnh giá để nạp'}
@@ -502,9 +490,7 @@ export default function PremiumButton() {
                                  {PLANS.map((plan) => (
                                     <div
                                        key={plan.id}
-                                       className={`${styles.planCard} ${
-                                          plan.cardClass ? styles[plan.cardClass] : ''
-                                       }`}
+                                       className={`${styles.planCard} ${plan.cardClass ? styles[plan.cardClass] : ''}`}
                                     >
                                        {plan.badge && (
                                           <span className={`${styles.planBadge} ${styles[plan.badge.cls]}`}>
@@ -526,9 +512,7 @@ export default function PremiumButton() {
                                           ))}
                                        </ul>
                                        <button
-                                          className={`${styles.planBtn} ${
-                                             plan.btnClass ? styles[plan.btnClass] : ''
-                                          }`}
+                                          className={`${styles.planBtn} ${plan.btnClass ? styles[plan.btnClass] : ''}`}
                                           onClick={() => handleSubscribe(plan)}
                                        >
                                           Đăng ký ngay

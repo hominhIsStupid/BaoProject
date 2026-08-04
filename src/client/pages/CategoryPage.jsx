@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { articlesAPI } from '../../utils/api';
-import { CATEGORIES, CATEGORY_MAP } from '../../constant/global';
-import { apiCache } from '../../utils/cache';
+import { articlesAPI } from '../utils/api';
+import { CATEGORIES, CATEGORY_MAP } from '../constant/global';
+import { apiCache } from '../utils/cache';
 import ArticleGrid from '../components/ArticleGrid';
 import styles from './CategoryPage.module.css';
 
 function CategoryPage() {
    const { category } = useParams();
-   
+
    const cacheKey = `GET:/articles/category/${category}?limit=15&offset=0`;
    const cachedData = apiCache.has(cacheKey) ? apiCache.get(cacheKey) : null;
 
    const [articles, setArticles] = useState(cachedData ? (Array.isArray(cachedData) ? cachedData : []) : []);
    const [loading, setLoading] = useState(!cachedData);
    const [error, setError] = useState(null);
-   
+
    useEffect(() => {
       const fetchArticles = async () => {
          if (!cachedData) setLoading(true);
@@ -23,7 +23,10 @@ function CategoryPage() {
          try {
             // Pass the category slug directly to the API
             const data = await articlesAPI.getByCategory(category, 15, 0);
-            setArticles(Array.isArray(data) ? data : []);
+            const uniqueData = (Array.isArray(data) ? data : []).filter(
+               (item, index, self) => index === self.findIndex((t) => t.title === item.title)
+            );
+            setArticles(uniqueData);
          } catch (err) {
             console.error('Failed to fetch category articles:', err);
             setError('Không thể tải bài viết. Vui lòng thử lại sau.');
@@ -37,7 +40,7 @@ function CategoryPage() {
    }, [category]);
 
    // find the display name from CATEGORY_MAP or CATEGORIES
-   const displayCategory = CATEGORY_MAP[category] || CATEGORIES.find(c => c.slug === category) || { name: category };
+   const displayCategory = CATEGORY_MAP[category] || CATEGORIES.find((c) => c.slug === category) || { name: category };
    const title = displayCategory.name;
 
    const featuredArticles = articles.slice(0, 2);
@@ -45,7 +48,10 @@ function CategoryPage() {
 
    if (loading) {
       return (
-         <div className={styles.categoryPage} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+         <div
+            className={styles.categoryPage}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}
+         >
             <div className="loading-spinner" style={{ fontSize: '1.5rem', color: 'var(--gold-primary)' }}>
                Đang tải bài viết...
             </div>
@@ -55,12 +61,23 @@ function CategoryPage() {
 
    if (error) {
       return (
-         <div className={styles.categoryPage} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+         <div
+            className={styles.categoryPage}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}
+         >
             <div style={{ textAlign: 'center', color: '#ff4757' }}>
                <p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>{error}</p>
                <button
                   onClick={() => window.location.reload()}
-                  style={{ padding: '0.5rem 1.5rem', background: 'var(--gold-primary)', color: '#0E0E0E', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                  style={{
+                     padding: '0.5rem 1.5rem',
+                     background: 'var(--gold-primary)',
+                     color: '#0E0E0E',
+                     border: 'none',
+                     borderRadius: '4px',
+                     cursor: 'pointer',
+                     fontWeight: 'bold',
+                  }}
                >
                   Thử lại
                </button>
@@ -98,7 +115,11 @@ function CategoryPage() {
                <div className={styles.featuredGrid}>
                   {featuredArticles.map((article) => (
                      <Link key={article.id} to={`/article/${article.id}`} className={styles.featuredCard}>
-                        <img src={article.image || 'https://via.placeholder.com/800x400'} alt={article.title} className={styles.featuredImage} />
+                        <img
+                           src={article.image || 'https://via.placeholder.com/800x400'}
+                           alt={article.title}
+                           className={styles.featuredImage}
+                        />
                         <div className={styles.featuredContent}>
                            <h3 className={styles.featuredTitle}>{article.title}</h3>
                            <p className={styles.featuredExcerpt}>{article.excerpt}</p>
@@ -123,4 +144,3 @@ function CategoryPage() {
 }
 
 export default CategoryPage;
-

@@ -29,7 +29,7 @@ const cors = require('cors');
 const ROOT = path.join(__dirname, '../..');
 
 // Require backend modules with absolute paths (works with jest module resolution)
-const { pool } = require(path.join(ROOT, 'src/backend/config/database'));
+const { pool } = require(path.join(ROOT, 'src/server/config/database'));
 
 /**
  * Build a fresh Express app without calling app.listen().
@@ -41,15 +41,15 @@ function buildApp() {
    app.use(express.json({ limit: '10mb' }));
    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-   app.use('/api/auth', require(path.join(ROOT, 'src/backend/routes/auth')));
-   app.use('/api/articles', require(path.join(ROOT, 'src/backend/routes/articles-public')));
-   app.use('/api/author/articles', require(path.join(ROOT, 'src/backend/routes/articles-author')));
-   app.use('/api/editor/articles', require(path.join(ROOT, 'src/backend/routes/articles-editor')));
-   app.use('/api/admin', require(path.join(ROOT, 'src/backend/routes/admin')));
-   app.use('/api/comments', require(path.join(ROOT, 'src/backend/routes/comments')));
-   app.use('/api/bookmarks', require(path.join(ROOT, 'src/backend/routes/bookmarks')));
-   app.use('/api/notifications', require(path.join(ROOT, 'src/backend/routes/notifications')));
-   app.use('/api/recommendations', require(path.join(ROOT, 'src/backend/routes/recommendations')));
+   app.use('/api/auth', require(path.join(ROOT, 'src/server/routes/auth')));
+   app.use('/api/articles', require(path.join(ROOT, 'src/server/routes/articles-public')));
+   app.use('/api/author/articles', require(path.join(ROOT, 'src/server/routes/articles-author')));
+   app.use('/api/editor/articles', require(path.join(ROOT, 'src/server/routes/articles-editor')));
+   app.use('/api/admin', require(path.join(ROOT, 'src/server/routes/admin')));
+   app.use('/api/comments', require(path.join(ROOT, 'src/server/routes/comments')));
+   app.use('/api/bookmarks', require(path.join(ROOT, 'src/server/routes/bookmarks')));
+   app.use('/api/notifications', require(path.join(ROOT, 'src/server/routes/notifications')));
+   app.use('/api/recommendations', require(path.join(ROOT, 'src/server/routes/recommendations')));
 
    app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
@@ -66,7 +66,7 @@ function buildApp() {
  * Run pending migrations against the (test) database.
  */
 async function setupTestDb() {
-   const migrationsDir = path.join(ROOT, 'src/backend/database/migrations');
+   const migrationsDir = path.join(ROOT, 'src/server/database/migrations');
    const client = await pool.connect();
 
    try {

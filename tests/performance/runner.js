@@ -28,12 +28,12 @@ function buildApp() {
    app.use(express.json({ limit: '10mb' }));
    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-   app.use('/api/auth', require(path.join(ROOT, 'src/backend/routes/auth')));
-   app.use('/api/articles', require(path.join(ROOT, 'src/backend/routes/articles-public')));
-   app.use('/api/comments', require(path.join(ROOT, 'src/backend/routes/comments')));
-   app.use('/api/bookmarks', require(path.join(ROOT, 'src/backend/routes/bookmarks')));
-   app.use('/api/notifications', require(path.join(ROOT, 'src/backend/routes/notifications')));
-   app.use('/api/recommendations', require(path.join(ROOT, 'src/backend/routes/recommendations')));
+   app.use('/api/auth', require(path.join(ROOT, 'src/server/routes/auth')));
+   app.use('/api/articles', require(path.join(ROOT, 'src/server/routes/articles-public')));
+   app.use('/api/comments', require(path.join(ROOT, 'src/server/routes/comments')));
+   app.use('/api/bookmarks', require(path.join(ROOT, 'src/server/routes/bookmarks')));
+   app.use('/api/notifications', require(path.join(ROOT, 'src/server/routes/notifications')));
+   app.use('/api/recommendations', require(path.join(ROOT, 'src/server/routes/recommendations')));
 
    app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 

@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import ArticleGrid from '../components/ArticleGrid';
-import { articlesAPI } from '../../utils/api';
-import { CATEGORIES } from '../../constant/global';
+import { articlesAPI } from '../utils/api';
+import { CATEGORIES } from '../constant/global';
 import styles from './SearchPage.module.css';
 
 function SearchPage() {
    const [searchParams, setSearchParams] = useSearchParams();
    const query = searchParams.get('q') || '';
    const categoryFilter = searchParams.get('category') || 'all';
-   
+
    const [selectedCategory, setSelectedCategory] = useState(categoryFilter);
    const [results, setResults] = useState([]);
    const [loading, setLoading] = useState(true);
@@ -20,8 +20,8 @@ function SearchPage() {
          try {
             const cat = selectedCategory === 'all' ? null : selectedCategory;
             const data = await articlesAPI.getAll(50, 0, cat, query);
-            const uniqueData = data.filter((item, index, self) => 
-               index === self.findIndex((t) => t.title === item.title)
+            const uniqueData = data.filter(
+               (item, index, self) => index === self.findIndex((t) => t.title === item.title)
             );
             setResults(uniqueData);
          } catch (err) {
@@ -54,9 +54,7 @@ function SearchPage() {
                {query && (
                   <p className={styles.searchQuery}>
                      Kết quả cho: <strong>"{query}"</strong>
-                     <span className={styles.resultCount}>
-                        ({results.length} kết quả)
-                     </span>
+                     <span className={styles.resultCount}>({results.length} kết quả)</span>
                   </p>
                )}
             </header>
@@ -78,7 +76,9 @@ function SearchPage() {
                         key={category.id}
                         className={`${styles.filterButton} ${selectedCategory === category.id ? styles.active : ''}`}
                         onClick={() => handleCategoryChange(category.id)}
-                        style={selectedCategory === category.id ? { backgroundColor: category.color, color: 'white' } : {}}
+                        style={
+                           selectedCategory === category.id ? { backgroundColor: category.color, color: 'white' } : {}
+                        }
                         role="tab"
                         aria-selected={selectedCategory === category.id}
                      >
@@ -91,21 +91,22 @@ function SearchPage() {
             {/* Results */}
             <section className={styles.results} aria-label="Search results" aria-live="polite">
                {loading ? (
-                  <div className="loading-spinner" style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}>
+                  <div
+                     className="loading-spinner"
+                     style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}
+                  >
                      Đang tìm kiếm...
                   </div>
+               ) : query && results.length === 0 ? (
+                  <div className={styles.noResults}>
+                     <h2>Không tìm thấy bài viết nào</h2>
+                     <p>Vui lòng thử tìm kiếm bằng các từ khóa khác hoặc duyệt tất cả bài viết.</p>
+                     <Link to="/" className={styles.link}>
+                        Duyệt tất cả bài viết
+                     </Link>
+                  </div>
                ) : (
-                  query && results.length === 0 ? (
-                     <div className={styles.noResults}>
-                        <h2>Không tìm thấy bài viết nào</h2>
-                        <p>Vui lòng thử tìm kiếm bằng các từ khóa khác hoặc duyệt tất cả bài viết.</p>
-                        <Link to="/" className={styles.link}>
-                           Duyệt tất cả bài viết
-                        </Link>
-                     </div>
-                  ) : (
-                     <ArticleGrid articles={results} />
-                  )
+                  <ArticleGrid articles={results} />
                )}
             </section>
          </div>
