@@ -4,6 +4,7 @@ import styles from './Header.module.css';
 import ThemeToggle from './ThemeToggle/ThemeToggle';
 import { CATEGORIES } from '../constant/global';
 import { useWeather } from '../hooks/useWeather';
+import { tokenStorage } from '../utils/api';
 
 const NAV_ITEMS = [
    { label: 'Trang Chủ', path: '/', id: 'home' },
@@ -99,8 +100,7 @@ function Header() {
    const [menuOpen, setMenuOpen] = useState(false);
    const { weather, loading: weatherLoading } = useWeather('Hanoi');
    const [user, setUser] = useState(() => {
-      const savedUser = localStorage.getItem('user');
-      return savedUser ? JSON.parse(savedUser) : null;
+      return tokenStorage.getUser();
    });
 
    // Date & Weather state
@@ -247,8 +247,7 @@ function Header() {
 
    useEffect(() => {
       const handleAuthChange = () => {
-         const savedUser = localStorage.getItem('user');
-         setUser(savedUser ? JSON.parse(savedUser) : null);
+         setUser(tokenStorage.getUser());
       };
 
       window.addEventListener('auth-change', handleAuthChange);
@@ -648,8 +647,8 @@ function Header() {
 
                            <button
                               onClick={() => {
-                                 localStorage.removeItem('auth_token');
-                                 localStorage.removeItem('user');
+                                 tokenStorage.clearToken();
+                                 tokenStorage.clearUser();
                                  window.location.href = '/';
                               }}
                               className={styles.btnLogout}

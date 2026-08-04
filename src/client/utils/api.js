@@ -4,15 +4,33 @@ const API_BASE_URL = '/api';
 
 // Token management
 const tokenStorage = {
-   getToken: () => localStorage.getItem('auth_token'),
-   setToken: (token) => localStorage.setItem('auth_token', token),
-   clearToken: () => localStorage.removeItem('auth_token'),
+   getToken: () => localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token'),
+   setToken: (token, rememberMe = true) => {
+      if (rememberMe) {
+         localStorage.setItem('auth_token', token);
+      } else {
+         sessionStorage.setItem('auth_token', token);
+      }
+   },
+   clearToken: () => {
+      localStorage.removeItem('auth_token');
+      sessionStorage.removeItem('auth_token');
+   },
    getUser: () => {
-      const user = localStorage.getItem('user');
+      const user = localStorage.getItem('user') || sessionStorage.getItem('user');
       return user ? JSON.parse(user) : null;
    },
-   setUser: (user) => localStorage.setItem('user', JSON.stringify(user)),
-   clearUser: () => localStorage.removeItem('user'),
+   setUser: (user, rememberMe = true) => {
+      if (rememberMe) {
+         localStorage.setItem('user', JSON.stringify(user));
+      } else {
+         sessionStorage.setItem('user', JSON.stringify(user));
+      }
+   },
+   clearUser: () => {
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
+   },
 };
 
 // ─── MOCK USERS MANAGER (Simulating Database) ───

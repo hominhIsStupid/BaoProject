@@ -21,8 +21,8 @@ function LoginPage() {
 
       try {
          const data = await authAPI.login(username.trim(), password);
-         tokenStorage.setToken(data.token);
-         tokenStorage.setUser(data.user);
+         tokenStorage.setToken(data.token, rememberMe);
+         tokenStorage.setUser(data.user, rememberMe);
          window.dispatchEvent(new Event('auth-change'));
          navigate('/');
       } catch (err) {
