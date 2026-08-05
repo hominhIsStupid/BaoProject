@@ -112,7 +112,7 @@ router.post('/:id/submit', authMiddleware, roleMiddleware(['author']), async (re
    }
 });
 
-// Delete article (only draft)
+// Delete article (draft or rejected)
 router.delete('/:id', authMiddleware, roleMiddleware(['author']), async (req, res) => {
    try {
       const article = await articleRepository.findById(req.params.id);
@@ -125,8 +125,8 @@ router.delete('/:id', authMiddleware, roleMiddleware(['author']), async (req, re
          return res.status(403).json({ message: 'Access denied' });
       }
 
-      if (article.status !== 'draft') {
-         return res.status(400).json({ message: 'Can only delete draft articles' });
+      if (article.status !== 'draft' && article.status !== 'rejected') {
+         return res.status(400).json({ message: 'Can only delete draft or rejected articles' });
       }
 
       await articleRepository.delete(req.params.id);

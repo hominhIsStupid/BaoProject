@@ -7,7 +7,6 @@ import SidebarNav from './components/SidebarNav';
 import ArticleCard from './components/ArticleCard';
 import EditorPanel from './components/EditorPanel';
 import ProfilePanel from './components/ProfilePanel';
-import EarningsPanel from './components/EarningsPanel';
 import AuthorDashboardOverview from './components/AuthorDashboardOverview';
 
 export default function AuthorDashboard() {
@@ -101,10 +100,12 @@ export default function AuthorDashboard() {
                            setEditingArticle(null);
                            setActiveTab('drafts');
                         }}
-                        onArticleCreated={() => {
-                           setEditingArticle(null);
+                        onArticleCreated={(isDraft) => {
                            fetchArticles();
-                           setActiveTab('dashboard');
+                           if (!isDraft) {
+                              setEditingArticle(null);
+                              setActiveTab('dashboard');
+                           }
                         }}
                      />
                   )}
@@ -161,7 +162,6 @@ export default function AuthorDashboard() {
                      </section>
                   )}
 
-                  {activeTab === 'earnings' && <EarningsPanel publishedArticles={publishedArticles} />}
 
                   {activeTab === 'profile' && (
                      <ProfilePanel

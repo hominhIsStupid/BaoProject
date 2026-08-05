@@ -7,7 +7,6 @@ const getAuthorMenu = (draftCount, pendingCount, publishedCount) => [
    { id: 'drafts', label: `Nháp (${draftCount})`, icon: '📝' },
    { id: 'pending', label: `Đang chờ duyệt (${pendingCount})`, icon: '⏳' },
    { id: 'published', label: `Đã đăng (${publishedCount})`, icon: '✅' },
-   { id: 'earnings', label: 'Thu nhập', icon: '💰' },
    { id: 'profile', label: 'Hồ sơ cá nhân', icon: '👤' },
 ];
 

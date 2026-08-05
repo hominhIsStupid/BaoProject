@@ -53,7 +53,7 @@ export default function ArticleCard({ article, status = 'draft', onDelete, onSub
                      🚀 {status === 'rejected' ? 'Gửi duyệt lại' : 'Gửi duyệt'}
                   </button>
                )}
-               {status === 'draft' && onDelete && (
+               {(status === 'draft' || status === 'rejected') && onDelete && (
                   <button className={styles.btnSmallGhost} onClick={() => onDelete(article.id)}>
                      🗑️ Xóa
                   </button>

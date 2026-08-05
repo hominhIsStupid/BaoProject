@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from '../AuthorDashboard.module.css';
 import { authorAPI } from '../../../utils/api';
-
+import { CATEGORIES } from '../../../constant/global';
 export default function EditorPanel({ onArticleCreated, initialData, onCancelEdit }) {
    const [title, setTitle] = useState(initialData?.title || '');
    const [category, setCategory] = useState(initialData?.category || 'thoisu');
@@ -14,6 +14,8 @@ export default function EditorPanel({ onArticleCreated, initialData, onCancelEdi
    const coverImageInputRef = useRef(null);
    const inlineImageInputRef = useRef(null);
 
+   const [currentArticleId, setCurrentArticleId] = useState(initialData?.id || null);
+
    useEffect(() => {
       if (initialData) {
          setTitle(initialData.title || '');
@@ -21,12 +23,14 @@ export default function EditorPanel({ onArticleCreated, initialData, onCancelEdi
          setExcerpt(initialData.excerpt || '');
          setImage(initialData.image || '');
          setContent(initialData.content || '');
+         setCurrentArticleId(initialData.id);
       } else {
          setTitle('');
          setCategory('thoisu');
          setExcerpt('');
          setImage('');
          setContent('');
+         setCurrentArticleId(null);
       }
    }, [initialData]);
 
@@ -39,18 +43,74 @@ export default function EditorPanel({ onArticleCreated, initialData, onCancelEdi
       }
    };
 
+   const compressImage = (file) => {
+      return new Promise((resolve, reject) => {
+         const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+         if (!validTypes.includes(file.type)) {
+            reject(new Error('Chỉ hỗ trợ định dạng JPG, PNG, WEBP'));
+            return;
+         }
+         
+         if (file.size > 5 * 1024 * 1024) {
+            reject(new Error('Kích thước ảnh tải lên tối đa là 5MB/ảnh'));
+            return;
+         }
+
+         const reader = new FileReader();
+         reader.readAsDataURL(file);
+         reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+               const canvas = document.createElement('canvas');
+               let width = img.width;
+               let height = img.height;
+               const MAX_WIDTH = 1000;
+               
+               if (width > MAX_WIDTH) {
+                  height = Math.round(height * (MAX_WIDTH / width));
+                  width = MAX_WIDTH;
+               }
+
+               canvas.width = width;
+               canvas.height = height;
+               const ctx = canvas.getContext('2d');
+               ctx.drawImage(img, 0, 0, width, height);
+
+               // Compress and convert to webp format
+               const compressedBase64 = canvas.toDataURL('image/webp', 0.8);
+               resolve(compressedBase64);
+            };
+            img.onerror = () => reject(new Error('Lỗi khi xử lý hình ảnh'));
+         };
+         reader.onerror = () => reject(new Error('Lỗi khi đọc file ảnh'));
+      });
+   };
+
+   const processAndInsertImage = async (file) => {
+      try {
+         const compressedBase64 = await compressImage(file);
+         const caption = prompt('Nhập chú thích cho ảnh (để trống nếu không có):', '');
+         
+         const captionHtml = caption !== null && caption.trim() !== '' 
+            ? `\n  <figcaption style="font-size: 0.9rem; color: #888; margin-top: 0.5rem; font-style: italic;">${caption}</figcaption>`
+            : '';
+
+         setContent(
+            (c) =>
+               c +
+               `\n<figure style="margin: 1.5rem 0; text-align: center;">\n  <img src="${compressedBase64}" alt="${caption || 'Ảnh nội dung'}" style="max-width: 100%; border-radius: 8px;" />${captionHtml}\n</figure>\n`
+         );
+      } catch (err) {
+         alert(err.message);
+      }
+   };
+
    const handleInlineImageUpload = (e) => {
       const file = e.target.files?.[0];
       if (file) {
-         const reader = new FileReader();
-         reader.onloadend = () => {
-            setContent(
-               (c) =>
-                  c +
-                  `<figure style="margin: 1.5rem 0; text-align: center;">\n  <img src="${reader.result}" alt="Ảnh nội dung" style="max-width: 100%; border-radius: 8px;" />\n  <figcaption style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">Mô tả ảnh</figcaption>\n</figure>\n`
-            );
-         };
-         reader.readAsDataURL(file);
+         processAndInsertImage(file);
+         e.target.value = null;
       }
    };
 
@@ -71,29 +131,28 @@ export default function EditorPanel({ onArticleCreated, initialData, onCancelEdi
             readTime: Math.max(1, Math.round(content.replace(/<[^>]+>/g, '').split(/\s+/).length / 200)),
          };
 
-         if (initialData) {
-            await authorAPI.updateArticle(initialData.id, articleData);
+         if (currentArticleId) {
+            await authorAPI.updateArticle(currentArticleId, articleData);
             if (shouldSubmit) {
-               await authorAPI.submitArticle(initialData.id);
+               await authorAPI.submitArticle(currentArticleId);
                alert('Bài viết đã được cập nhật và gửi duyệt thành công!');
+               onArticleCreated(false);
             } else {
                alert('Đã cập nhật bài viết nháp thành công!');
+               onArticleCreated(true);
             }
          } else {
             const res = await authorAPI.createArticle(articleData);
+            setCurrentArticleId(res.article.id);
             if (shouldSubmit) {
                await authorAPI.submitArticle(res.article.id);
                alert('Bài viết đã được tạo và gửi duyệt thành công!');
+               onArticleCreated(false);
             } else {
                alert('Đã lưu bài viết nháp thành công!');
+               onArticleCreated(true);
             }
-            setTitle('');
-            setContent('');
-            setExcerpt('');
-            setImage('');
          }
-
-         onArticleCreated();
       } catch (err) {
          alert('Lỗi khi lưu bài viết: ' + err.message);
       } finally {
@@ -120,15 +179,11 @@ export default function EditorPanel({ onArticleCreated, initialData, onCancelEdi
                <div className={styles.formGroup} style={{ maxWidth: '200px' }}>
                   <label className={styles.label}>Chuyên mục</label>
                   <select className={styles.inputField} value={category} onChange={(e) => setCategory(e.target.value)}>
-                     <option value="thoisu">Thời sự</option>
-                     <option value="thegioi">Thế giới</option>
-                     <option value="business">Kinh doanh</option>
-                     <option value="technology">Công nghệ</option>
-                     <option value="sports">Thể thao</option>
-                     <option value="entertainment">Giải trí</option>
-                     <option value="health">Sức khỏe</option>
-                     <option value="education">Giáo dục</option>
-                     <option value="lifestyle">Đời sống</option>
+                     {CATEGORIES.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                           {cat.name}
+                        </option>
+                     ))}
                   </select>
                </div>
             </div>
@@ -223,17 +278,25 @@ export default function EditorPanel({ onArticleCreated, initialData, onCancelEdi
                      <input
                         type="file"
                         hidden
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,.webp"
                         ref={inlineImageInputRef}
                         onChange={handleInlineImageUpload}
                      />
                   </div>
                   <textarea
                      className={styles.editorInput}
-                     placeholder="Nhập nội dung bài viết bằng HTML (hoặc sử dụng thanh công cụ để chèn thẻ)..."
+                     placeholder="Nhập nội dung bài viết bằng HTML (hoặc sử dụng thanh công cụ để chèn thẻ). Kéo thả ảnh vào đây để chèn nhanh..."
                      value={content}
                      onChange={(e) => setContent(e.target.value)}
                      required
+                     onDrop={(e) => {
+                        e.preventDefault();
+                        const file = e.dataTransfer.files?.[0];
+                        if (file) {
+                           processAndInsertImage(file);
+                        }
+                     }}
+                     onDragOver={(e) => e.preventDefault()}
                   />
                </div>
             </div>
