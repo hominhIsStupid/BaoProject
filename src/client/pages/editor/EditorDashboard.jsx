@@ -7,6 +7,7 @@ import ArticleReviewCard from './components/ArticleReviewCard';
 import GuidelinesPanel from './components/GuidelinesPanel';
 import ProfilePanel from './components/ProfilePanel';
 import EditorDashboardOverview from './components/EditorDashboardOverview';
+import EditorPendingTable from './components/EditorPendingTable';
 
 export default function EditorDashboard() {
    const [activeTab, setActiveTab] = useState('dashboard');
@@ -106,24 +107,12 @@ export default function EditorDashboard() {
                   )}
 
                   {activeTab === 'pending' && (
-                     <section className={styles.reviewSection}>
-                        <h1>Bài Viết Chờ Duyệt ({pendingArticles.length})</h1>
-                        {pendingArticles.length === 0 ? (
-                           <p style={{ color: 'rgba(255,255,255,0.4)' }}>Danh sách trống.</p>
-                        ) : (
-                           <div className={styles.queueList}>
-                              {pendingArticles.map((article) => (
-                                 <ArticleReviewCard
-                                    key={article.id}
-                                    article={article}
-                                    onApprove={handleApprove}
-                                    onReject={handleReject}
-                                    onSuggest={handleSuggestEdit}
-                                 />
-                              ))}
-                           </div>
-                        )}
-                     </section>
+                     <EditorPendingTable
+                        articles={pendingArticles}
+                        onApprove={handleApprove}
+                        onReject={handleReject}
+                        onSuggest={handleSuggestEdit}
+                     />
                   )}
 
                   {activeTab === 'approved' && (

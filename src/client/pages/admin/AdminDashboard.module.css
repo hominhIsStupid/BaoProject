@@ -25,9 +25,8 @@
    border-right: var(--border);
    padding: 1.5rem 0;
    position: sticky;
-   height: calc(100vh - 143px);
+   height: 100vh;
    overflow-y: auto;
-   top: 143px;
 }
 
 .sidebarHeader {
