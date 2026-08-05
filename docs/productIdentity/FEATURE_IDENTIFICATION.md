@@ -382,75 +382,9 @@ Tài liệu này xác định tất cả các tính năng Báo Rồng Vàng đư
 
 ---
 
-## DANH MỤC TÍNH NĂNG PHASE 3: KIẾM TIỀN & XUẤT BẢN
-
-### 1. Tính Năng Đăng Ký
-
-#### F3.1: Mô Hình Đăng Ký
-
-**Mô Tả**: Xác định 3 gói đăng ký
-
-**Thành Phần**:
-
-- **Basic (Miễn Phí)**: Truy cập cơ bản, có quảng cáo
-- **Premium ($4.99/tháng)**: Không quảng cáo, nội dung cao cấp
-- **Premium+ ($9.99/tháng)**: Không quảng cáo, nội dung độc quyền, hỗ trợ ưu tiên
-
-**Tiêu Chí Chấp Nhận**: US-013, US-014, US-015
-
-**Ưu Tiên**: Cao
-
-**Kích Cỡ Công Việc**: 5 điểm
-
-**Trạng Thái**: ⏳ Chờ
-
----
-
-#### F3.2: Thanh Toán & Đơn Đặt Hàng
-
-**Mô Tả**: Tích hợp thanh toán Stripe
-
-**Thành Phần**:
-
-- Tích hợp Stripe API
-- Hỗ trợ thẻ tín dụng
-- Tạo đơn đặt hàng
-- Hoàn tiền
-
-**Tiêu Chí Chấp Nhận**: US-013
-
-**Ưu Tiên**: Cao
-
-**Kích Cỡ Công Việc**: 8 điểm
-
-**Trạng Thái**: ⏳ Chờ
-
----
-
-#### F3.3: Nội Dung Cao Cấp
-
-**Mô Tả**: Bảo vệ nội dung dành cho người đăng ký cao cấp
-
-**Thành Phần**:
-
-- Đánh dấu bài viết là "Premium"
-- Hiển thị tóm tắt cho người không Premium
-- Kiểm tra mức đăng ký trước khi hiển thị nội dung
-- Nút "Nâng Cấp Ngay"
-
-**Tiêu Chí Chấp Nhận**: US-014
-
-**Ưu Tiên**: Cao
-
-**Kích Cỡ Công Việc**: 5 điểm
-
-**Trạng Thái**: ⏳ Chờ
-
----
-
 ### 2. Tính Năng Quản Lý Nội Dung
 
-#### F3.4: Bảng Điều Khiển Tác Giả
+#### F3.1: Bảng Điều Khiển Tác Giả
 
 **Mô Tả**: Giao diện để tác giả quản lý bài viết
 
@@ -471,7 +405,7 @@ Tài liệu này xác định tất cả các tính năng Báo Rồng Vàng đư
 
 ---
 
-#### F3.5: Viết/Chỉnh Sửa Bài Viết
+#### F3.2: Viết/Chỉnh Sửa Bài Viết
 
 **Mô Tả**: Cho phép tác giả viết bài viết
 
@@ -493,7 +427,7 @@ Tài liệu này xác định tất cả các tính năng Báo Rồng Vàng đư
 
 ---
 
-#### F3.6: Bảng Điều Khiển Biên Tập
+#### F3.3: Bảng Điều Khiển Biên Tập
 
 **Mô Tả**: Giao diện để biên tập viên thẩm duyệt bài viết
 
@@ -514,7 +448,7 @@ Tài liệu này xác định tất cả các tính năng Báo Rồng Vàng đư
 
 ---
 
-#### F3.7: Nhận Xét Nội Tuyến
+#### F3.4: Nhận Xét Nội Tuyến
 
 **Mô Tả**: Cho phép biên tập viên nhận xét nội dung
 

@@ -14,8 +14,6 @@ CREATE TABLE IF NOT EXISTS mascot_outfits (
     name VARCHAR(100) NOT NULL,
     type VARCHAR(50) NOT NULL, -- body, wing, tail, accessory
     asset_data JSONB NOT NULL, -- configuration or sprite paths for rendering
-    price_coins INTEGER DEFAULT 0,
-    is_premium BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -28,9 +26,9 @@ CREATE TABLE IF NOT EXISTS mascot_inventory (
 );
 
 -- Insert some default outfits
-INSERT INTO mascot_outfits (name, type, asset_data, price_coins) VALUES
-('Default Coat', 'body', '{"color": "0x0E0E0E"}', 0),
-('Gold Wings', 'wing', '{"color": "0xC4A44A"}', 100),
-('Ice Tail', 'tail', '{"color": "0x88CCFF"}', 100),
-('Magic Book', 'accessory', '{"type": "book"}', 50)
+INSERT INTO mascot_outfits (name, type, asset_data) VALUES
+('Default Coat', 'body', '{"color": "0x0E0E0E"}'),
+('Gold Wings', 'wing', '{"color": "0xC4A44A"}'),
+('Ice Tail', 'tail', '{"color": "0x88CCFF"}'),
+('Magic Book', 'accessory', '{"type": "book"}')
 ON CONFLICT DO NOTHING;
