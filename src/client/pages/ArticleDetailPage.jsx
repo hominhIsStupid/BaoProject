@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { Link, useParams } from 'react-router-dom';
 import { articlesAPI, commentsAPI, bookmarksAPI, recommendationAPI, tokenStorage } from '../utils/api';
 import { apiCache } from '../utils/cache';
@@ -309,7 +310,7 @@ function ArticleDetailPage() {
             finalContent = doc.body.innerHTML;
          } catch (e) {}
       }
-      return <div className={styles.htmlContent} dangerouslySetInnerHTML={{ __html: finalContent }} />;
+      return <div className={styles.htmlContent} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(finalContent) }} />;
    };
 
    return (

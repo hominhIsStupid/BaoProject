@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import styles from '../AuthorDashboard.module.css';
 import { authorAPI } from '../../../utils/api';
 import { CATEGORIES } from '../../../constant/global';
@@ -434,7 +435,7 @@ export default function EditorPanel({ onArticleCreated, initialData, onCancelEdi
 
                   <div
                      className="article-content"
-                     dangerouslySetInnerHTML={{ __html: content || '<p>Chưa có nội dung</p>' }}
+                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content || '<p>Chưa có nội dung</p>') }}
                      style={{
                         fontSize: '1.1rem',
                         lineHeight: 1.8,
