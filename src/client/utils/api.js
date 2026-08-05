@@ -639,8 +639,15 @@ const commentsAPI = {
 
 // BOOKMARKS API
 const bookmarksAPI = {
-   add: async (articleId) => {
-      const res = await apiCall('POST', `/bookmarks/${articleId}`);
+   add: async (articleId, folderName = 'Mặc định') => {
+      const res = await apiCall('POST', `/bookmarks/${articleId}`, { folderName });
+      const { apiCache } = await import('./cache.js');
+      apiCache.delete('GET:/bookmarks');
+      return res;
+   },
+
+   updateFolder: async (articleId, folderName) => {
+      const res = await apiCall('PUT', `/bookmarks/${articleId}/folder`, { folderName });
       const { apiCache } = await import('./cache.js');
       apiCache.delete('GET:/bookmarks');
       return res;

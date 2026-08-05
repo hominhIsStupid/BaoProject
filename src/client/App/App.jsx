@@ -7,6 +7,7 @@ import CategoryPage from '../pages/CategoryPage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import ProfileEditPage from '../pages/ProfileEditPage';
+import PersonalLibraryPage from '../pages/PersonalLibraryPage';
 import AuthorDashboard from '../pages/author/AuthorDashboard';
 import EditorDashboard from '../pages/editor/EditorDashboard';
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -85,6 +86,14 @@ function AppLayout() {
                      element={
                         <ProtectedRoute>
                            <ProfileEditPage />
+                        </ProtectedRoute>
+                     }
+                  />
+                  <Route
+                     path="/library"
+                     element={
+                        <ProtectedRoute>
+                           <PersonalLibraryPage />
                         </ProtectedRoute>
                      }
                   />

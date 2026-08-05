@@ -82,7 +82,7 @@ export function useArticleData(id) {
       window.scrollTo(0, 0);
    }, [id, loggedInUser?.id]);
 
-   const handleToggleBookmark = async () => {
+   const handleToggleBookmark = async (folderName = 'Mặc định') => {
       if (!loggedInUser) {
          alert('Vui lòng đăng nhập để lưu bài viết!');
          return;
@@ -93,7 +93,7 @@ export function useArticleData(id) {
             await bookmarksAPI.delete(id);
             setIsBookmarked(false);
          } else {
-            await bookmarksAPI.add(id);
+            await bookmarksAPI.add(id, folderName);
             setIsBookmarked(true);
          }
       } catch (err) {

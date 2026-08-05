@@ -38,6 +38,42 @@ function ArticleDetailPage() {
    const [activeTab, setActiveTab] = useState('newest');
    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+   const [showSaveModal, setShowSaveModal] = useState(false);
+   const [saveFolderName, setSaveFolderName] = useState('Mặc định');
+   const [newFolderInput, setNewFolderInput] = useState('');
+   const [existingFolders, setExistingFolders] = useState([]);
+   const [savedToast, setSavedToast] = useState(false);
+
+   const onClickSave = async () => {
+      if (!loggedInUser) {
+         alert('Vui lòng đăng nhập để lưu bài viết!');
+         return;
+      }
+      if (isBookmarked) {
+         handleToggleBookmark();
+         return;
+      }
+      try {
+         const bookmarks = await bookmarksAPI.getAll();
+         const folders = [...new Set(bookmarks.map((b) => b.folderName || 'Mặc định'))];
+         setExistingFolders(folders.length > 0 ? folders : ['Mặc định']);
+         setSaveFolderName(folders.includes('Mặc định') ? 'Mặc định' : folders[0]);
+      } catch (err) {
+         console.error(err);
+         setExistingFolders(['Mặc định']);
+      }
+      setShowSaveModal(true);
+      setNewFolderInput('');
+   };
+
+   const confirmSave = async () => {
+      const finalFolder = saveFolderName === 'NEW' ? newFolderInput.trim() || existingFolders[0] || 'Mặc định' : saveFolderName;
+      setShowSaveModal(false);
+      await handleToggleBookmark(finalFolder);
+      setSavedToast(true);
+      setTimeout(() => setSavedToast(false), 3000);
+   };
+
    const handleCommentSubmit = async (e) => {
       e.preventDefault();
       if (!newCommentText.trim() || !loggedInUser) return;
@@ -196,6 +232,50 @@ function ArticleDetailPage() {
       <div className={styles.articlePage}>
          {/* Toast Notification for copying link */}
          {copied && <div className={styles.toast}>Đã sao chép liên kết thành công!</div>}
+         {savedToast && <div className={styles.toast}>Đã lưu thành công!</div>}
+
+         {/* Save Modal */}
+         {showSaveModal && (
+            <div className={styles.modalOverlay} onClick={() => setShowSaveModal(false)}>
+               <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                  <h3>Lưu bài viết</h3>
+                  <div className={styles.modalBody}>
+                     <label>Chọn thư mục:</label>
+                     <select
+                        value={saveFolderName}
+                        onChange={(e) => setSaveFolderName(e.target.value)}
+                        className={styles.folderSelect}
+                     >
+                        {existingFolders.map((f) => (
+                           <option key={f} value={f}>
+                              {f}
+                           </option>
+                        ))}
+                        <option value="NEW">-- Tạo thư mục mới --</option>
+                     </select>
+
+                     {saveFolderName === 'NEW' && (
+                        <input
+                           type="text"
+                           placeholder="Nhập tên thư mục mới..."
+                           className={styles.folderInput}
+                           value={newFolderInput}
+                           onChange={(e) => setNewFolderInput(e.target.value)}
+                           autoFocus
+                        />
+                     )}
+                  </div>
+                  <div className={styles.modalActions}>
+                     <button className={styles.btnCancel} onClick={() => setShowSaveModal(false)}>
+                        Hủy
+                     </button>
+                     <button className={styles.btnConfirm} onClick={confirmSave}>
+                        Lưu
+                     </button>
+                  </div>
+               </div>
+            </div>
+         )}
 
          <div className={styles.container}>
             {/* Breadcrumb Navigation */}
@@ -313,7 +393,7 @@ function ArticleDetailPage() {
                         {loggedInUser && (
                            <button
                               className={`${styles.toolBtn} ${isBookmarked ? styles.bookmarked : ''}`}
-                              onClick={handleToggleBookmark}
+                              onClick={onClickSave}
                               disabled={bookmarkLoading}
                               aria-label={isBookmarked ? 'Bỏ lưu bài viết' : 'Lưu bài viết'}
                               title={isBookmarked ? 'Bỏ lưu bài viết' : 'Lưu bài viết'}

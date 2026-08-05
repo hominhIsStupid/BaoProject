@@ -614,6 +614,14 @@ function Header() {
                               <span className={styles.userName}>{user.fullName}</span>
                            </Link>
 
+                           <Link
+                              to="/library"
+                              className={styles.authorLink}
+                              title="Thư viện cá nhân"
+                           >
+                              📚
+                           </Link>
+
                            {user.role === 'author' && (
                               <Link
                                  to="/author"

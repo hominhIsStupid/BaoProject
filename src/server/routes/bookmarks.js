@@ -8,6 +8,7 @@ const { authMiddleware } = require('../middleware/auth');
 router.post('/:articleId', authMiddleware, async (req, res) => {
    try {
       const { articleId } = req.params;
+      const { folderName } = req.body;
       const userId = req.user.id;
 
       const article = await articleRepository.findById(articleId);
@@ -25,7 +26,7 @@ router.post('/:articleId', authMiddleware, async (req, res) => {
          return res.status(409).json({ message: 'Article already bookmarked' });
       }
 
-      const bookmark = await bookmarkRepository.create(userId, articleId);
+      const bookmark = await bookmarkRepository.create(userId, articleId, folderName);
 
       res.status(201).json({
          message: 'Article bookmarked successfully',
@@ -62,6 +63,29 @@ router.delete('/:articleId', authMiddleware, async (req, res) => {
       res.json({ message: 'Bookmark removed successfully' });
    } catch (error) {
       res.status(500).json({ message: 'Failed to remove bookmark', error: error.message });
+   }
+});
+
+// Move bookmark to a different folder (authenticated users)
+router.put('/:articleId/folder', authMiddleware, async (req, res) => {
+   try {
+      const { articleId } = req.params;
+      const { folderName } = req.body;
+      const userId = req.user.id;
+
+      if (!folderName) {
+         return res.status(400).json({ message: 'folderName is required' });
+      }
+
+      const existingBookmark = await bookmarkRepository.findByUserAndArticle(userId, articleId);
+      if (!existingBookmark) {
+         return res.status(404).json({ message: 'Bookmark not found' });
+      }
+
+      const updatedBookmark = await bookmarkRepository.updateFolder(userId, articleId, folderName);
+      res.json({ message: 'Folder updated successfully', bookmark: updatedBookmark });
+   } catch (error) {
+      res.status(500).json({ message: 'Failed to update folder', error: error.message });
    }
 });
 
