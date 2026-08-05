@@ -8,6 +8,59 @@ import styles from './ArticleDetailPage.module.css';
 import { getTimeAgo } from '../utils/formatTime';
 import { useArticleData } from '../hooks/useArticleData';
 
+// Reusable Share Component to be placed at top and bottom
+const ShareButtonsGroup = ({ shareUrl, handleCopyLink, copied }) => {
+   const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+   const zaloShareUrl = `https://zalo.me/share?url=${encodeURIComponent(shareUrl)}`;
+
+   return (
+      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+         <a
+            href={fbShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${styles.toolBtn} ${styles.shareFb}`}
+            aria-label="Chia sẻ qua Facebook"
+            title="Chia sẻ qua Facebook"
+         >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+               <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+         </a>
+         <a
+            href={zaloShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${styles.toolBtn} ${styles.shareZalo}`}
+            aria-label="Chia sẻ qua Zalo"
+            title="Chia sẻ qua Zalo"
+         >
+            <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Zalo</span>
+         </a>
+         <button
+            className={`${styles.toolBtn} ${styles.shareCopy}`}
+            onClick={handleCopyLink}
+            aria-label="Copy liên kết bài viết"
+            title="Copy liên kết"
+            style={{ position: 'relative' }}
+         >
+            <svg
+               width="16"
+               height="16"
+               fill="none"
+               stroke="currentColor"
+               strokeWidth="2"
+               viewBox="0 0 24 24"
+            >
+               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            {copied && <span className={styles.copyToast}>Đã sao chép</span>}
+         </button>
+      </div>
+   );
+};
+
 function ArticleDetailPage() {
    const { id } = useParams();
 
@@ -152,6 +205,37 @@ function ArticleDetailPage() {
          })
       );
    };
+
+   // Inject meta tags for Open Graph (Facebook/Zalo)
+   useEffect(() => {
+      if (article) {
+         document.title = article.title;
+         
+         const setMeta = (propName, propValue, content) => {
+            let meta = document.querySelector(`meta[${propName}="${propValue}"]`);
+            if (!meta) {
+               meta = document.createElement('meta');
+               meta.setAttribute(propName, propValue);
+               document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', content);
+         };
+
+         // Use excerpt or summary or strip HTML from content
+         let description = article.excerpt || article.summary || '';
+         if (!description && article.content) {
+            description = article.content.replace(/<[^>]+>/g, '').substring(0, 150) + '...';
+         }
+
+         setMeta('property', 'og:title', article.title);
+         setMeta('property', 'og:description', description);
+         if (article.image) {
+            setMeta('property', 'og:image', article.image);
+         }
+         setMeta('property', 'og:url', window.location.href);
+         setMeta('property', 'og:type', 'article');
+      }
+   }, [article]);
 
    if (loading) {
       return (
@@ -370,25 +454,11 @@ function ArticleDetailPage() {
                   <div className={styles.toolbar}>
                      <div className={styles.shareActions}>
                         <span className={styles.toolbarLabel}>Chia sẻ:</span>
-                        <button
-                           className={`${styles.toolBtn} ${styles.shareCopy}`}
-                           onClick={handleCopyLink}
-                           aria-label="Copy liên kết bài viết"
-                           style={{ position: 'relative' }}
-                        >
-                           <svg
-                              width="16"
-                              height="16"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              viewBox="0 0 24 24"
-                           >
-                              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                           </svg>
-                           {copied && <span className={styles.copyToast}>Đã sao chép đường dẫn</span>}
-                        </button>
+                        <ShareButtonsGroup 
+                           shareUrl={typeof window !== 'undefined' ? window.location.href : ''} 
+                           handleCopyLink={handleCopyLink} 
+                           copied={copied} 
+                        />
                         {/* Bookmark button */}
                         {loggedInUser && (
                            <button
@@ -502,6 +572,16 @@ function ArticleDetailPage() {
                   {/* Article content (Adjustable text size) */}
                   <div className={styles.articleContent} style={{ fontSize: `${fontSizeMultiplier * 1.05}rem` }}>
                      {renderContent()}
+                  </div>
+
+                  {/* Share actions at the bottom of the article */}
+                  <div className={styles.bottomShareToolbar} style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '2rem', paddingBottom: '1rem', borderBottom: '1px solid var(--bg-border)' }}>
+                     <span style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>Chia sẻ bài viết này:</span>
+                     <ShareButtonsGroup 
+                        shareUrl={typeof window !== 'undefined' ? window.location.href : ''} 
+                        handleCopyLink={handleCopyLink} 
+                        copied={copied} 
+                     />
                   </div>
 
                   {/* ========== COMMENT SECTION ========== */}

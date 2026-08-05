@@ -225,6 +225,12 @@
    border-color: #1877f2;
 }
 
+.shareZalo:hover {
+   background: #0068ff;
+   border-color: #0068ff;
+   color: #fff;
+}
+
 .shareMessenger:hover {
    background: #0078ff;
    border-color: #0078ff;
