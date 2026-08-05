@@ -8,7 +8,7 @@ const { authMiddleware } = require('../middleware/auth');
 router.post('/:articleId', authMiddleware, async (req, res) => {
    try {
       const { articleId } = req.params;
-      const { folderName } = req.body;
+      const { folderName } = req.body || {};
       const userId = req.user.id;
 
       const article = await articleRepository.findById(articleId);
@@ -70,7 +70,7 @@ router.delete('/:articleId', authMiddleware, async (req, res) => {
 router.put('/:articleId/folder', authMiddleware, async (req, res) => {
    try {
       const { articleId } = req.params;
-      const { folderName } = req.body;
+      const { folderName } = req.body || {};
       const userId = req.user.id;
 
       if (!folderName) {
