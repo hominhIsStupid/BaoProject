@@ -65,20 +65,7 @@ export default function EditorPendingTable({ articles, onApprove, onReject, onSu
                            >
                               ✅ Duyệt
                            </button>
-                           <button
-                              style={{
-                                 background: '#3b82f6',
-                                 color: '#fff',
-                                 border: 'none',
-                                 padding: '0.3rem 0.6rem',
-                                 borderRadius: '4px',
-                                 cursor: 'pointer',
-                                 fontSize: '0.8rem',
-                              }}
-                              onClick={() => onSuggest(article.id)}
-                           >
-                              💬 Góp ý
-                           </button>
+
                            <button
                               style={{
                                  background: '#ef4444',
