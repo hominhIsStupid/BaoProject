@@ -19,7 +19,7 @@ class BookmarkRepository {
        FROM bookmarks b
        JOIN articles a ON b.article_id = a.id
        JOIN users u ON a.author_id = u.id
-       WHERE b.user_id = $1 AND a.status = 'published'
+       WHERE b.user_id = $1 AND a.status IN ('published', 'approved')
        ORDER BY b."createdAt" DESC`,
          [userId]
       );

@@ -165,7 +165,7 @@ export default function ArticlesManagementTable({ articles, onDelete, onRefresh 
                      <span>{article.category}</span>
                      <span>
                         <span
-                           className={`${styles.statusBadge} ${article.status === 'published' ? styles.statusApproved : ''}`}
+                           className={`${styles.statusBadge} ${(article.status === 'published' || article.status === 'approved') ? styles.statusApproved : ''}`}
                         >
                            {article.status.toUpperCase()}
                         </span>

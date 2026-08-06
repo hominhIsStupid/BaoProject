@@ -107,7 +107,7 @@ export default function DashboardOverview({ stats, articles = [], users = [], on
                <div className={styles.statText}>
                   <div className={styles.statLabel}>Đã xuất bản</div>
                   <div className={styles.statValue}>
-                     {stats?.publishedArticles || articles.filter((a) => a.status === 'published').length || 0}
+                     {stats?.publishedArticles || articles.filter((a) => a.status === 'published' || a.status === 'approved').length || 0}
                   </div>
                </div>
             </div>
@@ -323,10 +323,10 @@ export default function DashboardOverview({ stats, articles = [], users = [], on
                            <span
                               style={{
                                  background:
-                                    article.status === 'published'
+                                    article.status === 'published' || article.status === 'approved'
                                        ? 'rgba(76, 175, 80, 0.2)'
                                        : 'rgba(255, 152, 0, 0.2)',
-                                 color: article.status === 'published' ? '#4caf50' : '#ff9800',
+                                 color: (article.status === 'published' || article.status === 'approved') ? '#4caf50' : '#ff9800',
                                  padding: '0.2rem 0.6rem',
                                  borderRadius: '4px',
                                  fontSize: '0.75rem',

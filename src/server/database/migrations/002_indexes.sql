@@ -24,7 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_articles_search ON articles USING GIN(search_vect
 -- Composite index for common query: published articles by category
 CREATE INDEX IF NOT EXISTS idx_articles_published_category
   ON articles(category, "publishedAt" DESC)
-  WHERE status = 'published';
+  WHERE status IN ('published', 'approved');
 
 -- Comments indexes
 CREATE INDEX IF NOT EXISTS idx_comments_article_id ON comments(article_id);

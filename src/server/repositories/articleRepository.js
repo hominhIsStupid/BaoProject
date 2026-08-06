@@ -99,7 +99,7 @@ class ArticleRepository {
 
    async updateStatus(id, status, rejectionReason = null) {
       let query, params;
-      if (status === 'published') {
+      if (status === 'published' || status === 'approved') {
          query = `UPDATE articles SET status = $1, "publishedAt" = NOW(), "updatedAt" = NOW()
                WHERE id = $2 RETURNING id, status`;
          params = [status, id];

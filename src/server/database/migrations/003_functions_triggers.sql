@@ -95,7 +95,7 @@ BEGIN
     UPDATE categories
     SET "articleCount" = (
       SELECT COUNT(*) FROM articles
-      WHERE category = OLD.category AND status = 'published'
+      WHERE category = OLD.category AND status IN ('published', 'approved')
     )
     WHERE slug = OLD.category;
   END IF;
@@ -105,7 +105,7 @@ BEGIN
     UPDATE categories
     SET "articleCount" = (
       SELECT COUNT(*) FROM articles
-      WHERE category = NEW.category AND status = 'published'
+      WHERE category = NEW.category AND status IN ('published', 'approved')
     )
     WHERE slug = NEW.category;
   END IF;

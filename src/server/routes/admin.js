@@ -263,7 +263,7 @@ router.get('/stats', authMiddleware, roleMiddleware(['admin']), async (req, res)
          totalEditorsRow,
       ] = await Promise.all([
          pool.query(`SELECT COUNT(*) as count FROM articles`),
-         pool.query(`SELECT COUNT(*) as count FROM articles WHERE status = 'published'`),
+         pool.query(`SELECT COUNT(*) as count FROM articles WHERE status IN ('published', 'approved')`),
          pool.query(`SELECT COUNT(*) as count FROM articles WHERE status = 'pending'`),
          pool.query(`SELECT COUNT(*) as count FROM users`),
          pool.query(`SELECT COUNT(*) as count FROM users WHERE role = 'author'`),

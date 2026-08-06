@@ -62,7 +62,7 @@ router.post('/:id/approve', authMiddleware, roleMiddleware(['editor']), async (r
          await client.query('BEGIN');
 
          // 1. Cập nhật trạng thái bài viết và gán biên tập viên
-         await client.query(`UPDATE articles SET status = 'approved', editor_id = $1, "updatedAt" = NOW() WHERE id = $2`, [req.user.id, req.params.id]);
+         await client.query(`UPDATE articles SET status = 'approved', editor_id = $1, "publishedAt" = NOW(), "updatedAt" = NOW() WHERE id = $2`, [req.user.id, req.params.id]);
 
          // 2. Tạo thông báo cho tác giả
          await client.query(

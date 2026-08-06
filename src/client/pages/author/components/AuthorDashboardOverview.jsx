@@ -41,9 +41,9 @@ export default function AuthorDashboardOverview({ articles = [], onTabChange }) 
          published = 0,
          rejected = 0;
       articles.forEach((a) => {
-         if (a.status === 'pending' || a.status === 'approved') pending++;
+         if (a.status === 'pending') pending++;
          else if (a.status === 'draft') draft++;
-         else if (a.status === 'published') published++;
+         else if (a.status === 'published' || a.status === 'approved') published++;
          else if (a.status === 'rejected') rejected++;
          else draft++;
       });
@@ -80,8 +80,8 @@ export default function AuthorDashboardOverview({ articles = [], onTabChange }) 
       .join(' ');
 
    const draftArticles = articles.filter((a) => a.status === 'draft' || a.status === 'rejected');
-   const pendingArticles = articles.filter((a) => a.status === 'pending' || a.status === 'approved');
-   const publishedArticles = articles.filter((a) => a.status === 'published');
+   const pendingArticles = articles.filter((a) => a.status === 'pending');
+   const publishedArticles = articles.filter((a) => a.status === 'published' || a.status === 'approved');
    const totalViews = publishedArticles.reduce((sum, a) => sum + (a.views || 0), 0);
 
    return (
@@ -294,10 +294,10 @@ export default function AuthorDashboardOverview({ articles = [], onTabChange }) 
                            <span
                               style={{
                                  background:
-                                    article.status === 'published'
+                                    article.status === 'published' || article.status === 'approved'
                                        ? 'rgba(76, 175, 80, 0.2)'
                                        : 'rgba(255, 152, 0, 0.2)',
-                                 color: article.status === 'published' ? '#4caf50' : '#ff9800',
+                                 color: (article.status === 'published' || article.status === 'approved') ? '#4caf50' : '#ff9800',
                                  padding: '0.2rem 0.6rem',
                                  borderRadius: '4px',
                                  fontSize: '0.75rem',
