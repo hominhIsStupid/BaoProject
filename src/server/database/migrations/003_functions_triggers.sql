@@ -186,7 +186,7 @@ BEGIN
     "articlesReviewed" = v_reviewed,
     "articlesApproved" = v_approved,
     "articlesRejected" = v_rejected,
-    "approvalRate"     = CASE WHEN v_reviewed > 0 THEN ROUND((v_approved::REAL / v_reviewed) * 100, 2) ELSE 0 END,
+    "approvalRate"     = CASE WHEN v_reviewed > 0 THEN ROUND((v_approved::NUMERIC / v_reviewed) * 100, 2) ELSE 0 END,
     "updatedAt"        = NOW()
   WHERE editor_id = v_editor_id;
 
@@ -228,7 +228,7 @@ CREATE OR REPLACE VIEW v_published_articles AS
   LEFT JOIN users u   ON a.author_id  = u.id
   LEFT JOIN users e   ON a.editor_id  = e.id
   LEFT JOIN categories cat ON a.category = cat.slug
-  WHERE a.status = 'published';
+  WHERE a.status IN ('published', 'approved');
 
 -- ============================================================
 -- View: article stats summary (for admin dashboard)

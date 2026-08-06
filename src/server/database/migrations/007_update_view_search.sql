@@ -29,4 +29,4 @@ CREATE OR REPLACE VIEW v_published_articles AS
   LEFT JOIN users u   ON a.author_id  = u.id
   LEFT JOIN users e   ON a.editor_id  = e.id
   LEFT JOIN categories cat ON a.category = cat.slug
-  WHERE a.status = 'published';
+  WHERE a.status IN ('published', 'approved');
