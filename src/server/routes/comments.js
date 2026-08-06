@@ -47,7 +47,7 @@ router.post('/:articleId', authMiddleware, async (req, res) => {
          return res.status(404).json({ message: 'Article not found' });
       }
 
-      if (article.status !== 'published') {
+      if (article.status !== 'published' && article.status !== 'approved') {
          return res.status(400).json({ message: 'Cannot comment on unpublished articles' });
       }
 

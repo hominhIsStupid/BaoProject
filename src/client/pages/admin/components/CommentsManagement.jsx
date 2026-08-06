@@ -65,15 +65,12 @@ export default function CommentsManagement({ comments, onDelete, onUpdateStatus 
                      <span>{comment.articleTitle || 'Bài viết'}</span>
                      <span
                         style={{
-                           fontStyle: 'italic',
-                           textOverflow: 'ellipsis',
-                           overflow: 'hidden',
-                           whiteSpace: 'nowrap',
-                           maxWidth: '300px',
+                           whiteSpace: 'normal',
+                           wordBreak: 'break-word',
                            color: comment.status === 'reported' ? '#ff4757' : 'inherit',
                         }}
                      >
-                        "{comment.content}"
+                        {comment.content}
                      </span>
                      <span>{new Date(comment.createdAt).toLocaleDateString('vi-VN')}</span>
                      <span className={styles.actions} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
