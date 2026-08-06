@@ -10,7 +10,6 @@ export default function SidebarNav({ activeTab, onTabChange, pendingCount = 0, a
       { id: 'categories-manage', label: 'Quản lý chuyên mục', icon: '📂' },
       { id: 'comments-manage', label: 'Quản lý bình luận', icon: '💬' },
       { id: 'users-manage', label: 'Quản lý người dùng', icon: '👥' },
-      { id: 'research-manage', label: 'Nghiên cứu khoa học', icon: '🔬' },
       { id: 'logs', label: 'Nhật ký hệ thống', icon: '📜' },
       { id: 'settings', label: 'Cài đặt hệ thống', icon: '⚙️' },
    ];

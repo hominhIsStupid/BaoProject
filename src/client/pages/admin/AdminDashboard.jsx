@@ -12,7 +12,6 @@ import CommentsManagement from './components/CommentsManagement';
 import UsersManagement from './components/UsersManagement';
 import SystemLogs from './components/SystemLogs';
 import SystemSettings from './components/SystemSettings';
-import ResearchManagement from './components/ResearchManagement';
 
 export default function AdminDashboard() {
    const [activeTab, setActiveTab] = useState('dashboard');
@@ -253,7 +252,6 @@ export default function AdminDashboard() {
                         onUpdateWallet={handleUpdateWallet}
                      />
                   )}
-                  {activeTab === 'research-manage' && <ResearchManagement />}
                   {activeTab === 'logs' && <SystemLogs logs={logs} />}
                   {activeTab === 'settings' && <SystemSettings />}
                </>

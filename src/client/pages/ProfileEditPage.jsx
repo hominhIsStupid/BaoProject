@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authAPI, commentsAPI, bookmarksAPI, notificationsAPI, tokenStorage } from '../utils/api';
+import { authAPI, commentsAPI, notificationsAPI, tokenStorage } from '../utils/api';
 import styles from './ProfileEditPage.module.css';
 
 function ProfileEditPage() {
@@ -28,10 +28,6 @@ function ProfileEditPage() {
    // Comments Tab States
    const [userComments, setUserComments] = useState([]);
    const [loadingComments, setLoadingComments] = useState(false);
-
-   // Bookmarks Tab States
-   const [savedArticles, setSavedArticles] = useState([]);
-   const [loadingSaved, setLoadingSaved] = useState(false);
 
    // Notifications Tab States
    const [notifications, setNotifications] = useState([]);
@@ -77,20 +73,6 @@ function ProfileEditPage() {
             }
          };
          fetchComments();
-      } else if (activeMenu === 'saved') {
-         const fetchSaved = async () => {
-            setLoadingSaved(true);
-            try {
-               const data = await bookmarksAPI.getAll();
-               setSavedArticles(data);
-            } catch (err) {
-               console.error(err);
-               showToast('Lỗi khi tải bài viết đã lưu.');
-            } finally {
-               setLoadingSaved(false);
-            }
-         };
-         fetchSaved();
       } else if (activeMenu === 'notifications') {
          const fetchNotifications = async () => {
             setLoadingNotifications(true);
@@ -146,16 +128,6 @@ function ProfileEditPage() {
          showToast('Đã xóa bình luận.');
       } catch (err) {
          showToast('Lỗi khi xóa bình luận.');
-      }
-   };
-
-   const handleRemoveBookmark = async (articleId) => {
-      try {
-         await bookmarksAPI.delete(articleId);
-         setSavedArticles((prev) => prev.filter((a) => a.id !== articleId));
-         showToast('Đã bỏ lưu bài viết.');
-      } catch (err) {
-         showToast('Lỗi khi bỏ lưu.');
       }
    };
 
@@ -253,7 +225,6 @@ function ProfileEditPage() {
       { id: 'profile', label: 'Thông tin cá nhân', icon: '👤' },
       { id: 'password', label: 'Đổi mật khẩu', icon: '🔒' },
       { id: 'comments', label: 'Quản lý bình luận', icon: '💬' },
-      { id: 'saved', label: 'Bài viết đã lưu', icon: '🔖' },
       { id: 'notifications', label: 'Thông báo', icon: '🔔' },
    ];
 
@@ -590,50 +561,6 @@ function ProfileEditPage() {
                                           type="button"
                                        >
                                           🗑️ Xóa bình luận
-                                       </button>
-                                    </div>
-                                 </div>
-                              ))}
-                           </div>
-                        )}
-                     </>
-                  ) : activeMenu === 'saved' ? (
-                     <>
-                        <h2 className={styles.formTitle}>BÀI VIẾT ĐÃ LƯU</h2>
-                        {loadingSaved ? (
-                           <div
-                              className="loading-spinner"
-                              style={{ textAlign: 'center', margin: '2rem 0', color: 'var(--gold-primary)' }}
-                           >
-                              Đang tải danh sách bài viết...
-                           </div>
-                        ) : savedArticles.length === 0 ? (
-                           <div className={styles.emptyState}>
-                              <span className={styles.emptyStateIcon}>🔖</span>
-                              <p>Bạn chưa lưu bài viết nào.</p>
-                           </div>
-                        ) : (
-                           <div className={styles.list}>
-                              {savedArticles.map((article) => (
-                                 <div key={article.id} className={styles.item}>
-                                    <div className={styles.itemHeader}>
-                                       <Link to={`/article/${article.id}`} className={styles.itemTitle}>
-                                          {article.title}
-                                       </Link>
-                                    </div>
-                                    <p className={styles.itemContent}>{article.excerpt}</p>
-                                    <div className={styles.itemMeta}>
-                                       <span>Tác giả: {article.authorName}</span>
-                                       <span>•</span>
-                                       <span>Lượt xem: {article.views}</span>
-                                    </div>
-                                    <div className={styles.itemActions}>
-                                       <button
-                                          className={`${styles.btnActionLink} ${styles.btnActionRed}`}
-                                          onClick={() => handleRemoveBookmark(article.id)}
-                                          type="button"
-                                       >
-                                          ❌ Hủy lưu bài viết
                                        </button>
                                     </div>
                                  </div>
